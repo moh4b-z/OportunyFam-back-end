@@ -4,8 +4,8 @@
  * Versão enxuta e normalizada
  **********************************************/
 
-CREATE DATABASE oportuny;
-USE oportuny;
+CREATE DATABASE oportunyfam;
+USE oportunyfam;
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
