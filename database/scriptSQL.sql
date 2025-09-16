@@ -183,4 +183,30 @@ CREATE TABLE denuncia (
     FOREIGN KEY (id_status) REFERENCES status_denuncia(id_status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+
+CREATE TABLE endereco (
+    id_endereco INT AUTO_INCREMENT PRIMARY KEY,
+    cep VARCHAR(9) NOT NULL,
+    logradouro VARCHAR(200),
+    numero VARCHAR(20),
+    complemento VARCHAR(100),
+    bairro VARCHAR(100),
+    cidade VARCHAR(100),
+    estado CHAR(2),
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE usuario_endereco (
+    id_usuario INT NOT NULL,
+    id_endereco INT NOT NULL,
+    tipo VARCHAR(50) DEFAULT 'principal', -- principal, alternativo, comercial
+    PRIMARY KEY (id_usuario, id_endereco),
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (id_endereco) REFERENCES endereco(id_endereco) ON DELETE CASCADE
+);
+
+
+
+
+
 SET FOREIGN_KEY_CHECKS = 1;
