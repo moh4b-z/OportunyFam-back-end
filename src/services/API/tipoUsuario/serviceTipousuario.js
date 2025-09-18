@@ -4,61 +4,62 @@ const TableCORRECTION = require("../../../utils/tablesCheck");
 
 const tipoUsuarioDAO = require("../../../model/DAO/TipoUsuario/tipoUsuario");
 
-async function inserirTipoUsuario(tipoUsuario, contentType) {
+/////////////////////////insert//////////////////////////////////////
+async function inserirTipoUsuario(tipoUsuario, contentType){
     try {
-        if (contentType == "application/json") {
-             //verificar tbl
-            if (TableCORRECTION.CHECK_tbl_tipo_usuario(tipoUsuario)) {
+       if (contentType == "application/json") {
+         //verificar tbl
+            if (TableCORRECTION.CHECK_tbl_tipoUsuario(tipoUsuario)) {
                 let result = await tipoUsuarioDAO.insertTipoUsuario(tipoUsuario);
-
+        
                 if (result) {
                     return {
-                        ...MENSAGE.SUCCESS_CEATED_ITEM,
-                        tipo_usuario: result
+                         ...MENSAGE.SUCCESS_CEATED_ITEM,
+                         tipoUsuario: result
                     };
                 } else {
                     return MENSAGE.ERROR_INTERNAL_SERVER_MODEL;
-                }
+                 }
             } else {
-                return MENSAGE.ERROR_REQUIRED_FIELDS;
+              return MENSAGE.ERROR_REQUIRED_FIELDS;
             }
         } else {
-            return MENSAGE.ERROR_CONTENT_TYPE;
+           return MENSAGE.ERROR_CONTENT_TYPE;
         }
-    } catch (error) {
+     } catch (error) {
         console.error(error);
-        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES;
+                return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES;
     }
 }
 
+/////////////////////////atualizar//////////////////////////////////////
 async function atualizarTipoUsuario(tipoUsuario, id, contentType) {
-    try {
-        if (contentType == "application/json") {
-            if (TableCORRECTION.CHECK_tbl_tipo_usuario(tipoUsuario) && CORRECTION.CHECK_ID(id)) {
+    try{
+        if(contentType == "application/json"){
+            if(TableCORRECTION.CHECK_tbl_tipoUsuario(tipoUsuario)&& CORRECTION.CHECK_ID(id)){
                 let resultSearch = await buscarTipoUsuario(parseInt(id));
 
-                if (resultSearch.status_code == 201) {
-                    tipoUsuario.id_tipo = parseInt(id);
-                    let result = await tipoUsuarioDAO.updateTipoUsuario(tipoUsuario);
+                if (resultSearch.status_code == 201){
+                    tipoUsuario.id_tipoUsuario = parseInt(id);
+                    let result = await tipoUsuario.updateTipoUsuario(tipoUsuario);
 
                     return result ? MENSAGE.SUCCESS_UPDATED_ITEM : MENSAGE.ERROR_INTERNAL_SERVER_MODEL;
-                } else if (resultSearch.status_code == 404) {
+                }else if (resultSearch.status_code == 404){
                     return MENSAGE.ERROR_NOT_FOUND;
-                } else {
-                    return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES;
                 }
-            } else {
+            }else{
                 return MENSAGE.ERROR_REQUIRED_FIELDS;
             }
-        } else {
+        }else{
             return MENSAGE.ERROR_CONTENT_TYPE;
         }
-    } catch (error) {
+    } catch(error){
         console.error(error);
         return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES;
     }
 }
 
+/////////////////////////excluir//////////////////////////////////////
 async function excluirTipoUsuario(id) {
     try {
         if (CORRECTION.CHECK_ID(id)) {
@@ -79,7 +80,8 @@ async function excluirTipoUsuario(id) {
     }
 }
 
-async function listarTodosTiposUsuario() {
+/////////////////////////Listar//////////////////////////////////////
+async function listarTipoUsuario() {
     try {
         let result = await tipoUsuarioDAO.selectAllTipoUsuario();
 
@@ -88,7 +90,7 @@ async function listarTodosTiposUsuario() {
                 status: true,
                 status_code: 201,
                 items: result.length,
-                tipos_usuario: result
+                tipoUsuario: result
             };
         } else {
             return MENSAGE.ERROR_NOT_FOUND;
@@ -99,6 +101,7 @@ async function listarTodosTiposUsuario() {
     }
 }
 
+/////////////////////////buscar por id//////////////////////////////////////
 async function buscarTipoUsuario(id) {
     try {
         if (CORRECTION.CHECK_ID(id)) {
@@ -108,7 +111,7 @@ async function buscarTipoUsuario(id) {
                 return {
                     status: true,
                     status_code: 201,
-                    tipo_usuario: result
+                    tipoUsuario: result
                 };
             } else {
                 return MENSAGE.ERROR_NOT_FOUND;
@@ -121,11 +124,10 @@ async function buscarTipoUsuario(id) {
         return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES;
     }
 }
-
 module.exports = {
     inserirTipoUsuario,
     atualizarTipoUsuario,
     excluirTipoUsuario,
-    listarTodosTiposUsuario,
+    listarTipoUsuario,
     buscarTipoUsuario
 };

@@ -1,6 +1,6 @@
 const CORRECTION = require("./inputCheck");
 
-function CHECK_tbl_usuario(usuario) {
+function CHECK_tbl_tipo_usuarios(usuario) {
     return (
         CORRECTION.CHECK_VARCHAR_NOT_NULL(usuario.nome, 50)
     )
@@ -8,5 +8,5 @@ function CHECK_tbl_usuario(usuario) {
 
 
 module.exports = {
-    CHECK_tbl_usuario
+    CHECK_tbl_tipo_usuarios
 };
