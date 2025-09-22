@@ -1,16 +1,16 @@
-const MENSAGE = require("../../../modulo/config");
-const CORRECTION = require("../../../utils/inputCheck");
-const TableCORRECTION = require("../../../utils/tablesCheck");
+const MENSAGE = require("../../modulo/config");
+const CORRECTION = require("../../utils/inputCheck");
+const TableCORRECTION = require("../../utils/tablesCheck");
 
-const tipoDocumentoDAO = require("../../../model/DAO/TipoDocumento/tipoDocumento");
+const presencaDAO = require("../../model/DAO/Presenca/presenca");
 
 /////////////////////////insert//////////////////////////////////////
-async function inserirTipoDocumento(tipoDocumento, contentType){
+async function inserirPresenca(presenca, contentType){
     try {
        if (contentType == "application/json") {
          //verificar tbl
-            if (TableCORRECTION.CHECK_tbl_tipoDocumento(tipoDocumento)) {
-                let result = await tipoDocumentoDAO.insertTipoDocumento(tipoDocumento);
+            if (TableCORRECTION.CHECK_tbl_presenca(presenca)) {
+                let result = await presencaDAO.insertPresenca(presenca);
         
                 if (result) {
                     return {
@@ -33,15 +33,15 @@ async function inserirTipoDocumento(tipoDocumento, contentType){
 }
 
 /////////////////////////atualizar//////////////////////////////////////
-async function atualizarTipoDocumento(tipoDocumento, id, contentType) {
+async function atualizarPresenca(presenca, id, contentType) {
     try{
         if(contentType == "application/json"){
-            if(TableCORRECTION.CHECK_tbl_tipoDocumento(tipoDocumento)&& CORRECTION.CHECK_ID(id)){
-                let resultSearch = await buscarTipoDocumento(parseInt(id));
+            if(TableCORRECTION.CHECK_tbl_presenca(presenca)&& CORRECTION.CHECK_ID(id)){
+                let resultSearch = await buscarPresenca(parseInt(id));
 
                 if (resultSearch.status_code == 201){
-                    tipoDocumento.id_tipoDocumento = parseInt(id);
-                    let result = await tipoDocumento.updateTipoDocumento(tipoDocumento);
+                    presenca.id_presenca = parseInt(id);
+                    let result = await presencaDAO.updatePresenca(presenca);
 
                     return result ? MENSAGE.SUCCESS_UPDATED_ITEM : MENSAGE.ERROR_INTERNAL_SERVER_MODEL;
                 }else if (resultSearch.status_code == 404){
@@ -60,13 +60,14 @@ async function atualizarTipoDocumento(tipoDocumento, id, contentType) {
 }
 
 /////////////////////////excluir//////////////////////////////////////
-async function excluirTipoDocumento(id) {
+
+async function excluirPresenca(id) {
     try {
         if (CORRECTION.CHECK_ID(id)) {
-            let verification = await tipoDocumentoDAO.selectByIdTipoDocumento(parseInt(id));
+            let verification = await presencaDAO.selectByIdPresenca(parseInt(id));
 
             if (verification) {
-                let result = await tipoDocumentoDAO.deleteTipoDocumento(parseInt(id));
+                let result = await presencaDAO.deletePresenca(parseInt(id));
                 return result ? MENSAGE.SUCCESS_DELETE_ITEM : MENSAGE.ERROR_NOT_DELETE;
             } else {
                 return MENSAGE.ERROR_NOT_FOUND;
@@ -81,16 +82,17 @@ async function excluirTipoDocumento(id) {
 }
 
 /////////////////////////Listar//////////////////////////////////////
-async function listarTipoDocumento() {
+
+async function listarPresenca() {
     try {
-        let result = await tipoDocumentoDAO.selectAllTipoDocumento();
+        let result = await presencaDAO.selectAllPresenca();
 
         if (result && result.length > 0) {
             return {
                 status: true,
                 status_code: 201,
                 items: result.length,
-                tipoDocumento: result
+                presenca: result
             };
         } else {
             return MENSAGE.ERROR_NOT_FOUND;
@@ -102,16 +104,17 @@ async function listarTipoDocumento() {
 }
 
 /////////////////////////buscar por id//////////////////////////////////////
-async function buscarTipoDocumento(id) {
+
+async function buscarPresenca(id) {
     try {
         if (CORRECTION.CHECK_ID(id)) {
-            let result = await tipoDocumentoDAO.selectByIdTipoDocumento(parseInt(id));
+            let result = await presencaDAO.selectByIdPresenca(parseInt(id));
 
             if (result) {
                 return {
                     status: true,
                     status_code: 201,
-                    tipoDocumento: result
+                    presenca: result
                 };
             } else {
                 return MENSAGE.ERROR_NOT_FOUND;
@@ -125,9 +128,9 @@ async function buscarTipoDocumento(id) {
     }
 }
 module.exports = {
-    inserirTipoDocumento,
-    atualizarTipoDocumento,
-    excluirTipoDocumento,
-    listarTipoDocumento,
-    buscarTipoDocumento
+    inserirPresenca,
+    atualizarPresenca,
+    excluirPresenca,
+    listarPresenca,
+    buscarPresenca
 };

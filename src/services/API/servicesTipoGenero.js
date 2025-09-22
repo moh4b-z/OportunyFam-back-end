@@ -1,8 +1,8 @@
-const MENSAGE = require("../../../modulo/config");
-const CORRECTION = require("../../../utils/inputCheck");
-const TableCORRECTION = require("../../../utils/tablesCheck");
+const MENSAGE = require("../../modulo/config");
+const CORRECTION = require("../../utils/inputCheck");
+const TableCORRECTION = require("../../utils/tablesCheck");
 
-const generoDAO = require("../../../model/DAO/Genero/genero");
+const generoDAO = require("../../model/DAO/Genero/genero");
 
 /////////////////////////insert//////////////////////////////////////
 async function inserirGenero(genero, contentType) {

@@ -1,21 +1,21 @@
-const MENSAGE = require("../../../modulo/config");
-const CORRECTION = require("../../../utils/inputCheck");
-const TableCORRECTION = require("../../../utils/tablesCheck");
+const MENSAGE = require("../../modulo/config");
+const CORRECTION = require("../../utils/inputCheck");
+const TableCORRECTION = require("../../utils/tablesCheck");
 
-const tipoUsuarioDAO = require("../../../model/DAO/TipoUsuario/tipoUsuario");
+const tipoDocumentoDAO = require("../../model/DAO/TipoDocumento/tipoDocumento");
 
 /////////////////////////insert//////////////////////////////////////
-async function inserirTipoUsuario(tipoUsuario, contentType){
+async function inserirTipoDocumento(tipoDocumento, contentType){
     try {
        if (contentType == "application/json") {
          //verificar tbl
-            if (TableCORRECTION.CHECK_tbl_tipoUsuario(tipoUsuario)) {
-                let result = await tipoUsuarioDAO.insertTipoUsuario(tipoUsuario);
+            if (TableCORRECTION.CHECK_tbl_tipoDocumento(tipoDocumento)) {
+                let result = await tipoDocumentoDAO.insertTipoDocumento(tipoDocumento);
         
                 if (result) {
                     return {
                          ...MENSAGE.SUCCESS_CEATED_ITEM,
-                         tipoUsuario: result
+                           presenca: result
                     };
                 } else {
                     return MENSAGE.ERROR_INTERNAL_SERVER_MODEL;
@@ -33,15 +33,15 @@ async function inserirTipoUsuario(tipoUsuario, contentType){
 }
 
 /////////////////////////atualizar//////////////////////////////////////
-async function atualizarTipoUsuario(tipoUsuario, id, contentType) {
+async function atualizarTipoDocumento(tipoDocumento, id, contentType) {
     try{
         if(contentType == "application/json"){
-            if(TableCORRECTION.CHECK_tbl_tipoUsuario(tipoUsuario)&& CORRECTION.CHECK_ID(id)){
-                let resultSearch = await buscarTipoUsuario(parseInt(id));
+            if(TableCORRECTION.CHECK_tbl_tipoDocumento(tipoDocumento)&& CORRECTION.CHECK_ID(id)){
+                let resultSearch = await buscarTipoDocumento(parseInt(id));
 
                 if (resultSearch.status_code == 201){
-                    tipoUsuario.id_tipoUsuario = parseInt(id);
-                    let result = await tipoUsuario.updateTipoUsuario(tipoUsuario);
+                    tipoDocumento.id_tipoDocumento = parseInt(id);
+                    let result = await tipoDocumento.updateTipoDocumento(tipoDocumento);
 
                     return result ? MENSAGE.SUCCESS_UPDATED_ITEM : MENSAGE.ERROR_INTERNAL_SERVER_MODEL;
                 }else if (resultSearch.status_code == 404){
@@ -60,13 +60,13 @@ async function atualizarTipoUsuario(tipoUsuario, id, contentType) {
 }
 
 /////////////////////////excluir//////////////////////////////////////
-async function excluirTipoUsuario(id) {
+async function excluirTipoDocumento(id) {
     try {
         if (CORRECTION.CHECK_ID(id)) {
-            let verification = await tipoUsuarioDAO.selectByIdTipoUsuario(parseInt(id));
+            let verification = await tipoDocumentoDAO.selectByIdTipoDocumento(parseInt(id));
 
             if (verification) {
-                let result = await tipoUsuarioDAO.deleteTipoUsuario(parseInt(id));
+                let result = await tipoDocumentoDAO.deleteTipoDocumento(parseInt(id));
                 return result ? MENSAGE.SUCCESS_DELETE_ITEM : MENSAGE.ERROR_NOT_DELETE;
             } else {
                 return MENSAGE.ERROR_NOT_FOUND;
@@ -81,16 +81,16 @@ async function excluirTipoUsuario(id) {
 }
 
 /////////////////////////Listar//////////////////////////////////////
-async function listarTipoUsuario() {
+async function listarTipoDocumento() {
     try {
-        let result = await tipoUsuarioDAO.selectAllTipoUsuario();
+        let result = await tipoDocumentoDAO.selectAllTipoDocumento();
 
         if (result && result.length > 0) {
             return {
                 status: true,
                 status_code: 201,
                 items: result.length,
-                tipoUsuario: result
+                tipoDocumento: result
             };
         } else {
             return MENSAGE.ERROR_NOT_FOUND;
@@ -102,16 +102,16 @@ async function listarTipoUsuario() {
 }
 
 /////////////////////////buscar por id//////////////////////////////////////
-async function buscarTipoUsuario(id) {
+async function buscarTipoDocumento(id) {
     try {
         if (CORRECTION.CHECK_ID(id)) {
-            let result = await tipoUsuarioDAO.selectByIdTipoUsuario(parseInt(id));
+            let result = await tipoDocumentoDAO.selectByIdTipoDocumento(parseInt(id));
 
             if (result) {
                 return {
                     status: true,
                     status_code: 201,
-                    tipoUsuario: result
+                    tipoDocumento: result
                 };
             } else {
                 return MENSAGE.ERROR_NOT_FOUND;
@@ -125,9 +125,9 @@ async function buscarTipoUsuario(id) {
     }
 }
 module.exports = {
-    inserirTipoUsuario,
-    atualizarTipoUsuario,
-    excluirTipoUsuario,
-    listarTipoUsuario,
-    buscarTipoUsuario
+    inserirTipoDocumento,
+    atualizarTipoDocumento,
+    excluirTipoDocumento,
+    listarTipoDocumento,
+    buscarTipoDocumento
 };

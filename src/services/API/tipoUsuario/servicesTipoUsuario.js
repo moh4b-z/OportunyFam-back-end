@@ -8,7 +8,7 @@ async function inserirTipoUsuario(tipoUsuario, contentType) {
     try {
         if (contentType == "application/json") {
              //verificar tbl
-            if (TableCORRECTION.CHECK_tbl_tipo_usuario(tipoUsuario)) {
+            if (TableCORRECTION.CHECK_tbl_tipo_usuarios(tipoUsuario)) {
                 let result = await tipoUsuarioDAO.insertTipoUsuario(tipoUsuario);
 
                 if (result) {
