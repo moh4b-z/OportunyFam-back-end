@@ -1,21 +1,21 @@
-const MENSAGE = require("../../modulo/config");
-const CORRECTION = require("../../utils/inputCheck");
-const TableCORRECTION = require("../../utils/tablesCheck");
+const MENSAGE = require("../../../modulo/config");
+const CORRECTION = require("../../../utils/inputCheck");
+const TableCORRECTION = require("../../../utils/tablesCheck");
 
-const statusInscricaoDAO = require("../../model/DAO/StatusInscricao/statusInscricao");
+const presencaDAO = require("../../../model/DAO/Presenca/presenca");
 
 /////////////////////////insert//////////////////////////////////////
-async function inserirStatusInscricao(statusInscricao, contentType){
+async function inserirPresenca(presenca, contentType){
     try {
        if (contentType == "application/json") {
          //verificar tbl
             if (TableCORRECTION.CHECK_tbl_presenca(presenca)) {
-                let result = await statusInscricaoDAO.insertStatusInscricao(statusInscricao);
+                let result = await presencaDAO.insertPresenca(presenca);
         
                 if (result) {
                     return {
                          ...MENSAGE.SUCCESS_CEATED_ITEM,
-                         statusInscricao: result
+                           presenca: result
                     };
                 } else {
                     return MENSAGE.ERROR_INTERNAL_SERVER_MODEL;
@@ -33,15 +33,15 @@ async function inserirStatusInscricao(statusInscricao, contentType){
 }
 
 /////////////////////////atualizar//////////////////////////////////////
-async function atualizarStatusInscricao(statusInscricao, id, contentType) {
+async function atualizarPresenca(presenca, id, contentType) {
     try{
         if(contentType == "application/json"){
-            if(TableCORRECTION.CHECK_tbl_statusInscricao(statusInscricao)&& CORRECTION.CHECK_ID(id)){
-                let resultSearch = await buscarStatusInscricao(parseInt(id));
+            if(TableCORRECTION.CHECK_tbl_presenca(presenca)&& CORRECTION.CHECK_ID(id)){
+                let resultSearch = await buscarPresenca(parseInt(id));
 
                 if (resultSearch.status_code == 201){
-                    statusInscricao.id_statusInscricao = parseInt(id);
-                    let result = await statusInscricaoDAO.updateStatusInscricao(statusInscricao);
+                    presenca.id_presenca = parseInt(id);
+                    let result = await presencaDAO.updatePresenca(presenca);
 
                     return result ? MENSAGE.SUCCESS_UPDATED_ITEM : MENSAGE.ERROR_INTERNAL_SERVER_MODEL;
                 }else if (resultSearch.status_code == 404){
@@ -60,13 +60,14 @@ async function atualizarStatusInscricao(statusInscricao, id, contentType) {
 }
 
 /////////////////////////excluir//////////////////////////////////////
-async function excluirStatusInscricao(id) {
+
+async function excluirPresenca(id) {
     try {
         if (CORRECTION.CHECK_ID(id)) {
-            let verification = await statusInscricaoDAO.selectByIdStatusInscricao(parseInt(id));
+            let verification = await presencaDAO.selectByIdPresenca(parseInt(id));
 
             if (verification) {
-                let result = await statusInscricaoDAO.deleteStatusInscricao(parseInt(id));
+                let result = await presencaDAO.deletePresenca(parseInt(id));
                 return result ? MENSAGE.SUCCESS_DELETE_ITEM : MENSAGE.ERROR_NOT_DELETE;
             } else {
                 return MENSAGE.ERROR_NOT_FOUND;
@@ -81,16 +82,17 @@ async function excluirStatusInscricao(id) {
 }
 
 /////////////////////////Listar//////////////////////////////////////
-async function listarStatusInscricao() {
+
+async function listarPresenca() {
     try {
-        let result = await statusInscricaoDAO.selectAllStatusInscricao();
+        let result = await presencaDAO.selectAllPresenca();
 
         if (result && result.length > 0) {
             return {
                 status: true,
                 status_code: 201,
                 items: result.length,
-                statusInscricao: result
+                presenca: result
             };
         } else {
             return MENSAGE.ERROR_NOT_FOUND;
@@ -102,16 +104,17 @@ async function listarStatusInscricao() {
 }
 
 /////////////////////////buscar por id//////////////////////////////////////
-async function buscarStatusInscricao(id) {
+
+async function buscarPresenca(id) {
     try {
         if (CORRECTION.CHECK_ID(id)) {
-            let result = await statusInscricaoDAO.selectByIdStatusInscricao(parseInt(id));
+            let result = await presencaDAO.selectByIdPresenca(parseInt(id));
 
             if (result) {
                 return {
                     status: true,
                     status_code: 201,
-                    statusInscricao: result
+                    presenca: result
                 };
             } else {
                 return MENSAGE.ERROR_NOT_FOUND;
@@ -125,9 +128,9 @@ async function buscarStatusInscricao(id) {
     }
 }
 module.exports = {
-    inserirStatusInscricao,
-    atualizarStatusInscricao,
-    excluirStatusInscricao,
-    listarStatusInscricao,
-    buscarStatusInscricao
+    inserirPresenca,
+    atualizarPresenca,
+    excluirPresenca,
+    listarPresenca,
+    buscarPresenca
 };

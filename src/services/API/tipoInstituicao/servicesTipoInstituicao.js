@@ -1,8 +1,8 @@
-const MENSAGE = require("../../modulo/config");
-const CORRECTION = require("../../utils/inputCheck");
-const TableCORRECTION = require("../../utils/tablesCheck");
+const MENSAGE = require("../../../modulo/config");
+const CORRECTION = require("../../../utils/inputCheck");
+const TableCORRECTION = require("../../../utils/tablesCheck");
 
-const tipoInstituicaoDAO = require("../../model/DAO/TipoInstituicao/tipoInstituicao");
+const tipoInstituicaoDAO = require("../../../model/DAO/TipoInstituicao/tipoInstituicao");
 
 /////////////////////////insert//////////////////////////////////////
 async function inserirTipoInstituicao(tipoInstituicao, contentType){

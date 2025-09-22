@@ -1,8 +1,8 @@
-const MENSAGE = require("../../modulo/config");
-const CORRECTION = require("../../utils/inputCheck");
-const TableCORRECTION = require("../../utils/tablesCheck");
+const MENSAGE = require("../../../modulo/config");
+const CORRECTION = require("../../../utils/inputCheck");
+const TableCORRECTION = require("../../../utils/tablesCheck");
 
-const statusDenunciaDAO = require("../../model/DAO/StatusDenuncia/statusDenuncia");
+const statusDenunciaDAO = require("../../../model/DAO/StatusDenuncia/statusDenuncia");
 
 /////////////////////////insert//////////////////////////////////////
 async function inserirStatusDenuncia(statusDenuncia, contentType) {

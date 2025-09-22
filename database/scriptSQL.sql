@@ -119,7 +119,7 @@ CREATE TABLE instituicao (
     razao_social VARCHAR(200),
     id_tipo INT NOT NULL,
     descricao TEXT,
-    site VARCHAR(200),
+    site_instituicao VARCHAR(300),
     email_contato VARCHAR(150),
     gratuito BOOLEAN DEFAULT TRUE,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -197,9 +197,11 @@ CREATE TABLE endereco (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE usuario_endereco (
+    id ,
     id_usuario INT NOT NULL,
     id_endereco INT NOT NULL,
     tipo VARCHAR(50) DEFAULT 'principal', -- principal, alternativo, comercial
+    descricao TEXT,
     PRIMARY KEY (id_usuario, id_endereco),
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
     FOREIGN KEY (id_endereco) REFERENCES endereco(id_endereco) ON DELETE CASCADE
