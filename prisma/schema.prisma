@@ -4,12 +4,23 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
-generator client {
-  provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
+datasource mysql {
+  provider = "mysql"
+  url      = env("DATABASE_URL_MYSQL")
 }
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+datasource mongo {
+  provider = "mongodb"
+  url      = env("DATABASE_URL_MONGO")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/mysql" // gera o cliente separado para MySQL
+  previewFeatures = ["multiSchema"]
+}
+
+generator mongoClient {
+  provider = "prisma-client-js"
+  output   = "./generated/mongo" // gera o cliente separado para Mongo
 }
