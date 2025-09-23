@@ -5,60 +5,60 @@ const prismaMySQL = new MySQLClient()
 const prismaMongo = new MongoClient()
 
 
-async function insertGenero(genero) {
+async function insertSexo(sexo) {
     try {
-        return await prismaMySQL.genero.create({ data: { nome: genero.nome } })
+        return await prismaMySQL.sexo.create({ data: { nome: sexo.nome } })
     } catch (error) {
-        console.error("Erro ao inserir genero:", error)
+        console.error("Erro ao inserir sexo:", error)
         return false
     }
 }
 
-async function updateGenero(genero) {
+async function updateSexo(sexo) {
     try {
-        return await prismaMySQL.genero.update({
-            where: { id_genero: genero.id_genero },
-            data: { nome: genero.nome }
+        return await prismaMySQL.sexo.update({
+            where: { id: sexo.id },
+            data: { nome: sexo.nome }
         })
     } catch (error) {
-        console.error("Erro ao atualizar genero:", error)
+        console.error("Erro ao atualizar sexo:", error)
         return false
     }
 }
 
-async function deleteGenero(id) {
+async function deleteSexo(id) {
     try {
-        await prismaMySQL.genero.delete({ where: { id_genero: id } })
+        await prismaMySQL.sexo.delete({ where: { id: id } })
         return true
     } catch (error) {
-        console.error("Erro ao deletar genero:", error)
+        console.error("Erro ao deletar sexo:", error)
         return false
     }
 }
 
-async function selectAllGenero() {
+async function selectAllSexo() {
     try {
-        return await prismaMySQL.genero.findMany({ orderBy: { id_genero: 'desc' } })
+        return await prismaMySQL.sexo.findMany({ orderBy: { id: 'desc' } })
     } catch (error) {
-        console.error("Erro ao buscar generos:", error)
+        console.error("Erro ao buscar sexos:", error)
         return false
     }
 }
 
-async function selectByIdGenero(id) {
+async function selectByIdSexo(id) {
     try {
-        return await prismaMySQL.genero.findUnique({ where: { id_genero: id } })
+        return await prismaMySQL.sexo.findUnique({ where: { id: id } })
     } catch (error) {
-        console.error("Erro ao buscar genero por ID:", error)
+        console.error("Erro ao buscar sexo por ID:", error)
         return false
     }
 }
 
 
 module.exports = {
-    insertGenero, 
-    updateGenero, 
-    deleteGenero, 
-    selectAllGenero, 
-    selectByIdGenero
+    insertsexo, 
+    updatesexo, 
+    deletesexo, 
+    selectAllsexo, 
+    selectByIdsexo
 }
