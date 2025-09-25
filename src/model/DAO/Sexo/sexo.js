@@ -1,9 +1,5 @@
-const { PrismaClient: MySQLClient } = require('./generated/mysql')
-const { PrismaClient: MongoClient } = require('./generated/mongo')
-
+const { PrismaClient: MySQLClient } = require('../../../generated/mysql')
 const prismaMySQL = new MySQLClient()
-const prismaMongo = new MongoClient()
-
 
 async function insertSexo(sexo) {
     try {
@@ -38,7 +34,8 @@ async function deleteSexo(id) {
 
 async function selectAllSexo() {
     try {
-        return await prismaMySQL.sexo.findMany({ orderBy: { id: 'desc' } })
+        // Ordena por nome para uma lista mais organizada
+        return await prismaMySQL.sexo.findMany({ orderBy: { nome: 'asc' } }) 
     } catch (error) {
         console.error("Erro ao buscar sexos:", error)
         return false
@@ -54,11 +51,10 @@ async function selectByIdSexo(id) {
     }
 }
 
-
 module.exports = {
-    insertsexo, 
-    updatesexo, 
-    deletesexo, 
-    selectAllsexo, 
-    selectByIdsexo
+    insertSexo,
+    updateSexo,
+    deleteSexo,
+    selectAllSexo,
+    selectByIdSexo
 }

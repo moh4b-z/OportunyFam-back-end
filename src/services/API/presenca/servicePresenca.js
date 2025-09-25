@@ -4,7 +4,7 @@ const TableCORRECTION = require("../../../utils/tablesCheck");
 
 const presencaDAO = require("../../../model/DAO/Presenca/presenca");
 
-/////////////////////////insert//////////////////////////////////////
+
 async function inserirPresenca(presenca, contentType){
     try {
        if (contentType == "application/json") {
@@ -32,7 +32,7 @@ async function inserirPresenca(presenca, contentType){
     }
 }
 
-/////////////////////////atualizar//////////////////////////////////////
+
 async function atualizarPresenca(presenca, id, contentType) {
     try{
         if(contentType == "application/json"){
@@ -59,8 +59,6 @@ async function atualizarPresenca(presenca, id, contentType) {
     }
 }
 
-/////////////////////////excluir//////////////////////////////////////
-
 async function excluirPresenca(id) {
     try {
         if (CORRECTION.CHECK_ID(id)) {
@@ -81,7 +79,6 @@ async function excluirPresenca(id) {
     }
 }
 
-/////////////////////////Listar//////////////////////////////////////
 
 async function listarPresenca() {
     try {
@@ -103,7 +100,6 @@ async function listarPresenca() {
     }
 }
 
-/////////////////////////buscar por id//////////////////////////////////////
 
 async function buscarPresenca(id) {
     try {
