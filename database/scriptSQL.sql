@@ -12,12 +12,13 @@ CREATE TABLE tbl_sexo (
 
 CREATE TABLE tbl_tipo_nivel (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(100) UNIQUE NOT NULL
+    nivel VARCHAR(100) UNIQUE NOT NULL
 );
 
 CREATE TABLE tbl_rede_social (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL
+    nome VARCHAR(100) NOT NULL,
+    icone VARCHAR(300) NOT NULL
 );
 
 
@@ -27,6 +28,7 @@ CREATE TABLE tbl_usuario (
     email VARCHAR(150) NOT NULL UNIQUE,
     senha VARCHAR(255) NOT NULL, -- senha criptografada
     data_nascimento DATE NOT NULL,
+    cpf VARCHAR(11) NOT NULL,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     atualizado_em TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
     id_sexo INT NOT NULL,
@@ -39,6 +41,9 @@ CREATE TABLE tbl_usuario (
 CREATE TABLE tbl_crianca (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(150) NOT NULL,
+    email VARCHAR(150) UNIQUE,
+    cpf VARCHAR(11) NOT NULL,
+    senha VARCHAR(255) NOT NULL, -- senha criptografada
     data_nascimento DATE NOT NULL,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     id_sexo INT NOT NULL,
@@ -76,37 +81,46 @@ CREATE TABLE tbl_usuario_endereco (
     FOREIGN KEY (id_endereco) REFERENCES tbl_endereco(id) ON DELETE CASCADE
 );
 
--- Relação Instituição ↔ Endereço (1:1)
--- cada instituição fica em um endereço
 CREATE TABLE tbl_instituicao (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(200) NOT NULL,
+    cnpj VARCHAR(14) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    senha VARCHAR(255) NOT NULL,
     descricao TEXT,
-    id_endereco INT NOT NULL,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    id_endereco INT NOT NULL,
     FOREIGN KEY (id_endereco) REFERENCES tbl_endereco(id)
 );
 
--- ==========================
--- REDES SOCIAIS
--- ==========================
+CREATE TABLE tbl_instituicao_endereco (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_instituicao INT NOT NULL,
+    id_endereco INT NOT NULL,
+    FOREIGN KEY (id_instituicao) REFERENCES tbl_instituicao(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_endereco) REFERENCES tbl_endereco(id) ON DELETE CASCADE
+);
 
--- Relação Usuário ↔ Rede Social
 CREATE TABLE tbl_rede_social_usuario (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    link_perfil VARCHAR(255),
+    link_abreviado VARCHAR(20),
+    numero_telefone VARCHAR(20),
+    descricao TEXT,
     id_usuario INT NOT NULL,
     id_rede_social INT NOT NULL,
-    link_perfil VARCHAR(255),
     FOREIGN KEY (id_usuario) REFERENCES tbl_usuario(id) ON DELETE CASCADE,
     FOREIGN KEY (id_rede_social) REFERENCES tbl_rede_social(id)
 );
 
--- Relação Instituição ↔ Rede Social
 CREATE TABLE tbl_rede_social_instituicao (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    link_perfil VARCHAR(255),
+    link_abreviado VARCHAR(20),
+    numero_telefone VARCHAR(20),
+    descricao TEXT,
     id_instituicao INT NOT NULL,
     id_rede_social INT NOT NULL,
-    link_perfil VARCHAR(255),
     FOREIGN KEY (id_instituicao) REFERENCES tbl_instituicao(id) ON DELETE CASCADE,
     FOREIGN KEY (id_rede_social) REFERENCES tbl_rede_social(id)
 );
