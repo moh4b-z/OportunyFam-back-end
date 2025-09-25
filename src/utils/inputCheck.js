@@ -125,6 +125,11 @@ function CHECK_CPF(cpf) {
     return cpfRegex.test(cpf)
 }
 
+function CHECK_CNPJ(cnpj) {
+    const cnpjRegex = /^\d{14}$/;
+    return cnpjRegex.test(cnpj);
+}
+
 
 module.exports = {    
     CHECK_ID,
@@ -137,5 +142,6 @@ module.exports = {
     CHECK_TINYINT,
     CHECK_tbl_comentarios,
     CHECK_EMAIL,
-    CHECK_CPF
+    CHECK_CPF,
+    CHECK_CNPJ
 }

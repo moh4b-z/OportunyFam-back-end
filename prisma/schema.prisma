@@ -16,11 +16,11 @@ datasource mongo {
 
 generator client {
   provider = "prisma-client-js"
-  output   = "./generated/mysql" // gera o cliente separado para MySQL
+  output   = "./generated/mysql" 
   previewFeatures = ["multiSchema"]
 }
 
 generator mongoClient {
   provider = "prisma-client-js"
-  output   = "./generated/mongo" // gera o cliente separado para Mongo
+  output   = "./generated/mongo" 
 }

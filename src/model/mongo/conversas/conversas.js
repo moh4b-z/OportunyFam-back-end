@@ -1,10 +1,9 @@
-const { PrismaClient } = require('@prisma/client')
-const prisma = new PrismaClient()
+const { PrismaClient: MongoClient } = require('./generated/mongo')
+const prismaMongo = new MongoClient()
 
-// Inserir conversa
 async function insertConversa(conversa) {
     try {
-        const nova = await prisma.conversas.create({
+        const nova = await prismaMongo.conversas.create({
             data: {
                 participantes: conversa.participantes, // array de NumberInt
                 atualizado_em: new Date()
@@ -17,10 +16,9 @@ async function insertConversa(conversa) {
     }
 }
 
-// Atualizar conversa
 async function updateConversa(conversa) {
     try {
-        const atualizado = await prisma.conversas.update({
+        const atualizado = await prismaMongo.conversas.update({
             where: { id: conversa.id }, // id é ObjectId no Mongo
             data: {
                 participantes: conversa.participantes,
@@ -34,10 +32,9 @@ async function updateConversa(conversa) {
     }
 }
 
-// Deletar conversa
 async function deleteConversa(id) {
     try {
-        await prisma.conversas.delete({ where: { id } })
+        await prismaMongo.conversas.delete({ where: { id } })
         return true
     } catch (error) {
         console.error("Erro ao deletar conversa:", error)
@@ -45,20 +42,18 @@ async function deleteConversa(id) {
     }
 }
 
-// Buscar todas as conversas
 async function selectAllConversas() {
     try {
-        return await prisma.conversas.findMany({ orderBy: { atualizado_em: 'desc' } })
+        return await prismaMongo.conversas.findMany({ orderBy: { atualizado_em: 'desc' } })
     } catch (error) {
         console.error("Erro ao buscar conversas:", error)
         return false
     }
 }
 
-// Buscar conversa por ID
 async function selectByIdConversa(id) {
     try {
-        return await prisma.conversas.findUnique({ where: { id } })
+        return await prismaMongo.conversas.findUnique({ where: { id } })
     } catch (error) {
         console.error("Erro ao buscar conversa por ID:", error)
         return false

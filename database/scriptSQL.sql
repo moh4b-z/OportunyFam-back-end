@@ -87,7 +87,7 @@ CREATE TABLE tbl_usuario_endereco (
 CREATE TABLE tbl_instituicao (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(200) NOT NULL,
-    foto_perfil VARCHAR(400),
+    logo VARCHAR(400),
     cnpj VARCHAR(14) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE,
     senha VARCHAR(256) NOT NULL,

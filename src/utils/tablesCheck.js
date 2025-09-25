@@ -30,9 +30,20 @@ function CHECK_tbl_usuario(usuario) {
     );
 }
 
+function CHECK_tbl_instituicao(instituicao) {
+    return (
+        CORRECTION.CHECK_VARCHAR_NOT_NULL(instituicao.nome, 200) &&
+        CORRECTION.CHECK_CNPJ(instituicao.cnpj) &&
+        CORRECTION.CHECK_EMAIL(instituicao.email) &&
+        CORRECTION.CHECK_VARCHAR_NOT_NULL(instituicao.senha, 255) && // A senha será criptografada
+        (instituicao.descricao === undefined || CORRECTION.CHECK_VARCHAR(instituicao.descricao, 1000))
+    );
+}
+
 
 module.exports = {
     CHECK_tbl_tipo_nivel,
     CHECK_tbl_endereco,
     CHECK_tbl_usuario,
+    CHECK_tbl_instituicao,
 };
