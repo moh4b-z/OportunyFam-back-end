@@ -16,6 +16,11 @@ const ERROR_NOT_FOUND = {
     status_code: 404,
     messagem: "Conteudo não encontrado"
 }
+const ERROR_CEP_NOT_FOUND = {
+    status: false,
+    status_code: 404,
+    messagem: "Cep não encontrado"
+}
 const ERROR_NOT_FOUND_FOREIGN_KEY = {
     status: false,
     status_code: 404,
@@ -80,6 +85,7 @@ module.exports = {
     ERROR_NOT_FOUND,
     ERROR_NOT_FOUND_FOREIGN_KEY,
     ERROR_NOT_DELETE,
+    ERROR_CEP_NOT_FOUND,
 
     SUCCESS_CEATED_ITEM,
     SUCCESS_DELETE_ITEM,

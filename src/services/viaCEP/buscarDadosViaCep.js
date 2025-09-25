@@ -6,8 +6,6 @@ async function buscarDadosViaCep(cep){
     const data = await response.json()
     if ('erro' in data) return null
 
-    // Remove o campo ddd antes de retornar
-    const { ddd, ...rest } = data
     return rest
   } catch (error) {
     console.error('Erro ao buscar dados do ViaCEP:', error)
