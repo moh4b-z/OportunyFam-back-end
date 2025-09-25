@@ -126,3 +126,45 @@ CREATE TABLE tbl_rede_social_instituicao (
 );
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+
+CREATE VIEW vw_detalhes_usuario AS
+SELECT
+    u.id,
+    u.nome,
+    u.email,
+    u.data_nascimento,
+    u.cpf,
+    u.criado_em,
+    s.nome AS sexo,
+    tn.nivel AS tipo_nivel
+FROM
+    tbl_usuario AS u
+JOIN
+    tbl_sexo AS s ON u.id_sexo = s.id
+JOIN
+    tbl_tipo_nivel AS tn ON u.id_tipo_nivel = tn.id;
+
+
+
+CREATE VIEW vw_instituicao_completa AS
+SELECT
+    i.id,
+    i.nome,
+    i.cnpj,
+    i.email,
+    i.descricao,
+    i.criado_em,
+    e.cep,
+    e.logradouro,
+    e.numero,
+    e.complemento,
+    e.bairro,
+    e.cidade,
+    e.estado
+FROM
+    tbl_instituicao AS i
+JOIN
+    tbl_instituicao_endereco AS ie ON i.id = ie.id_instituicao
+JOIN
+    tbl_endereco AS e ON ie.id_endereco = e.id;

@@ -8,12 +8,12 @@ router.post(
 );
 
 router.delete(
-    '/:idTipoUsuario',
+    '/:id',
     controllerTipoUsuario.deleteTipoUsuario
 );
 
 router.put(
-    '/:idTipoUsuario',
+    '/:id',
     controllerTipoUsuario.putTipoUsuario
 );
 
@@ -23,7 +23,7 @@ router.get(
 );
 
 router.get(
-    '/:idTipoUsuario',
+    '/:id',
     controllerTipoUsuario.getSearchTipoUsuario
 );
 
