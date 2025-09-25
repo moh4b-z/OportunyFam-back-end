@@ -1,12 +1,12 @@
 const CORRECTION = require("./inputCheck");
 
-function CHECK_tbl_tipo_usuarios(usuario) {
+function CHECK_tbl_tipo_nivel(tipoNivel) {
     return (
-        CORRECTION.CHECK_VARCHAR_NOT_NULL(usuario.nome, 50)
-    )
+        CORRECTION.CHECK_VARCHAR_NOT_NULL(tipoNivel.nivel, 100)
+    );
 }
 
 
 module.exports = {
-    CHECK_tbl_tipo_usuarios
+    CHECK_tbl_tipo_nivel 
 };
