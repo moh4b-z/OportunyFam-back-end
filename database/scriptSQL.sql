@@ -70,7 +70,7 @@ CREATE TABLE tbl_endereco (
     complemento VARCHAR(100),
     bairro VARCHAR(100),
     cidade VARCHAR(100),
-    estado CHAR(2),
+    estado VARCHAR(2),
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

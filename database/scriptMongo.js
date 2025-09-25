@@ -7,7 +7,7 @@
 db.createCollection("conversas")
 
 db.conversas.insertOne({
-  participantes: [NumberInt(1), NumberInt(2)], // IDs do MySQL
+  participantes: [NumberInt(1), NumberInt(2)], 
   atualizado_em: ISODate()
 })
 
