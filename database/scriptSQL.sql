@@ -25,8 +25,9 @@ CREATE TABLE tbl_rede_social (
 CREATE TABLE tbl_usuario (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
+    foto_perfil VARCHAR(400),
     email VARCHAR(150) NOT NULL UNIQUE,
-    senha VARCHAR(255) NOT NULL, -- senha criptografada
+    senha VARCHAR(256) NOT NULL,
     data_nascimento DATE NOT NULL,
     cpf VARCHAR(11) NOT NULL,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -41,9 +42,10 @@ CREATE TABLE tbl_usuario (
 CREATE TABLE tbl_crianca (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(150) NOT NULL,
+    foto_perfil VARCHAR(400),
     email VARCHAR(150) UNIQUE,
     cpf VARCHAR(11) NOT NULL,
-    senha VARCHAR(255) NOT NULL, -- senha criptografada
+    senha VARCHAR(256) NOT NULL,
     data_nascimento DATE NOT NULL,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     id_sexo INT NOT NULL,
@@ -84,9 +86,10 @@ CREATE TABLE tbl_usuario_endereco (
 CREATE TABLE tbl_instituicao (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(200) NOT NULL,
+    foto_perfil VARCHAR(400),
     cnpj VARCHAR(14) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE,
-    senha VARCHAR(255) NOT NULL,
+    senha VARCHAR(256) NOT NULL,
     descricao TEXT,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     id_endereco INT NOT NULL,
