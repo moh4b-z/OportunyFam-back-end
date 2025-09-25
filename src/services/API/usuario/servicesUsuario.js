@@ -11,20 +11,51 @@ const inserirUsuario = async (dadosUsuario, contentType) => {
             return MENSAGE.ERROR_CONTENT_TYPE
         }
 
-        if (!TableCORRECTION.CHECK_tbl_usuario(dadosUsuario)) {
+        // Validação básica do usuário e do CEP
+        if (!dadosUsuario.cep || !TableCORRECTION.CHECK_tbl_usuario(dadosUsuario)) {
             return MENSAGE.ERROR_REQUIRED_FIELDS
         }
 
         const emailExists = await usuarioDAO.verifyEmailExists(dadosUsuario.email)
         if (emailExists) {
-            return MENSAGE.ERROR_EMAIL_ALREADY_EXISTS // Adicione esta mensagem ao seu config.js
+            return MENSAGE.ERROR_EMAIL_ALREADY_EXISTS
         }
 
         const { senha_hash } = encryptionFunction.hashPassword(dadosUsuario.senha)
         dadosUsuario.senha = senha_hash
 
-        let result = await usuarioDAO.insertUsuario(dadosUsuario)
-        return result ? { ...MENSAGE.SUCCESS_CEATED_ITEM, usuario: result } : MENSAGE.ERROR_INTERNAL_SERVER_MODEL
+        // 1. Inserir Endereço
+        const enderecoCriado = await servicesEndereco.inserirEndereco({ cep: dadosUsuario.cep }, contentType)
+
+        if (enderecoCriado.status_code !== MENSAGE.SUCCESS_CEATED_ITEM.status_code) {
+            return enderecoCriado // Retorna o erro do serviço de endereço
+        }
+
+        const idEndereco = enderecoCriado.endereco.id
+
+        // 2. Inserir Usuário
+        let resultUsuario = await usuarioDAO.insertUsuario(dadosUsuario)
+        if (!resultUsuario) {
+            return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
+        }
+
+        const idUsuario = resultUsuario.id
+
+        // 3. Inserir na Tabela Intermediária
+        const dadosRelacao = { id_usuario: idUsuario, id_endereco: idEndereco }
+        const resultRelacao = await usuarioEnderecoDAO.insertUsuarioEndereco(dadosRelacao)
+
+        if (resultRelacao) {
+            return {
+                ...MENSAGE.SUCCESS_CEATED_ITEM,
+                usuario: resultUsuario
+            }
+        } else {
+            // Se a relação falhar, podemos considerar a transação como falha e tentar reverter
+            // Aqui, por simplicidade, apenas retornamos um erro, mas em produção, o ideal é reverter o cadastro
+            await usuarioDAO.deleteUsuario(idUsuario)
+            return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
+        }
 
     } catch (error) {
         console.error(error)

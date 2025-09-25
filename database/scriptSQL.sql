@@ -77,6 +77,7 @@ CREATE TABLE tbl_endereco (
 
 CREATE TABLE tbl_usuario_endereco (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    descricao VARCHAR(500),
     id_usuario INT NOT NULL,
     id_endereco INT NOT NULL,
     FOREIGN KEY (id_usuario) REFERENCES tbl_usuario(id) ON DELETE CASCADE,
@@ -98,6 +99,7 @@ CREATE TABLE tbl_instituicao (
 
 CREATE TABLE tbl_instituicao_endereco (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    descricao VARCHAR(500),
     id_instituicao INT NOT NULL,
     id_endereco INT NOT NULL,
     FOREIGN KEY (id_instituicao) REFERENCES tbl_instituicao(id) ON DELETE CASCADE,
