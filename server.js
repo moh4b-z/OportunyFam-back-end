@@ -7,8 +7,8 @@ const app = express()
 app.use(cors())
 app.use(bodyParser.json())
 
-const clientesRoutes = require("./src/routes/routesClientes")
-app.use("/v1/clientes", clientesRoutes)
+const MainRoutes = require("./src/routes/MainRoutes")
+app.use("/v1/oportunyfam", MainRoutes)
 
 
 const PORT = process.env.PORT || 8080

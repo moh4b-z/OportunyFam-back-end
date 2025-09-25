@@ -115,6 +115,17 @@ function CHECK_tbl_comentarios(comentario) {
 }
 
 
+function CHECK_EMAIL(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email) && email.length <= 150
+}
+
+function CHECK_CPF(cpf) {
+    const cpfRegex = /^\d{11}$/
+    return cpfRegex.test(cpf)
+}
+
+
 module.exports = {    
     CHECK_ID,
     verificarNumero,
@@ -124,5 +135,7 @@ module.exports = {
     CHECK_DECIMAL,
     CHECK_DECIMAL_NOT_NULL,
     CHECK_TINYINT,
-    CHECK_tbl_comentarios
+    CHECK_tbl_comentarios,
+    CHECK_EMAIL,
+    CHECK_CPF
 }
