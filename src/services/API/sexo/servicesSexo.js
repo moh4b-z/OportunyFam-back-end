@@ -1,4 +1,3 @@
-// src/services/API/sexo/servicesSexo.js
 const MENSAGE = require("../../../modulo/config")
 const CORRECTION = require("../../../utils/inputCheck")
 const TableCORRECTION = require("../../../utils/tablesCheck")

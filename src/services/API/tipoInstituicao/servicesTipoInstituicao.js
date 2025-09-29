@@ -1,14 +1,11 @@
 const MENSAGE = require("../../../modulo/config");
 const CORRECTION = require("../../../utils/inputCheck");
 const TableCORRECTION = require("../../../utils/tablesCheck");
-
 const tipoInstituicaoDAO = require("../../../model/DAO/TipoInstituicao/tipoInstituicao");
 
-/////////////////////////insert//////////////////////////////////////
 async function inserirTipoInstituicao(tipoInstituicao, contentType){
     try {
        if (contentType == "application/json") {
-        //verificar tbl
             if (TableCORRECTION.CHECK_tbl_tipoInstituicao(presenca)) {
                 let result = await tipoInstituicaoDAO.insertTipoInstituicao(tipoInstituicao);
         

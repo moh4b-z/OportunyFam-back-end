@@ -1,11 +1,9 @@
-// src/services/API/tipoNivel/servicesTipoNivel.js
-
 const MENSAGE = require("../../../modulo/config")
 const CORRECTION = require("../../../utils/inputCheck")
 const TableCORRECTION = require("../../../utils/tablesCheck")
 const tipoNivelDAO = require("../../../model/DAO/tipoNivel/tipoNivel")
 
-const inserirTipoNivel = async (dadosTipoNivel, contentType) => {
+async function inserirTipoNivel(dadosTipoNivel, contentType){
     try {
         if (contentType == "application/json") {
             if (TableCORRECTION.CHECK_tbl_tipo_nivel(dadosTipoNivel)) {
@@ -23,7 +21,7 @@ const inserirTipoNivel = async (dadosTipoNivel, contentType) => {
     }
 }
 
-const atualizarTipoNivel = async (dadosTipoNivel, id, contentType) => {
+async function atualizarTipoNivel(dadosTipoNivel, id, contentType){
     try {
         if (contentType == "application/json") {
             if (TableCORRECTION.CHECK_tbl_tipo_nivel(dadosTipoNivel) && CORRECTION.CHECK_ID(id)) {
@@ -50,7 +48,7 @@ const atualizarTipoNivel = async (dadosTipoNivel, id, contentType) => {
     }
 }
 
-const excluirTipoNivel = async (id) => {
+async function excluirTipoNivel(id){
     try {
         if (CORRECTION.CHECK_ID(id)) {
             let resultSearch = await buscarTipoNivel(parseInt(id))
@@ -71,7 +69,7 @@ const excluirTipoNivel = async (id) => {
     }
 }
 
-const listarTodosTiposNivel = async () => {
+async function listarTodosTiposNivel(){
     try {
         let result = await tipoNivelDAO.selectAllTipoNivel()
         if (result) {
@@ -85,7 +83,7 @@ const listarTodosTiposNivel = async () => {
     }
 }
 
-const buscarTipoNivel = async (id) => {
+async function buscarTipoNivel(id){
     try {
         if (CORRECTION.CHECK_ID(id)) {
             let result = await tipoNivelDAO.selectByIdTipoNivel(parseInt(id))
