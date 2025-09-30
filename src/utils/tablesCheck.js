@@ -70,6 +70,18 @@ function CHECK_tbl_rede_social_usuario(redeSocialUsuario) {
     )
 }
 
+function CHECK_tbl_rede_social_instituicao(redeSocialInstituicao) {
+    return (
+        CORRECTION.CHECK_ID(redeSocialInstituicao.id_instituicao) &&
+        CORRECTION.CHECK_ID(redeSocialInstituicao.id_rede_social) &&
+        (redeSocialInstituicao.link_perfil === undefined || CORRECTION.CHECK_VARCHAR(redeSocialInstituicao.link_perfil, 255)) &&
+        (redeSocialInstituicao.link_abreviado === undefined || CORRECTION.CHECK_VARCHAR(redeSocialInstituicao.link_abreviado, 20)) &&
+        (redeSocialInstituicao.numero_telefone === undefined || CORRECTION.CHECK_VARCHAR(redeSocialInstituicao.numero_telefone, 20)) &&
+        (redeSocialInstituicao.descricao === undefined || CORRECTION.CHECK_TEXT(redeSocialInstituicao.descricao))
+    )
+}
+
+
 
 module.exports = {
     CHECK_tbl_tipo_nivel,
@@ -78,5 +90,6 @@ module.exports = {
     CHECK_tbl_instituicao,
     CHECK_tbl_crianca,
     CHECK_tbl_rede_social,
-    CHECK_tbl_rede_social_usuario
+    CHECK_tbl_rede_social_usuario,
+    CHECK_tbl_rede_social_instituicao
 }
