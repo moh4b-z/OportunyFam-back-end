@@ -9,6 +9,7 @@ const routesInstituicao = require('./routesInstituicao')
 const routesCrianca = require('./routesCrianca')
 const routesResponsavel = require('./routesResponsavel')
 const routesRedeSocial = require('./routesRedeSocial')
+const routesRedeSocialUsuario = require('./routesRedeSocialUsuario')
 
 router.use('/sexo', routesSexo)
 router.use('/tipoNivel', routesTipoNivel)
@@ -18,5 +19,6 @@ router.use('/instituicao', routesInstituicao)
 router.use('/crianca', routesCrianca)
 router.use('/responsavel', routesResponsavel)
 router.use('/redeSocial', routesRedeSocial)
+router.use('/redeSocialUsuario', routesRedeSocialUsuario)
 
 module.exports = router
