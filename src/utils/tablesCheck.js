@@ -52,10 +52,19 @@ function CHECK_tbl_crianca(crianca) {
 }
 
 
+function CHECK_tbl_rede_social(redeSocial) {
+    return (
+        CORRECTION.CHECK_VARCHAR_NOT_NULL(redeSocial.nome, 100) &&
+        CORRECTION.CHECK_VARCHAR_NOT_NULL(redeSocial.icone, 300)
+    )
+}
+
+
 module.exports = {
     CHECK_tbl_tipo_nivel,
     CHECK_tbl_endereco,
     CHECK_tbl_usuario,
     CHECK_tbl_instituicao,
-    CHECK_tbl_crianca
+    CHECK_tbl_crianca,
+    CHECK_tbl_rede_social
 }
