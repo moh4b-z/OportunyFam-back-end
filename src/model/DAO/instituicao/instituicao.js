@@ -1,7 +1,7 @@
 const { PrismaClient: MySQLClient } = require('../../../generated/mysql')
 const prismaMySQL = new MySQLClient()
 
-const insertInstituicao = async (instituicao) => {
+async function insertInstituicao(instituicao){
     try {
         return await prismaMySQL.instituicao.create({
             data: {
@@ -18,7 +18,7 @@ const insertInstituicao = async (instituicao) => {
     }
 }
 
-const updateInstituicao = async (instituicao) => {
+async function updateInstituicao(instituicao){
     try {
         return await prismaMySQL.instituicao.update({
             where: { id: instituicao.id },
@@ -36,7 +36,7 @@ const updateInstituicao = async (instituicao) => {
     }
 }
 
-const deleteInstituicao = async (id) => {
+async function deleteInstituicao(id){
     try {
         await prismaMySQL.instituicao.delete({ where: { id: id } })
         return true
@@ -46,7 +46,7 @@ const deleteInstituicao = async (id) => {
     }
 }
 
-const selectAllInstituicoes = async () => {
+async function selectAllInstituicoes(){
     try {
         return await prismaMySQL.$queryRaw`SELECT * FROM vw_instituicao_completa ORDER BY id DESC`
     } catch (error) {
@@ -55,7 +55,7 @@ const selectAllInstituicoes = async () => {
     }
 }
 
-const selectByIdInstituicao = async (id) => {
+async function selectByIdInstituicao(id){
     try {
         const result = await prismaMySQL.$queryRaw`SELECT * FROM vw_instituicao_completa WHERE id = ${id}`
         return result.length > 0 ? result[0] : null
@@ -65,7 +65,7 @@ const selectByIdInstituicao = async (id) => {
     }
 }
 
-const selectByEmail = async (email) => {
+async function selectByEmail(email){
     try {
         return await prismaMySQL.instituicao.findUnique({ where: { email: email } })
     } catch (error) {

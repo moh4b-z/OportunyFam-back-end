@@ -1,7 +1,7 @@
 const { PrismaClient: MySQLClient } = require('../../../generated/mysql')
 const prismaMySQL = new MySQLClient()
 
-const insertCrianca = async (crianca) => {
+async function  insertCrianca(crianca){
     try {
         return await prismaMySQL.crianca.create({
             data: {
@@ -19,7 +19,7 @@ const insertCrianca = async (crianca) => {
     }
 }
 
-const updateCrianca = async (crianca) => {
+async function  updateCrianca(crianca){
     try {
         return await prismaMySQL.crianca.update({
             where: { id: crianca.id },
@@ -38,7 +38,7 @@ const updateCrianca = async (crianca) => {
     }
 }
 
-const deleteCrianca = async (id) => {
+async function  deleteCrianca(id){
     try {
         await prismaMySQL.crianca.delete({ where: { id: id } })
         return true
@@ -48,7 +48,7 @@ const deleteCrianca = async (id) => {
     }
 }
 
-const selectAllCriancas = async () => {
+async function  selectAllCriancas(){
     try {
         return await prismaMySQL.crianca.findMany({
             orderBy: { id: 'desc' }
@@ -59,7 +59,7 @@ const selectAllCriancas = async () => {
     }
 }
 
-const selectByIdCrianca = async (id) => {
+async function  selectByIdCrianca(id){
     try {
         return await prismaMySQL.crianca.findUnique({
             where: { id: id }
@@ -70,7 +70,7 @@ const selectByIdCrianca = async (id) => {
     }
 }
 
-const selectByEmail = async (email) => {
+async function  selectByEmail(email){
     try {
         return await prismaMySQL.crianca.findUnique({
             where: { email: email }

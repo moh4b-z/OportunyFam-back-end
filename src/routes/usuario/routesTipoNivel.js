@@ -1,7 +1,7 @@
 // src/routes/routesTipoNivel.js
 const express = require('express')
 const router = express.Router()
-const controllerTipoNivel = require('../controllers/tipoNivel/controllerTipoNivel')
+const controllerTipoNivel = require('../../controllers/usuario/tipoNivel/controllerTipoNivel')
 
 router.post(
     '/',

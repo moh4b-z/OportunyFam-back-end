@@ -1,8 +1,8 @@
-const MENSAGE = require("../../../modulo/config")
-const CORRECTION = require("../../../utils/inputCheck")
-const responsavelDAO = require("../../../model/DAO/responsavel/responsavel")
-const usuarioDAO = require("../../../model/DAO/usuario/usuario")
-const criancaDAO = require("../../../model/DAO/crianca/crianca")
+const MENSAGE = require("../../../../modulo/config")
+const CORRECTION = require("../../../../utils/inputCheck")
+const responsavelDAO = require("../../../../model/DAO/usuario/responsavel/responsavel")
+const usuarioDAO = require("../../../../model/DAO/usuario/usuario")
+const criancaDAO = require("../../../../model/DAO/crianca/crianca")
 
 async function inserirResponsavel(dadosResponsavel, contentType) {
     try {

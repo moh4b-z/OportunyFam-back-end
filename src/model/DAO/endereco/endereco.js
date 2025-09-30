@@ -2,7 +2,7 @@
 const { PrismaClient: MySQLClient } = require('../../../generated/mysql')
 const prismaMySQL = new MySQLClient()
 
-const insertEndereco = async (endereco) => {
+async function insertEndereco(endereco){
     try {
         return await prismaMySQL.endereco.create({
             data: {
@@ -21,7 +21,7 @@ const insertEndereco = async (endereco) => {
     }
 }
 
-const updateEndereco = async (endereco) => {
+async function updateEndereco(endereco){
     try {
         return await prismaMySQL.endereco.update({
             where: { id: endereco.id },
@@ -41,7 +41,7 @@ const updateEndereco = async (endereco) => {
     }
 }
 
-const deleteEndereco = async (id) => {
+async function deleteEndereco(id){
     try {
         await prismaMySQL.endereco.delete({ where: { id: id } })
         return true
@@ -51,7 +51,7 @@ const deleteEndereco = async (id) => {
     }
 }
 
-const selectAllEnderecos = async () => {
+async function selectAllEnderecos(){
     try {
         return await prismaMySQL.endereco.findMany({ orderBy: { id: 'desc' } })
     } catch (error) {
@@ -60,7 +60,7 @@ const selectAllEnderecos = async () => {
     }
 }
 
-const selectByIdEndereco = async (id) => {
+async function selectByIdEndereco(id){
     try {
         return await prismaMySQL.endereco.findUnique({ where: { id: id } })
     } catch (error) {

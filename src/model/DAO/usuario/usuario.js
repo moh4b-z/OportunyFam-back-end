@@ -1,7 +1,7 @@
 const { PrismaClient: MySQLClient } = require('../../../generated/mysql')
 const prismaMySQL = new MySQLClient()
 
-const insertUsuario = async (usuario) => {
+async function insertUsuario(usuario){
     try {
         return await prismaMySQL.usuario.create({
             data: {
@@ -20,7 +20,7 @@ const insertUsuario = async (usuario) => {
     }
 }
 
-const updateUsuario = async (usuario) => {
+async function updateUsuario(usuario){
     try {
         return await prismaMySQL.usuario.update({
             where: { id: usuario.id },
@@ -40,7 +40,7 @@ const updateUsuario = async (usuario) => {
     }
 }
 
-const deleteUsuario = async (id) => {
+async function deleteUsuario(id){
     try {
         await prismaMySQL.usuario.delete({ where: { id: id } })
         return true
@@ -50,7 +50,7 @@ const deleteUsuario = async (id) => {
     }
 }
 
-const selectAllUsuario = async () => {
+async function selectAllUsuario(){
     try {
         // Usa a view para buscar dados completos do usuário
         return await prismaMySQL.$queryRaw`SELECT * FROM vw_detalhes_usuario ORDER BY id DESC`
@@ -60,7 +60,7 @@ const selectAllUsuario = async () => {
     }
 }
 
-const selectByIdUsuario = async (id) => {
+async function selectByIdUsuario(id){
     try {
         // Usa a view para buscar um usuário específico
         const result = await prismaMySQL.$queryRaw`SELECT * FROM vw_detalhes_usuario WHERE id = ${id}`
@@ -71,7 +71,7 @@ const selectByIdUsuario = async (id) => {
     }
 }
 
-const selectByEmail = async (email) => {
+async function selectByEmail(email){
     try {
         // Busca um usuário pelo e-mail para o login
         const result = await prismaMySQL.usuario.findUnique({
@@ -84,7 +84,7 @@ const selectByEmail = async (email) => {
     }
 }
 
-const verifyEmailExists = async (email) => {
+async function verifyEmailExists(email){
     try {
         const usuario = await prismaMySQL.usuario.findUnique({ where: { email } })
         const crianca = await prismaMySQL.crianca.findUnique({ where: { email } })

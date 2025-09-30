@@ -1,7 +1,7 @@
 const MENSAGE = require("../../../modulo/config")
 const CORRECTION = require("../../../utils/inputCheck")
 const TableCORRECTION = require("../../../utils/tablesCheck")
-const redeSocialUsuarioDAO = require("../../../model/DAO/redeSocialUsuario/redeSocialUsuario")
+const redeSocialUsuarioDAO = require("../../../model/DAO/usuario/redeSocialUsuario/redeSocialUsuario")
 const usuarioDAO = require("../../../model/DAO/usuario/usuario")
 const redeSocialDAO = require("../../../model/DAO/redeSocial/redeSocial")
 

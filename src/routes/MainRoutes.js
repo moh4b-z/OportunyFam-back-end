@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 
 const routesSexo = require('./routesSexo')
-const routesTipoNivel = require('./routesTipoNivel')
+const routesTipoNivel = require('./usuario/routesTipoNivel')
 const routesEndereco = require('./routesEndereco')
 const routesUsuario = require('./routesUsuario')
 const routesInstituicao = require('./routesInstituicao')

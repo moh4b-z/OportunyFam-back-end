@@ -1,7 +1,7 @@
 const { PrismaClient: MySQLClient } = require('../../../generated/mysql')
 const prismaMySQL = new MySQLClient()
 
-const insertRedeSocial = async (redeSocial) => {
+async function insertRedeSocial(redeSocial){
     try {
         return await prismaMySQL.redeSocial.create({
             data: {
@@ -15,7 +15,7 @@ const insertRedeSocial = async (redeSocial) => {
     }
 }
 
-const updateRedeSocial = async (redeSocial) => {
+async function updateRedeSocial(redeSocial){
     try {
         return await prismaMySQL.redeSocial.update({
             where: { id: redeSocial.id },
@@ -30,7 +30,7 @@ const updateRedeSocial = async (redeSocial) => {
     }
 }
 
-const deleteRedeSocial = async (id) => {
+async function deleteRedeSocial(id){
     try {
         await prismaMySQL.redeSocial.delete({ where: { id: id } })
         return true
@@ -40,7 +40,7 @@ const deleteRedeSocial = async (id) => {
     }
 }
 
-const selectAllRedesSociais = async () => {
+async function selectAllRedesSociais(){
     try {
         return await prismaMySQL.redeSocial.findMany({
             orderBy: { nome: 'asc' }
@@ -51,7 +51,7 @@ const selectAllRedesSociais = async () => {
     }
 }
 
-const selectByIdRedeSocial = async (id) => {
+async function selectByIdRedeSocial(id){
     try {
         return await prismaMySQL.redeSocial.findUnique({
             where: { id: id }

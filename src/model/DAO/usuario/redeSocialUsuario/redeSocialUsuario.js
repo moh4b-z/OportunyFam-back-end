@@ -1,7 +1,7 @@
 const { PrismaClient: MySQLClient } = require('../../../generated/mysql')
 const prismaMySQL = new MySQLClient()
 
-const insertRedeSocialUsuario = async (redeSocialUsuario) => {
+async function insertRedeSocialUsuario(redeSocialUsuario){
     try {
         return await prismaMySQL.redeSocialUsuario.create({
             data: {
@@ -19,7 +19,7 @@ const insertRedeSocialUsuario = async (redeSocialUsuario) => {
     }
 }
 
-const updateRedeSocialUsuario = async (redeSocialUsuario) => {
+async function updateRedeSocialUsuario(redeSocialUsuario){
     try {
         return await prismaMySQL.redeSocialUsuario.update({
             where: { id: redeSocialUsuario.id },
@@ -38,7 +38,7 @@ const updateRedeSocialUsuario = async (redeSocialUsuario) => {
     }
 }
 
-const deleteRedeSocialUsuario = async (id) => {
+async function deleteRedeSocialUsuario(id){
     try {
         await prismaMySQL.redeSocialUsuario.delete({ where: { id: id } })
         return true
@@ -48,7 +48,7 @@ const deleteRedeSocialUsuario = async (id) => {
     }
 }
 
-const selectAllRedesSociaisUsuario = async () => {
+async function selectAllRedesSociaisUsuario(){
     try {
         // Você pode criar uma View posteriormente para retornar detalhes do usuário e da rede social
         return await prismaMySQL.redeSocialUsuario.findMany({
@@ -60,7 +60,7 @@ const selectAllRedesSociaisUsuario = async () => {
     }
 }
 
-const selectByIdRedeSocialUsuario = async (id) => {
+async function selectByIdRedeSocialUsuario(id){
     try {
         return await prismaMySQL.redeSocialUsuario.findUnique({
             where: { id: id }
@@ -71,7 +71,7 @@ const selectByIdRedeSocialUsuario = async (id) => {
     }
 }
 
-const selectByUsuarioAndRedeSocial = async (id_usuario, id_rede_social) => {
+async function selectByUsuarioAndRedeSocial(id_usuario, id_rede_social){
     try {
         return await prismaMySQL.redeSocialUsuario.findFirst({
             where: {

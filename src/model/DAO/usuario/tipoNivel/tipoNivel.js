@@ -1,7 +1,7 @@
 const { PrismaClient: MySQLClient } = require('../../../generated/mysql')
 const prismaMySQL = new MySQLClient()
 
-const insertTipoNivel = async (tipoNivel) => {
+async function insertTipoNivel(tipoNivel){
     try {
         return await prismaMySQL.tipoNivel.create({ data: { nivel: tipoNivel.nivel } })
     } catch (error) {
@@ -10,7 +10,7 @@ const insertTipoNivel = async (tipoNivel) => {
     }
 }
 
-const updateTipoNivel = async (tipoNivel) => {
+async function updateTipoNivel(tipoNivel){
     try {
         return await prismaMySQL.tipoNivel.update({
             where: { id: tipoNivel.id },
@@ -22,7 +22,7 @@ const updateTipoNivel = async (tipoNivel) => {
     }
 }
 
-const deleteTipoNivel = async (id) => {
+async function deleteTipoNivel(id){
     try {
         await prismaMySQL.tipoNivel.delete({ where: { id: id } })
         return true
@@ -32,7 +32,7 @@ const deleteTipoNivel = async (id) => {
     }
 }
 
-const selectAllTipoNivel = async () => {
+async function selectAllTipoNivel(){
     try {
         return await prismaMySQL.tipoNivel.findMany({ orderBy: { nivel: 'asc' } })
     } catch (error) {
@@ -41,7 +41,7 @@ const selectAllTipoNivel = async () => {
     }
 }
 
-const selectByIdTipoNivel = async (id) => {
+async function selectByIdTipoNivel(id){
     try {
         return await prismaMySQL.tipoNivel.findUnique({ where: { id: id } })
     } catch (error) {

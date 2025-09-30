@@ -1,7 +1,7 @@
 const { PrismaClient: MySQLClient } = require('../../../generated/mysql')
 const prismaMySQL = new MySQLClient()
 
-const insertResponsavel = async (responsavel) => {
+async function insertResponsavel(responsavel){
     try {
         return await prismaMySQL.responsavel.create({
             data: {
@@ -15,7 +15,7 @@ const insertResponsavel = async (responsavel) => {
     }
 }
 
-const deleteResponsavel = async (id) => {
+async function deleteResponsavel(id){
     try {
         await prismaMySQL.responsavel.delete({ where: { id: id } })
         return true
@@ -25,7 +25,7 @@ const deleteResponsavel = async (id) => {
     }
 }
 
-const selectAllResponsaveis = async () => {
+async function selectAllResponsaveis(){
     try {
         return await prismaMySQL.responsavel.findMany({
             orderBy: { id: 'desc' }
@@ -36,7 +36,7 @@ const selectAllResponsaveis = async () => {
     }
 }
 
-const selectByIdResponsavel = async (id) => {
+async function selectByIdResponsavel(id){
     try {
         return await prismaMySQL.responsavel.findUnique({
             where: { id: id }
@@ -47,7 +47,7 @@ const selectByIdResponsavel = async (id) => {
     }
 }
 
-const selectByUsuarioECrianca = async (id_usuario, id_crianca) => {
+async function selectByUsuarioECrianca(id_usuario, id_crianca){
     try {
         return await prismaMySQL.responsavel.findFirst({
             where: {

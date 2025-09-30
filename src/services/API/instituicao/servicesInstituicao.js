@@ -4,111 +4,142 @@ const TableCORRECTION = require("../../../utils/tablesCheck")
 const encryptionFunction = require("../../../utils/encryptionFunction")
 const instituicaoDAO = require("../../../model/DAO/instituicao/instituicao")
 const usuarioDAO = require("../../../model/DAO/usuario/usuario") // Reutiliza a função de validação de e-mail
-const instituicaoEnderecoDAO = require("../../../model/DAO/instituicaoEndereco/instituicaoEndereco")
+const instituicaoEnderecoDAO = require("../../../model/DAO/instituicaoEndereco/instituicaoEndereco") // Caminho ajustado
 const servicesEndereco = require("../endereco/servicesEndereco")
 
-const inserirInstituicao = async (dadosInstituicao, contentType) => {
+async function inserirInstituicao(dadosInstituicao, contentType){
     try {
-        if (contentType !== "application/json") {
-            return MENSAGE.ERROR_CONTENT_TYPE
-        }
+        if (contentType == "application/json") {
+            if (dadosInstituicao.cep && TableCORRECTION.CHECK_tbl_instituicao(dadosInstituicao)) {
+                
+                // 1. Verifica unicidade do email
+                const emailExists = await usuarioDAO.verifyEmailExists(dadosInstituicao.email)
+                if (emailExists) {
+                    return MENSAGE.ERROR_EMAIL_ALREADY_EXISTS
+                }
+                
+                // 2. Criptografa a senha
+                const { senha_hash } = encryptionFunction.hashPassword(dadosInstituicao.senha)
+                dadosInstituicao.senha = senha_hash
 
-        if (!dadosInstituicao.cep || !TableCORRECTION.CHECK_tbl_instituicao(dadosInstituicao)) {
-            return MENSAGE.ERROR_REQUIRED_FIELDS
-        }
+                // 3. Insere o Endereço
+                const enderecoCriado = await servicesEndereco.inserirEndereco({ cep: dadosInstituicao.cep, numero: dadosInstituicao.numero, complemento: dadosInstituicao.complemento }, contentType)
+                
+                if (enderecoCriado.status_code == MENSAGE.SUCCESS_CEATED_ITEM.status_code) {
+                    const idEndereco = enderecoCriado.endereco.id
+                    
+                    // 4. Insere a Instituição
+                    let resultInstituicao = await instituicaoDAO.insertInstituicao(dadosInstituicao)
+                    
+                    if (resultInstituicao) {
+                        const idInstituicao = resultInstituicao.id
 
-        const emailExists = await usuarioDAO.verifyEmailExists(dadosInstituicao.email)
-        if (emailExists) {
-            return MENSAGE.ERROR_EMAIL_ALREADY_EXISTS
-        }
+                        // 5. Cria a relação Instituicao-Endereco
+                        const dadosRelacao = { id_instituicao: idInstituicao, id_endereco: idEndereco }
+                        const resultRelacao = await instituicaoEnderecoDAO.insertInstituicaoEndereco(dadosRelacao)
 
-        const { senha_hash } = encryptionFunction.hashPassword(dadosInstituicao.senha)
-        dadosInstituicao.senha = senha_hash
-
-        const enderecoCriado = await servicesEndereco.inserirEndereco({ cep: dadosInstituicao.cep }, contentType)
-        if (enderecoCriado.status_code !== MENSAGE.SUCCESS_CEATED_ITEM.status_code) {
-            return enderecoCriado
-        }
-        const idEndereco = enderecoCriado.endereco.id
-
-        let resultInstituicao = await instituicaoDAO.insertInstituicao(dadosInstituicao)
-        if (!resultInstituicao) {
-            return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
-        }
-        const idInstituicao = resultInstituicao.id
-
-        const dadosRelacao = { id_instituicao: idInstituicao, id_endereco: idEndereco }
-        const resultRelacao = await instituicaoEnderecoDAO.insertInstituicaoEndereco(dadosRelacao)
-
-        if (resultRelacao) {
-            return {
-                ...MENSAGE.SUCCESS_CEATED_ITEM,
-                instituicao: resultInstituicao
+                        if (resultRelacao) {
+                            return {
+                                ...MENSAGE.SUCCESS_CEATED_ITEM,
+                                instituicao: resultInstituicao
+                            }
+                        } else {
+                            // ROLLBACK: Se a relação falhar, deleta a instituição criada
+                            await instituicaoDAO.deleteInstituicao(idInstituicao) 
+                            return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
+                        }
+                    } else {
+                        // ROLLBACK: Se a instituição falhar, deleta o endereço criado
+                        await servicesEndereco.excluirEndereco(idEndereco)
+                        return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
+                    }
+                } else {
+                    return enderecoCriado // Retorna o erro do service de endereço (ex: CEP not found)
+                }
+            } else {
+                return MENSAGE.ERROR_REQUIRED_FIELDS
             }
         } else {
-            await instituicaoDAO.deleteInstituicao(idInstituicao)
-            return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
-        }
-    } catch (error) {
-        console.error(error)
-        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
-    }
-}
-
-const atualizarInstituicao = async (dadosInstituicao, id, contentType) => {
-    try {
-        if (contentType !== "application/json") {
             return MENSAGE.ERROR_CONTENT_TYPE
         }
-
-        if (!TableCORRECTION.CHECK_tbl_instituicao(dadosInstituicao) || !CORRECTION.CHECK_ID(id)) {
-            return MENSAGE.ERROR_REQUIRED_FIELDS
-        }
-
-        const instituicaoExistente = await instituicaoDAO.selectByIdInstituicao(parseInt(id))
-        if (!instituicaoExistente) {
-            return MENSAGE.ERROR_NOT_FOUND
-        }
-
-        if (dadosInstituicao.email !== instituicaoExistente.email) {
-            const emailExists = await usuarioDAO.verifyEmailExists(dadosInstituicao.email)
-            if (emailExists) {
-                return MENSAGE.ERROR_EMAIL_ALREADY_EXISTS
-            }
-        }
-
-        const { senha_hash } = encryptionFunction.hashPassword(dadosInstituicao.senha)
-        dadosInstituicao.senha = senha_hash
-        dadosInstituicao.id = parseInt(id)
-
-        let result = await instituicaoDAO.updateInstituicao(dadosInstituicao)
-        return result ? MENSAGE.SUCCESS_UPDATED_ITEM : MENSAGE.ERROR_INTERNAL_SERVER_MODEL
     } catch (error) {
         console.error(error)
         return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
     }
 }
 
-const excluirInstituicao = async (id) => {
+async function atualizarInstituicao(dadosInstituicao, id, contentType){
     try {
-        if (!CORRECTION.CHECK_ID(id)) {
-            return MENSAGE.ERROR_REQUIRED_FIELDS
-        }
+        if (contentType == "application/json") {
+            if (TableCORRECTION.CHECK_tbl_instituicao(dadosInstituicao) && CORRECTION.CHECK_ID(id)) {
+                
+                let resultSearch = await buscarInstituicao(parseInt(id))
+                
+                if (resultSearch.status_code == MENSAGE.SUCCESS_REQUEST.status_code) {
+                    
+                    const instituicaoExistente = resultSearch.instituicao
+                    
+                    // 1. Verifica se o email foi alterado e se o novo email já existe
+                    if (dadosInstituicao.email && dadosInstituicao.email !== instituicaoExistente.email) {
+                        const emailExists = await usuarioDAO.verifyEmailExists(dadosInstituicao.email)
+                        if (emailExists) {
+                            return MENSAGE.ERROR_EMAIL_ALREADY_EXISTS
+                        }
+                    }
 
-        const instituicaoExistente = await instituicaoDAO.selectByIdInstituicao(parseInt(id))
-        if (!instituicaoExistente) {
-            return MENSAGE.ERROR_NOT_FOUND
+                    // 2. Criptografa a senha (sempre criptografa ao atualizar)
+                    const { senha_hash } = encryptionFunction.hashPassword(dadosInstituicao.senha)
+                    dadosInstituicao.senha = senha_hash
+                    
+                    // 3. Atualiza a Instituição
+                    dadosInstituicao.id = parseInt(id)
+                    let result = await instituicaoDAO.updateInstituicao(dadosInstituicao)
+                    
+                    return result ? MENSAGE.SUCCESS_UPDATED_ITEM : MENSAGE.ERROR_INTERNAL_SERVER_MODEL
+                } else if (resultSearch.status_code == MENSAGE.ERROR_NOT_FOUND.status_code) {
+                    return MENSAGE.ERROR_NOT_FOUND
+                } else {
+                    return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
+                }
+            } else {
+                return MENSAGE.ERROR_REQUIRED_FIELDS
+            }
+        } else {
+            return MENSAGE.ERROR_CONTENT_TYPE
         }
-
-        let result = await instituicaoDAO.deleteInstituicao(parseInt(id))
-        return result ? MENSAGE.SUCCESS_DELETE_ITEM : MENSAGE.ERROR_NOT_DELETE
     } catch (error) {
         console.error(error)
         return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
     }
 }
 
-const listarTodasInstituicoes = async () => {
+async function excluirInstituicao(id){
+    try {
+        if (CORRECTION.CHECK_ID(id)) {
+            let resultSearch = await buscarInstituicao(parseInt(id))
+            
+            if (resultSearch.status_code == MENSAGE.SUCCESS_REQUEST.status_code) {
+                // OBS: O deleteInstituicao do DAO deve gerenciar a exclusão do Endereço relacionado, se necessário.
+                // Como tbl_instituicao_endereco tem CASCADE ON DELETE, deletar a instituição
+                // deleta a relação.
+
+                let result = await instituicaoDAO.deleteInstituicao(parseInt(id))
+                return result ? MENSAGE.SUCCESS_DELETE_ITEM : MENSAGE.ERROR_NOT_DELETE
+            } else if (resultSearch.status_code == MENSAGE.ERROR_NOT_FOUND.status_code) {
+                return MENSAGE.ERROR_NOT_FOUND
+            } else {
+                return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
+            }
+        } else {
+            return MENSAGE.ERROR_REQUIRED_FIELDS
+        }
+    } catch (error) {
+        console.error(error)
+        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
+    }
+}
+
+async function listarTodasInstituicoes(){
     try {
         let result = await instituicaoDAO.selectAllInstituicoes()
         if (result) {
@@ -122,45 +153,48 @@ const listarTodasInstituicoes = async () => {
     }
 }
 
-const buscarInstituicao = async (id) => {
+async function buscarInstituicao(id){
     try {
-        if (!CORRECTION.CHECK_ID(id)) {
+        if (CORRECTION.CHECK_ID(id)) {
+            let result = await instituicaoDAO.selectByIdInstituicao(parseInt(id))
+            return result ? { ...MENSAGE.SUCCESS_REQUEST, instituicao: result } : MENSAGE.ERROR_NOT_FOUND
+        } else {
             return MENSAGE.ERROR_REQUIRED_FIELDS
         }
-
-        let result = await instituicaoDAO.selectByIdInstituicao(parseInt(id))
-        return result ? { ...MENSAGE.SUCCESS_REQUEST, instituicao: result } : MENSAGE.ERROR_NOT_FOUND
     } catch (error) {
         console.error(error)
         return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
     }
 }
 
-const loginInstituicao = async (dadosLogin, contentType) => {
+async function loginInstituicao(dadosLogin, contentType){
     try {
-        if (contentType !== "application/json") {
+        if (contentType == "application/json") {
+            const { email, senha } = dadosLogin
+            
+            if (email && senha) {
+                const instituicao = await instituicaoDAO.selectByEmail(email)
+                
+                if (instituicao) {
+                    const senhaValida = encryptionFunction.verifyPassword(senha, instituicao.senha_salt, instituicao.senha_hash)
+                    
+                    if (senhaValida) {
+                        delete instituicao.senha
+                        return {
+                            ...MENSAGE.SUCCESS_LOGIN,
+                            instituicao: instituicao
+                        }
+                    } else {
+                        return MENSAGE.ERROR_INVALID_CREDENTIALS
+                    }
+                } else {
+                    return MENSAGE.ERROR_INVALID_CREDENTIALS
+                }
+            } else {
+                return MENSAGE.ERROR_REQUIRED_FIELDS
+            }
+        } else {
             return MENSAGE.ERROR_CONTENT_TYPE
-        }
-
-        const { email, senha } = dadosLogin
-        if (!email || !senha) {
-            return MENSAGE.ERROR_REQUIRED_FIELDS
-        }
-
-        const instituicao = await instituicaoDAO.selectByEmail(email)
-        if (!instituicao) {
-            return MENSAGE.ERROR_INVALID_CREDENTIALS
-        }
-
-        const senhaValida = encryptionFunction.verifyPassword(senha, instituicao.senha_salt, instituicao.senha_hash)
-        if (!senhaValida) {
-            return MENSAGE.ERROR_INVALID_CREDENTIALS
-        }
-
-        delete instituicao.senha
-        return {
-            ...MENSAGE.SUCCESS_LOGIN,
-            instituicao: instituicao
         }
     } catch (error) {
         console.error(error)

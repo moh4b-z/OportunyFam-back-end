@@ -1,4 +1,4 @@
-const servicesResponsavel = require("../../services/API/responsavel/servicesResponsavel")
+const servicesResponsavel = require("../../../services/API/usuario/responsavel/servicesResponsavel")
 
 const postResponsavel = async (request, response) => {
     let contentType = request.headers['content-type']

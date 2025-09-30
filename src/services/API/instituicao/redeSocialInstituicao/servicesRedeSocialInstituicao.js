@@ -3,7 +3,7 @@
 const MENSAGE = require("../../../modulo/config")
 const CORRECTION = require("../../../utils/inputCheck")
 const TableCORRECTION = require("../../../utils/tablesCheck")
-const redeSocialInstituicaoDAO = require("../../../model/DAO/redeSocialInstituicao/redeSocialInstituicao")
+const redeSocialInstituicaoDAO = require("../../../model/DAO/instituicao/redeSocialInstituicao/redeSocialInstituicao")
 const instituicaoDAO = require("../../../model/DAO/instituicao/instituicao")
 const redeSocialDAO = require("../../../model/DAO/redeSocial/redeSocial")
 
