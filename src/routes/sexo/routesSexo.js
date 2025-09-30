@@ -1,7 +1,7 @@
 // src/routes/routesSexo.js
 const express = require('express')
 const router = express.Router()
-const controllerSexo = require('../controllers/sexo/controllerSexo')
+const controllerSexo = require('../../controllers/sexo/controllerSexo')
 
 router.post(
     '/',

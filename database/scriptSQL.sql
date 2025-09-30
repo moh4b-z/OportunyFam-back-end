@@ -64,15 +64,25 @@ CREATE TABLE tbl_responsavel (
 
 CREATE TABLE tbl_endereco (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    cep VARCHAR(9) NOT NULL,
+    osm_id BIGINT, -- ID do objeto no OpenStreetMap
+    nome VARCHAR(200), -- Nome do local (ex: Escola Municipal X)
+    tipo VARCHAR(100), -- Tipo do local (school, community_centre, etc)
+    cep VARCHAR(9),
     logradouro VARCHAR(200),
     numero VARCHAR(20),
     complemento VARCHAR(100),
     bairro VARCHAR(100),
     cidade VARCHAR(100),
     estado VARCHAR(2),
-    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    telefone VARCHAR(50),
+    site VARCHAR(255),
+    latitude DECIMAL(10, 7) NOT NULL,
+    longitude DECIMAL(10, 7) NOT NULL,
+    atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY (osm_id) -- evita duplicados do mesmo ponto do OSM
 );
+
 
 
 CREATE TABLE tbl_usuario_endereco (

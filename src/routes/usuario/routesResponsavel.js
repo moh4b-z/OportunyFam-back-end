@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const controllerResponsavel = require('../controllers/responsavel/controllerResponsavel')
+const controllerResponsavel = require('../../controllers/usuario/responsavel/controllerResponsavel')
 
 router.post(
     '/',

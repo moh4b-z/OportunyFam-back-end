@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const controllerRedeSocial = require('../controllers/redeSocial/controllerRedeSocial')
+const controllerRedeSocial = require('../../controllers/redeSocial/controllerRedeSocial')
 
 router.post(
     '/',

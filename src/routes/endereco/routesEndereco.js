@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const controllerEndereco = require('../controllers/endereco/controllerEndereco')
+const controllerEndereco = require('../../controllers/endereco/controllerEndereco')
 
 router.post(
     '/',
@@ -20,6 +20,11 @@ router.put(
 router.get(
     '/',
     controllerEndereco.getSearchAllEndereco
+)
+
+router.get(
+    '/osm/',
+    controllerEndereco.getInstituicoes
 )
 
 router.get(

@@ -1,7 +1,7 @@
 // src/routes/routesInstituicao.js
 const express = require('express')
 const router = express.Router()
-const controllerInstituicao = require('../controllers/instituicao/controllerInstituicao')
+const controllerInstituicao = require('../../controllers/instituicao/controllerInstituicao')
 
 router.post(
     '/',

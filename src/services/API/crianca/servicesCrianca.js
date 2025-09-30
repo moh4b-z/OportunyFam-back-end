@@ -1,11 +1,9 @@
-// src/services/API/crianca/servicesCrianca.js
-
 const MENSAGE = require("../../../modulo/config")
 const CORRECTION = require("../../../utils/inputCheck")
 const TableCORRECTION = require("../../../utils/tablesCheck")
 const encryptionFunction = require("../../../utils/encryptionFunction")
 const criancaDAO = require("../../../model/DAO/crianca/crianca")
-const usuarioDAO = require("../../../model/DAO/usuario/usuario") // Para a validação de e-mail
+const usuarioDAO = require("../../../model/DAO/usuario/usuario")
 
 async function inserirCrianca(dadosCrianca, contentType) {
     try {

@@ -2,7 +2,7 @@
 
 const express = require('express')
 const router = express.Router()
-const controllerRedeSocialInstituicao = require('../controllers/instituicao/redeSocialInstituicao/controllerRedeSocialInstituicao')
+const controllerRedeSocialInstituicao = require('../../controllers/instituicao/redeSocialInstituicao/controllerRedeSocialInstituicao')
 
 router.post(
     '/',
