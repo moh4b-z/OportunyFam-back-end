@@ -84,7 +84,7 @@ async function selectByEmail(email){
     }
 }
 
-async function verifyEmailExists(email){
+async function verifyEmailExists(email){h
     try {
         const usuario = await prismaMySQL.usuario.findUnique({ where: { email } })
         const crianca = await prismaMySQL.crianca.findUnique({ where: { email } })

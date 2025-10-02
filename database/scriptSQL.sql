@@ -84,7 +84,7 @@ CREATE TABLE tbl_endereco (
   cidade       VARCHAR(100),
   estado       VARCHAR(2),
   telefone     VARCHAR(50),
-  site         VARCHAR(255),
+  "site"         VARCHAR(255),
   latitude     DECIMAL(10,7) NOT NULL,
   longitude    DECIMAL(10,7) NOT NULL,
   -- coluna geográfica gerada (SRID 4326)
@@ -174,7 +174,11 @@ CREATE TABLE tbl_instituicao_tipo_instituicao (
 ) ENGINE=InnoDB;
 
 INSERT IGNORE INTO tbl_tipo_instituicao (nome) VALUES
-  ('ONG'),('Escola Pública'),('Escola Privada'),('Centro Esportivo'),('Centro Cultural');
+  ('ONG'),
+  ('Escola Pública'),
+  ('Escola Privada'),
+  ('Centro Esportivo'),
+  ('Centro Cultural');
 
 -- -----------------------
 -- Categorias / Atividades / Aulas
@@ -185,7 +189,13 @@ CREATE TABLE tbl_categoria (
 ) ENGINE=InnoDB;
 
 INSERT IGNORE INTO tbl_categoria (nome) VALUES
-  ('Esporte'),('Reforço Escolar'),('Música'),('Dança'),('Teatro'),('Tecnologia'),('Artes Visuais');
+  ('Esporte'),
+  ('Reforço Escolar'),
+  ('Música'),
+  ('Dança'),
+  ('Teatro'),
+  ('Tecnologia'),
+  ('Artes Visuais');
 
 CREATE TABLE tbl_atividades (
   id                INT AUTO_INCREMENT PRIMARY KEY,
@@ -225,8 +235,12 @@ CREATE TABLE tbl_status_inscricao (
   nome VARCHAR(40) NOT NULL UNIQUE
 ) ENGINE=InnoDB;
 
-INSERT IGNORE INTO tbl_status_inscricao (id, nome) VALUES
-  (1,'pendente'),(2,'aprovada'),(3,'negada'),(4,'cancelada'),(5,'concluida');
+INSERT IGNORE INTO tbl_status_inscricao (nome) VALUES
+  ('pendente'),
+  ('aprovada'),
+  ('negada'),
+  ('cancelada'),
+  ('concluida');
 
 CREATE TABLE tbl_inscricao (
   id                 BIGINT AUTO_INCREMENT PRIMARY KEY,
