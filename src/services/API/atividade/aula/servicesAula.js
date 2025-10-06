@@ -1,10 +1,7 @@
-// src/services/API/atividade/servicesAula.js
-const MENSAGE = require("../../../modulo/config")
-const TableCORRECTION = require("../../../utils/tablesCheck")
-const CORRECTION = require("../../../utils/inputCheck")
-const aulaDAO = require("../../../model/DAO/atividade/aula")
-
-/** Aulas **/
+const MENSAGE = require("../../../../modulo/config")
+const TableCORRECTION = require("../../../../utils/tablesCheck")
+const CORRECTION = require("../../../../utils/inputCheck")
+const aulaDAO = require("../../../../model/DAO/atividade/aula/aula")
 
 async function inserirAula(dadosAula, contentType){
     try {
@@ -74,8 +71,57 @@ async function excluirAula(id){
     }
 }
 
+async function buscarAula(id){
+    try {
+        if (CORRECTION.CHECK_ID(id)) {
+            let result = await aulaDAO.selectByIdAula(parseInt(id))
+            return result ? { ...MENSAGE.SUCCESS_REQUEST, aula: result } : MENSAGE.ERROR_NOT_FOUND
+        } else {
+            return MENSAGE.ERROR_REQUIRED_FIELDS
+        }
+    } catch (error) {
+        console.error(error)
+        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
+    }
+}
+
+async function listarTodasAulas(){
+    try {
+        let result = await aulaDAO.selectAllAulas()
+        if (result) {
+            return result.length > 0 ? { ...MENSAGE.SUCCESS_REQUEST, aulas: result } : MENSAGE.ERROR_NOT_FOUND
+        } else {
+            return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
+        }
+    } catch (error) {
+        console.error(error)
+        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
+    }
+}
+
+async function listarAulasPorInstituicao(idInstituicao){
+    try {
+        if (CORRECTION.CHECK_ID(idInstituicao)) {
+            let result = await aulaDAO.selectAulasByInstituicaoId(parseInt(idInstituicao))
+            if (result) {
+                return result.length > 0 ? { ...MENSAGE.SUCCESS_REQUEST, aulas: result } : MENSAGE.ERROR_NOT_FOUND
+            } else {
+                return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
+            }
+        } else {
+            return MENSAGE.ERROR_REQUIRED_FIELDS
+        }
+    } catch (error) {
+        console.error(error)
+        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
+    }
+}
+
 module.exports = {
     inserirAula,
     atualizarAula,
-    excluirAula
+    excluirAula,
+    buscarAula,
+    listarTodasAulas,
+    listarAulasPorInstituicao 
 }

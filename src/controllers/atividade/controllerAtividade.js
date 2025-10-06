@@ -1,5 +1,5 @@
 const servicesAtividade = require("../../services/API/atividade/servicesAtividade")
-const servicesAula = require("../../services/API/atividade/servicesAula") // Importa o service de Aula
+const servicesAula = require("../../services/API/atividade/aula/servicesAula")
 
 const postAtividade = async (request, response) => {
     let contentType = request.headers['content-type']
