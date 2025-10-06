@@ -4,13 +4,16 @@ const TableCORRECTION = require("../../../utils/tablesCheck")
 const encryptionFunction = require("../../../utils/encryptionFunction")
 const instituicaoDAO = require("../../../model/DAO/instituicao/instituicao")
 const usuarioDAO = require("../../../model/DAO/usuario/usuario") // Reutiliza a função de validação de e-mail
-const instituicaoEnderecoDAO = require("../../../model/DAO/instituicaoEndereco/instituicaoEndereco") // Caminho ajustado
+const instituicaoEnderecoDAO = require("../../../model/DAO/instituicaoEndereco/instituicaoEndereco") 
+const instituicaoTipoInstituicaoDAO = require("../../../model/DAO/instituicao/instituicaoTipoInstituicao/instituicaoTipoInstituicao") // NOVO DAO
 const servicesEndereco = require("../endereco/servicesEndereco")
 
 async function inserirInstituicao(dadosInstituicao, contentType){
     try {
         if (contentType == "application/json") {
-            if (dadosInstituicao.cep && TableCORRECTION.CHECK_tbl_instituicao(dadosInstituicao)) {
+            // Verifica se a estrutura básica da instituição e o CEP foram fornecidos
+            // E verifica se 'tipos_instituicao' é um array de IDs (mesmo que vazio, se não for obrigatório no front)
+            if (dadosInstituicao.cep && dadosInstituicao.tipos_instituicao && Array.isArray(dadosInstituicao.tipos_instituicao) && TableCORRECTION.CHECK_tbl_instituicao(dadosInstituicao)) {
                 
                 // 1. Verifica unicidade do email
                 const emailExists = await usuarioDAO.verifyEmailExists(dadosInstituicao.email)
@@ -22,29 +25,55 @@ async function inserirInstituicao(dadosInstituicao, contentType){
                 const { senha_hash } = encryptionFunction.hashPassword(dadosInstituicao.senha)
                 dadosInstituicao.senha = senha_hash
 
+                // Armazena a lista de tipos de instituição antes de passar 'dadosInstituicao' adiante
+                const tiposInstituicaoIds = dadosInstituicao.tipos_instituicao
+                delete dadosInstituicao.tipos_instituicao // Remove do objeto principal para não atrapalhar o DAO
+
                 // 3. Insere o Endereço
                 const enderecoCriado = await servicesEndereco.inserirEndereco({ cep: dadosInstituicao.cep, numero: dadosInstituicao.numero, complemento: dadosInstituicao.complemento }, contentType)
                 
                 if (enderecoCriado.status_code == MENSAGE.SUCCESS_CEATED_ITEM.status_code) {
                     const idEndereco = enderecoCriado.endereco.id
                     
-                    // 4. Insere a Instituição
+                    // 4. Insere a Instituição (sem id_tipo_instituicao)
                     let resultInstituicao = await instituicaoDAO.insertInstituicao(dadosInstituicao)
                     
                     if (resultInstituicao) {
                         const idInstituicao = resultInstituicao.id
 
                         // 5. Cria a relação Instituicao-Endereco
-                        const dadosRelacao = { id_instituicao: idInstituicao, id_endereco: idEndereco }
-                        const resultRelacao = await instituicaoEnderecoDAO.insertInstituicaoEndereco(dadosRelacao)
+                        const dadosRelacaoEndereco = { id_instituicao: idInstituicao, id_endereco: idEndereco }
+                        const resultRelacaoEndereco = await instituicaoEnderecoDAO.insertInstituicaoEndereco(dadosRelacaoEndereco)
 
-                        if (resultRelacao) {
-                            return {
-                                ...MENSAGE.SUCCESS_CEATED_ITEM,
-                                instituicao: resultInstituicao
+                        if (resultRelacaoEndereco) {
+                            
+                            // 6. Cria as relações Instituicao-TipoInstituicao (N:N)
+                            let relacoesCriadas = true
+                            if (tiposInstituicaoIds.length > 0) {
+                                for (const idTipo of tiposInstituicaoIds) {
+                                    const dadosRelacaoTipo = { id_instituicao: idInstituicao, id_tipo_instituicao: idTipo }
+                                    const resultRelacaoTipo = await instituicaoTipoInstituicaoDAO.insertInstituicaoTipoInstituicao(dadosRelacaoTipo)
+                                    if (!resultRelacaoTipo) {
+                                        relacoesCriadas = false
+                                        break // Se uma falhar, para o loop
+                                    }
+                                }
+                            }
+
+                            if (relacoesCriadas) {
+                                // SUCESSO TOTAL
+                                return {
+                                    ...MENSAGE.SUCCESS_CEATED_ITEM,
+                                    instituicao: resultInstituicao
+                                }
+                            } else {
+                                // ROLLBACK: Se a relação TIPO falhar, deleta a instituição e o endereço (se necessário)
+                                await instituicaoDAO.deleteInstituicao(idInstituicao) 
+                                await servicesEndereco.excluirEndereco(idEndereco) // Se necessário, pois deleteInstituicao deveria cuidar do endereço
+                                return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
                             }
                         } else {
-                            // ROLLBACK: Se a relação falhar, deleta a instituição criada
+                            // ROLLBACK: Se a relação ENDERECO falhar, deleta a instituição criada
                             await instituicaoDAO.deleteInstituicao(idInstituicao) 
                             return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
                         }
@@ -68,9 +97,19 @@ async function inserirInstituicao(dadosInstituicao, contentType){
     }
 }
 
+
 async function atualizarInstituicao(dadosInstituicao, id, contentType){
     try {
         if (contentType == "application/json") {
+            // Nota: Se 'tipos_instituicao' for enviado aqui, ele deve ser removido antes de chamar o DAO principal
+            if (dadosInstituicao.tipos_instituicao) {
+                delete dadosInstituicao.tipos_instituicao 
+                // Assumimos que a atualização dos tipos de instituição é feita em um endpoint separado,
+                // ou que o código de atualização do tipo de instituição será adicionado aqui, 
+                // o que o torna complexo (requer exclusão e reinserção dos relacionamentos)
+            }
+
+
             if (TableCORRECTION.CHECK_tbl_instituicao(dadosInstituicao) && CORRECTION.CHECK_ID(id)) {
                 
                 let resultSearch = await buscarInstituicao(parseInt(id))
@@ -87,12 +126,18 @@ async function atualizarInstituicao(dadosInstituicao, id, contentType){
                         }
                     }
 
-                    // 2. Criptografa a senha (sempre criptografa ao atualizar)
-                    const { senha_hash } = encryptionFunction.hashPassword(dadosInstituicao.senha)
-                    dadosInstituicao.senha = senha_hash
+                    // 2. Criptografa a senha (só se a senha for passada)
+                    if(dadosInstituicao.senha){
+                         const { senha_hash } = encryptionFunction.hashPassword(dadosInstituicao.senha)
+                         dadosInstituicao.senha = senha_hash
+                    } else {
+                         // Se a senha não for passada, garantimos que ela não vá para o DAO update (partial update)
+                         delete dadosInstituicao.senha
+                    }
                     
                     // 3. Atualiza a Instituição
                     dadosInstituicao.id = parseInt(id)
+                    // Uso de spread operator para garantir que apenas os campos do 'dadosInstituicao' sejam enviados
                     let result = await instituicaoDAO.updateInstituicao(dadosInstituicao)
                     
                     return result ? MENSAGE.SUCCESS_UPDATED_ITEM : MENSAGE.ERROR_INTERNAL_SERVER_MODEL
@@ -113,16 +158,17 @@ async function atualizarInstituicao(dadosInstituicao, id, contentType){
     }
 }
 
+
+// Manter as demais funções (excluirInstituicao, listarTodasInstituicoes, buscarInstituicao, loginInstituicao) inalteradas
 async function excluirInstituicao(id){
     try {
         if (CORRECTION.CHECK_ID(id)) {
             let resultSearch = await buscarInstituicao(parseInt(id))
             
             if (resultSearch.status_code == MENSAGE.SUCCESS_REQUEST.status_code) {
-                // OBS: O deleteInstituicao do DAO deve gerenciar a exclusão do Endereço relacionado, se necessário.
-                // Como tbl_instituicao_endereco tem CASCADE ON DELETE, deletar a instituição
-                // deleta a relação.
-
+                // OBS: Como tbl_instituicao_tipo_instituicao tem CASCADE ON DELETE com tbl_instituicao,
+                // a exclusão da instituição principal deleta automaticamente os seus tipos.
+                
                 let result = await instituicaoDAO.deleteInstituicao(parseInt(id))
                 return result ? MENSAGE.SUCCESS_DELETE_ITEM : MENSAGE.ERROR_NOT_DELETE
             } else if (resultSearch.status_code == MENSAGE.ERROR_NOT_FOUND.status_code) {

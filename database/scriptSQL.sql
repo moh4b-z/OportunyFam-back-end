@@ -273,11 +273,29 @@ JOIN tbl_tipo_nivel tn ON tn.id = u.id_tipo_nivel;
 
 CREATE OR REPLACE VIEW vw_instituicao_completa AS
 SELECT
-  i.id, i.nome, i.cnpj, i.email, i.descricao, i.criado_em,
-  e.cep, e.logradouro, e.numero, e.complemento, e.bairro, e.cidade, e.estado
+    i.id, 
+    i.nome, 
+    i.cnpj, 
+    i.email, 
+    i.descricao, 
+    i.criado_em,
+    e.cep, 
+    e.logradouro, 
+    e.numero, 
+    e.complemento, 
+    e.bairro, 
+    e.cidade, 
+    e.estado,
+    -- Concatena os nomes dos tipos de instituição para o resultado
+    (
+        SELECT GROUP_CONCAT(ti.nome SEPARATOR ', ')
+        FROM tbl_tipo_instituicao ti
+        JOIN tbl_instituicao_tipo_instituicao iti ON iti.id_tipo_instituicao = ti.id
+        WHERE iti.id_instituicao = i.id
+    ) AS tipos_instituicao
 FROM tbl_instituicao i
 JOIN tbl_instituicao_endereco ie ON ie.id_instituicao = i.id
-JOIN tbl_endereco e              ON e.id = ie.id_endereco;
+JOIN tbl_endereco e ON e.id = ie.id_endereco;
 
 CREATE OR REPLACE VIEW vw_crianca_perfil AS
 SELECT
