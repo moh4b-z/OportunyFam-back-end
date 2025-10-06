@@ -12,6 +12,7 @@ const routesRedeSocial = require('./redeSocial/routesRedeSocial')
 const routesRedeSocialUsuario = require('./usuario/routesRedeSocialUsuario')
 const routesRedeSocialInstituicao = require('./instituicao/routesRedeSocialInstituicao')
 const routesTipoInstituicao = require('./instituicao/routesTipoInstituicao')
+const routesAtividade = require('./atividade/routesAtividade')
 
 router.use('/sexo', routesSexo)
 router.use('/tipoNivel', routesTipoNivel)
@@ -24,5 +25,6 @@ router.use('/redeSocial', routesRedeSocial)
 router.use('/redeSocialUsuario', routesRedeSocialUsuario)
 router.use('/redeSocialInstituicao', routesRedeSocialInstituicao)
 router.use('/tipoInstituicao', routesTipoInstituicao)
+router.use('/atividade', routesAtividade)
 
 module.exports = router
