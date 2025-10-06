@@ -3,7 +3,7 @@ const prismaMySQL = new MySQLClient()
 
 async function insertInstituicao(instituicao){
     try {
-        return await prismaMySQL.instituicao.create({
+        return await prismaMySQL.tbl_instituicao.create({
             data: {
                 nome: instituicao.nome,
                 cnpj: instituicao.cnpj,
@@ -20,7 +20,7 @@ async function insertInstituicao(instituicao){
 
 async function updateInstituicao(instituicao){
     try {
-        return await prismaMySQL.instituicao.update({
+        return await prismaMySQL.tbl_instituicao.update({
             where: { id: instituicao.id },
             data: {
                 nome: instituicao.nome,
@@ -38,7 +38,7 @@ async function updateInstituicao(instituicao){
 
 async function deleteInstituicao(id){
     try {
-        await prismaMySQL.instituicao.delete({ where: { id: id } })
+        await prismaMySQL.tbl_instituicao.delete({ where: { id: id } })
         return true
     } catch (error) {
         console.error("Erro ao deletar instituição:", error)
@@ -67,7 +67,7 @@ async function selectByIdInstituicao(id){
 
 async function selectByEmail(email){
     try {
-        return await prismaMySQL.instituicao.findUnique({ where: { email: email } })
+        return await prismaMySQL.tbl_instituicao.findUnique({ where: { email: email } })
     } catch (error) {
         console.error("Erro ao buscar instituição por e-mail:", error)
         return false

@@ -3,7 +3,7 @@ const prismaMySQL = new MySQLClient()
 
 async function insertTipoNivel(tipoNivel){
     try {
-        return await prismaMySQL.tipoNivel.create({ data: { nivel: tipoNivel.nivel } })
+        return await prismaMySQL.tbl_tipo_nivel.create({ data: { nivel: tipoNivel.nivel } })
     } catch (error) {
         console.error("Erro ao inserir tipo de nível:", error)
         return false
@@ -12,7 +12,7 @@ async function insertTipoNivel(tipoNivel){
 
 async function updateTipoNivel(tipoNivel){
     try {
-        return await prismaMySQL.tipoNivel.update({
+        return await prismaMySQL.tbl_tipo_nivel.update({
             where: { id: tipoNivel.id },
             data: { nivel: tipoNivel.nivel }
         })
@@ -24,7 +24,7 @@ async function updateTipoNivel(tipoNivel){
 
 async function deleteTipoNivel(id){
     try {
-        await prismaMySQL.tipoNivel.delete({ where: { id: id } })
+        await prismaMySQL.tbl_tipo_nivel.delete({ where: { id: id } })
         return true
     } catch (error) {
         console.error("Erro ao deletar tipo de nível:", error)
@@ -34,7 +34,7 @@ async function deleteTipoNivel(id){
 
 async function selectAllTipoNivel(){
     try {
-        return await prismaMySQL.tipoNivel.findMany({ orderBy: { nivel: 'asc' } })
+        return await prismaMySQL.tbl_tipo_nivel.findMany({ orderBy: { nivel: 'asc' } })
     } catch (error) {
         console.error("Erro ao buscar tipos de nível:", error)
         return false
@@ -43,7 +43,7 @@ async function selectAllTipoNivel(){
 
 async function selectByIdTipoNivel(id){
     try {
-        return await prismaMySQL.tipoNivel.findUnique({ where: { id: id } })
+        return await prismaMySQL.tbl_tipo_nivel.findUnique({ where: { id: id } })
     } catch (error) {
         console.error("Erro ao buscar tipo de nível por ID:", error)
         return false

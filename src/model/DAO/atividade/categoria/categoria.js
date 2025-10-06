@@ -3,7 +3,7 @@ const prismaMySQL = new MySQLClient()
 
 async function insertCategoria(categoria){
     try {
-        return await prismaMySQL.categoria.create({
+        return await prismaMySQL.tbl_categoria.create({
             data: {
                 nome: categoria.nome
             }
@@ -16,7 +16,7 @@ async function insertCategoria(categoria){
 
 async function updateCategoria(categoria){
     try {
-        return await prismaMySQL.categoria.update({
+        return await prismaMySQL.tbl_categoria.update({
             where: { id: categoria.id },
             data: {
                 nome: categoria.nome
@@ -31,7 +31,7 @@ async function updateCategoria(categoria){
 async function deleteCategoria(id){
     try {
         // A chave estrangeira com RESTRICT impede a exclusão se houver atividades associadas
-        await prismaMySQL.categoria.delete({ where: { id: id } })
+        await prismaMySQL.tbl_categoria.delete({ where: { id: id } })
         return true
     } catch (error) {
         console.error("Erro ao deletar categoria:", error)
@@ -41,7 +41,7 @@ async function deleteCategoria(id){
 
 async function selectAllCategorias(){
     try {
-        return await prismaMySQL.categoria.findMany({ orderBy: { nome: 'asc' } })
+        return await prismaMySQL.tbl_categoria.findMany({ orderBy: { nome: 'asc' } })
     } catch (error) {
         console.error("Erro ao buscar categorias:", error)
         return false
@@ -50,7 +50,7 @@ async function selectAllCategorias(){
 
 async function selectByIdCategoria(id){
     try {
-        return await prismaMySQL.categoria.findUnique({ where: { id: id } })
+        return await prismaMySQL.tbl_categoria.findUnique({ where: { id: id } })
     } catch (error) {
         console.error("Erro ao buscar categoria por ID:", error)
         return false

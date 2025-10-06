@@ -4,7 +4,7 @@ const prismaMySQL = new MySQLClient()
 
 async function insertEndereco(endereco){
     try {
-        return await prismaMySQL.endereco.create({
+        return await prismaMySQL.tbl_endereco.create({
             data: {
                 cep: endereco.cep,
                 logradouro: endereco.logradouro,
@@ -23,7 +23,7 @@ async function insertEndereco(endereco){
 
 async function updateEndereco(endereco){
     try {
-        return await prismaMySQL.endereco.update({
+        return await prismaMySQL.tbl_endereco.update({
             where: { id: endereco.id },
             data: {
                 cep: endereco.cep,
@@ -43,7 +43,7 @@ async function updateEndereco(endereco){
 
 async function deleteEndereco(id){
     try {
-        await prismaMySQL.endereco.delete({ where: { id: id } })
+        await prismaMySQL.tbl_endereco.delete({ where: { id: id } })
         return true
     } catch (error) {
         console.error("Erro ao deletar endereço:", error)
@@ -53,7 +53,7 @@ async function deleteEndereco(id){
 
 async function selectAllEnderecos(){
     try {
-        return await prismaMySQL.endereco.findMany({ orderBy: { id: 'desc' } })
+        return await prismaMySQL.tbl_endereco.findMany({ orderBy: { id: 'desc' } })
     } catch (error) {
         console.error("Erro ao buscar endereços:", error)
         return false
@@ -62,7 +62,7 @@ async function selectAllEnderecos(){
 
 async function selectByIdEndereco(id){
     try {
-        return await prismaMySQL.endereco.findUnique({ where: { id: id } })
+        return await prismaMySQL.tbl_endereco.findUnique({ where: { id: id } })
     } catch (error) {
         console.error("Erro ao buscar endereço por ID:", error)
         return false

@@ -3,7 +3,7 @@ const prismaMySQL = new MySQLClient()
 
 async function insertSexo(sexo) {
     try {
-        return await prismaMySQL.sexo.create({ data: { nome: sexo.nome } })
+        return await prismaMySQL.tbl_sexo.create({ data: { nome: sexo.nome } })
     } catch (error) {
         console.error("Erro ao inserir sexo:", error)
         return false
@@ -12,7 +12,7 @@ async function insertSexo(sexo) {
 
 async function updateSexo(sexo) {
     try {
-        return await prismaMySQL.sexo.update({
+        return await prismaMySQL.tbl_sexo.update({
             where: { id: sexo.id },
             data: { nome: sexo.nome }
         })
@@ -24,7 +24,7 @@ async function updateSexo(sexo) {
 
 async function deleteSexo(id) {
     try {
-        await prismaMySQL.sexo.delete({ where: { id: id } })
+        await prismaMySQL.tbl_sexo.delete({ where: { id: id } })
         return true
     } catch (error) {
         console.error("Erro ao deletar sexo:", error)
@@ -35,7 +35,7 @@ async function deleteSexo(id) {
 async function selectAllSexo() {
     try {
         // Ordena por nome para uma lista mais organizada
-        return await prismaMySQL.sexo.findMany({ orderBy: { nome: 'asc' } }) 
+        return await prismaMySQL.tbl_sexo.findMany({ orderBy: { nome: 'asc' } }) 
     } catch (error) {
         console.error("Erro ao buscar sexos:", error)
         return false
@@ -44,7 +44,7 @@ async function selectAllSexo() {
 
 async function selectByIdSexo(id) {
     try {
-        return await prismaMySQL.sexo.findUnique({ where: { id: id } })
+        return await prismaMySQL.tbl_sexo.findUnique({ where: { id: id } })
     } catch (error) {
         console.error("Erro ao buscar sexo por ID:", error)
         return false

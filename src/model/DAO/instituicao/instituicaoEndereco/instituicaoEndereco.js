@@ -4,7 +4,7 @@ const prismaMySQL = new MySQLClient()
 
 async function  insertInstituicaoEndereco(dadosRelacao){
     try {
-        return await prismaMySQL.instituicaoEndereco.create({
+        return await prismaMySQL.tbl_instituicao_endereco.create({
             data: {
                 id_instituicao: dadosRelacao.id_instituicao,
                 id_endereco: dadosRelacao.id_endereco
@@ -18,7 +18,7 @@ async function  insertInstituicaoEndereco(dadosRelacao){
 
 async function  deleteInstituicaoEnderecoByInstituicao(id_instituicao){
     try {
-        await prismaMySQL.instituicaoEndereco.deleteMany({
+        await prismaMySQL.tbl_instituicao_endereco.deleteMany({
             where: {
                 id_instituicao: id_instituicao
             }

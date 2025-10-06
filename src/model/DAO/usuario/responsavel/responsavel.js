@@ -3,7 +3,7 @@ const prismaMySQL = new MySQLClient()
 
 async function insertResponsavel(responsavel){
     try {
-        return await prismaMySQL.responsavel.create({
+        return await prismaMySQL.tbl_responsavel.create({
             data: {
                 id_usuario: responsavel.id_usuario,
                 id_crianca: responsavel.id_crianca
@@ -17,7 +17,7 @@ async function insertResponsavel(responsavel){
 
 async function deleteResponsavel(id){
     try {
-        await prismaMySQL.responsavel.delete({ where: { id: id } })
+        await prismaMySQL.tbl_responsavel.delete({ where: { id: id } })
         return true
     } catch (error) {
         console.error("Erro ao deletar relação responsável-criança:", error)
@@ -27,7 +27,7 @@ async function deleteResponsavel(id){
 
 async function selectAllResponsaveis(){
     try {
-        return await prismaMySQL.responsavel.findMany({
+        return await prismaMySQL.tbl_responsavel.findMany({
             orderBy: { id: 'desc' }
         })
     } catch (error) {
@@ -38,7 +38,7 @@ async function selectAllResponsaveis(){
 
 async function selectByIdResponsavel(id){
     try {
-        return await prismaMySQL.responsavel.findUnique({
+        return await prismaMySQL.tbl_responsavel.findUnique({
             where: { id: id }
         })
     } catch (error) {
@@ -49,7 +49,7 @@ async function selectByIdResponsavel(id){
 
 async function selectByUsuarioECrianca(id_usuario, id_crianca){
     try {
-        return await prismaMySQL.responsavel.findFirst({
+        return await prismaMySQL.tbl_responsavel.findFirst({
             where: {
                 id_usuario: id_usuario,
                 id_crianca: id_crianca

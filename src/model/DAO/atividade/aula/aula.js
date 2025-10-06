@@ -4,7 +4,7 @@ const prismaMySQL = new MySQLClient()
 
 async function insertAula(aula){
     try {
-        return await prismaMySQL.aulas_atividade.create({
+        return await prismaMySQL.tbl_aulas_atividade.create({
             data: {
                 id_atividade: aula.id_atividade,
                 dia_semana: aula.dia_semana,
@@ -24,7 +24,7 @@ async function insertAula(aula){
 async function updateAula(aula){
     try {
         // Não permite alteração de id_atividade ou id no update de dados.
-        return await prismaMySQL.aulas_atividade.update({
+        return await prismaMySQL.tbl_aulas_atividade.update({
             where: { id: aula.id },
             data: {
                 dia_semana: aula.dia_semana,
@@ -43,7 +43,7 @@ async function updateAula(aula){
 
 async function deleteAula(id){
     try {
-        await prismaMySQL.aulas_atividade.delete({ where: { id: id } })
+        await prismaMySQL.tbl_aulas_atividade.delete({ where: { id: id } })
         return true
     } catch (error) {
         console.error("Erro ao deletar aula:", error)
@@ -53,7 +53,7 @@ async function deleteAula(id){
 
 async function selectByIdAula(id){
     try {
-        return await prismaMySQL.aulas_atividade.findUnique({ where: { id: id } })
+        return await prismaMySQL.tbl_aulas_atividade.findUnique({ where: { id: id } })
     } catch (error) {
         console.error("Erro ao buscar aula por ID:", error)
         return null
@@ -62,7 +62,7 @@ async function selectByIdAula(id){
 
 async function selectAllAulas(){
     try {
-        return await prismaMySQL.aulas_atividade.findMany({ orderBy: { id: 'desc' } })
+        return await prismaMySQL.tbl_aulas_atividade.findMany({ orderBy: { id: 'desc' } })
     } catch (error) {
         console.error("Erro ao buscar todas as aulas:", error)
         return false

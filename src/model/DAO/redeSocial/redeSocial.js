@@ -3,7 +3,7 @@ const prismaMySQL = new MySQLClient()
 
 async function insertRedeSocial(redeSocial){
     try {
-        return await prismaMySQL.redeSocial.create({
+        return await prismaMySQL.tbl_rede_social.create({
             data: {
                 nome: redeSocial.nome,
                 icone: redeSocial.icone
@@ -17,7 +17,7 @@ async function insertRedeSocial(redeSocial){
 
 async function updateRedeSocial(redeSocial){
     try {
-        return await prismaMySQL.redeSocial.update({
+        return await prismaMySQL.tbl_rede_social.update({
             where: { id: redeSocial.id },
             data: {
                 nome: redeSocial.nome,
@@ -32,7 +32,7 @@ async function updateRedeSocial(redeSocial){
 
 async function deleteRedeSocial(id){
     try {
-        await prismaMySQL.redeSocial.delete({ where: { id: id } })
+        await prismaMySQL.tbl_rede_social.delete({ where: { id: id } })
         return true
     } catch (error) {
         console.error("Erro ao deletar rede social:", error)
@@ -42,7 +42,7 @@ async function deleteRedeSocial(id){
 
 async function selectAllRedesSociais(){
     try {
-        return await prismaMySQL.redeSocial.findMany({
+        return await prismaMySQL.tbl_rede_social.findMany({
             orderBy: { nome: 'asc' }
         })
     } catch (error) {
@@ -53,7 +53,7 @@ async function selectAllRedesSociais(){
 
 async function selectByIdRedeSocial(id){
     try {
-        return await prismaMySQL.redeSocial.findUnique({
+        return await prismaMySQL.tbl_rede_social.findUnique({
             where: { id: id }
         })
     } catch (error) {

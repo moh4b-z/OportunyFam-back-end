@@ -3,7 +3,7 @@ const prismaMySQL = new MySQLClient()
 
 async function insertTipoInstituicao(tipoInstituicao){
     try {
-        let result = await prismaMySQL.tipo_instituicao.create({
+        let result = await prismaMySQL.tbl_tipo_instituicao.create({
             data: {
                 nome: tipoInstituicao.nome
             }
@@ -17,7 +17,7 @@ async function insertTipoInstituicao(tipoInstituicao){
 
 async function updateTipoInstituicao(tipoInstituicao){
     try {
-        let result = await prismaMySQL.tipo_instituicao.update({
+        let result = await prismaMySQL.tbl_tipo_instituicao.update({
             where: { id: tipoInstituicao.id },
             data: {
                 nome: tipoInstituicao.nome
@@ -32,7 +32,7 @@ async function updateTipoInstituicao(tipoInstituicao){
 
 async function deleteTipoInstituicao(id){
     try {
-        let result = await prismaMySQL.tipo_instituicao.delete({ where: { id: id } })
+        let result = await prismaMySQL.tbl_tipo_instituicao.delete({ where: { id: id } })
         return result ? true : false
     } catch (error) {
         console.error("Erro DAO: Erro ao deletar tipo de instituição.", error)

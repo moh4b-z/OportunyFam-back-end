@@ -3,7 +3,7 @@ const prismaMySQL = new MySQLClient()
 
 async function insertUsuario(usuario){
     try {
-        let result = await prismaMySQL.usuario.create({
+        let result = await prismaMySQL.tbl_usuario.create({
             data: {
                 nome: usuario.nome,
                 foto_perfil: usuario.foto_perfil,
@@ -24,7 +24,7 @@ async function insertUsuario(usuario){
 
 async function updateUsuario(usuario){
     try {
-        let result = await prismaMySQL.usuario.update({
+        let result = await prismaMySQL.tbl_usuario.update({
             where: { id: usuario.id },
             data: {
                 nome: usuario.nome,
@@ -47,7 +47,7 @@ async function updateUsuario(usuario){
 
 async function deleteUsuario(id){
     try {
-        let result = await prismaMySQL.usuario.delete({ where: { id: id } })
+        let result = await prismaMySQL.tbl_usuario.delete({ where: { id: id } })
         return result ? true : false
     } catch (error) {
         console.error("Erro DAO: Erro ao deletar usuário.", error)
@@ -79,7 +79,7 @@ async function selectByIdUsuario(id){
 
 async function selectByEmail(email){
     try {
-        let result = await prismaMySQL.usuario.findUnique({
+        let result = await prismaMySQL.tbl_usuario.findUnique({
             where: { email: email }
         })
         return result
@@ -92,7 +92,7 @@ async function selectByEmail(email){
 // Verifica se um e-mail já existe nas tabelas (usuario, crianca, instituicao).
 async function verifyEmailExists(email){
     try {
-        let usuario = await prismaMySQL.usuario.findUnique({ where: { email } })
+        let usuario = await prismaMySQL.tbl_usuario.findUnique({ where: { email } })
         let crianca = await prismaMySQL.crianca.findUnique({ where: { email } })
         let instituicao = await prismaMySQL.instituicao.findUnique({ where: { email } })
         

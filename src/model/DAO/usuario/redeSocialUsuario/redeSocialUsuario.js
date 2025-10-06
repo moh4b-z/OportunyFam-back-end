@@ -3,7 +3,7 @@ const prismaMySQL = new MySQLClient()
 
 async function insertRedeSocialUsuario(redeSocialUsuario){
     try {
-        return await prismaMySQL.redeSocialUsuario.create({
+        return await prismaMySQL.tbl_rede_social_usuario.create({
             data: {
                 id_usuario: redeSocialUsuario.id_usuario,
                 id_rede_social: redeSocialUsuario.id_rede_social,
@@ -21,7 +21,7 @@ async function insertRedeSocialUsuario(redeSocialUsuario){
 
 async function updateRedeSocialUsuario(redeSocialUsuario){
     try {
-        return await prismaMySQL.redeSocialUsuario.update({
+        return await prismaMySQL.tbl_rede_social_usuario.update({
             where: { id: redeSocialUsuario.id },
             data: {
                 id_usuario: redeSocialUsuario.id_usuario,
@@ -40,7 +40,7 @@ async function updateRedeSocialUsuario(redeSocialUsuario){
 
 async function deleteRedeSocialUsuario(id){
     try {
-        await prismaMySQL.redeSocialUsuario.delete({ where: { id: id } })
+        await prismaMySQL.tbl_rede_social_usuario.delete({ where: { id: id } })
         return true
     } catch (error) {
         console.error("Erro ao deletar relação rede social-usuário:", error)
@@ -51,7 +51,7 @@ async function deleteRedeSocialUsuario(id){
 async function selectAllRedesSociaisUsuario(){
     try {
         // Você pode criar uma View posteriormente para retornar detalhes do usuário e da rede social
-        return await prismaMySQL.redeSocialUsuario.findMany({
+        return await prismaMySQL.tbl_rede_social_usuario.findMany({
             orderBy: { id: 'desc' }
         })
     } catch (error) {
@@ -62,7 +62,7 @@ async function selectAllRedesSociaisUsuario(){
 
 async function selectByIdRedeSocialUsuario(id){
     try {
-        return await prismaMySQL.redeSocialUsuario.findUnique({
+        return await prismaMySQL.tbl_rede_social_usuario.findUnique({
             where: { id: id }
         })
     } catch (error) {
@@ -73,7 +73,7 @@ async function selectByIdRedeSocialUsuario(id){
 
 async function selectByUsuarioAndRedeSocial(id_usuario, id_rede_social){
     try {
-        return await prismaMySQL.redeSocialUsuario.findFirst({
+        return await prismaMySQL.tbl_rede_social_usuario.findFirst({
             where: {
                 id_usuario: id_usuario,
                 id_rede_social: id_rede_social

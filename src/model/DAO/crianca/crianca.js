@@ -3,7 +3,7 @@ const prismaMySQL = new MySQLClient()
 
 async function  insertCrianca(crianca){
     try {
-        return await prismaMySQL.crianca.create({
+        return await prismaMySQL.tbl_crianca.create({
             data: {
                 nome: crianca.nome,
                 email: crianca.email,
@@ -21,7 +21,7 @@ async function  insertCrianca(crianca){
 
 async function  updateCrianca(crianca){
     try {
-        return await prismaMySQL.crianca.update({
+        return await prismaMySQL.tbl_crianca.update({
             where: { id: crianca.id },
             data: {
                 nome: crianca.nome,
@@ -40,7 +40,7 @@ async function  updateCrianca(crianca){
 
 async function  deleteCrianca(id){
     try {
-        await prismaMySQL.crianca.delete({ where: { id: id } })
+        await prismaMySQL.tbl_crianca.delete({ where: { id: id } })
         return true
     } catch (error) {
         console.error("Erro ao deletar criança:", error)
@@ -50,7 +50,7 @@ async function  deleteCrianca(id){
 
 async function  selectAllCriancas(){
     try {
-        return await prismaMySQL.crianca.findMany({
+        return await prismaMySQL.tbl_crianca.findMany({
             orderBy: { id: 'desc' }
         })
     } catch (error) {
@@ -61,7 +61,7 @@ async function  selectAllCriancas(){
 
 async function  selectByIdCrianca(id){
     try {
-        return await prismaMySQL.crianca.findUnique({
+        return await prismaMySQL.tbl_crianca.findUnique({
             where: { id: id }
         })
     } catch (error) {
@@ -72,7 +72,7 @@ async function  selectByIdCrianca(id){
 
 async function  selectByEmail(email){
     try {
-        return await prismaMySQL.crianca.findUnique({
+        return await prismaMySQL.tbl_crianca.findUnique({
             where: { email: email }
         })
     } catch (error) {

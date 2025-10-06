@@ -1,16 +1,10 @@
--- =========================================
--- OportunyFam - schema + buscas paginadas
--- =========================================
-
 CREATE DATABASE IF NOT EXISTS oportunyfam;
 USE oportunyfam;
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
--- -----------------------
--- Catálogos básicos
--- -----------------------
+
 CREATE TABLE tbl_sexo (
   id   INT AUTO_INCREMENT PRIMARY KEY,
   nome VARCHAR(50) UNIQUE NOT NULL
@@ -27,9 +21,7 @@ CREATE TABLE tbl_rede_social (
   icone VARCHAR(300) NOT NULL
 ) ENGINE=InnoDB;
 
--- -----------------------
--- Usuários / Crianças
--- -----------------------
+
 CREATE TABLE tbl_usuario (
   id               INT AUTO_INCREMENT PRIMARY KEY,
   nome             VARCHAR(100) NOT NULL,
@@ -68,9 +60,6 @@ CREATE TABLE tbl_responsavel (
   CONSTRAINT fk_resp_crianca  FOREIGN KEY (id_crianca) REFERENCES tbl_crianca(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- -----------------------
--- Endereço (com GEO/FT)
--- -----------------------
 CREATE TABLE tbl_endereco (
   id           INT AUTO_INCREMENT PRIMARY KEY,
   osm_id       BIGINT,
@@ -105,9 +94,6 @@ CREATE TABLE tbl_usuario_endereco (
   CONSTRAINT fk_uend_endereco FOREIGN KEY (id_endereco) REFERENCES tbl_endereco(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- -----------------------
--- Instituições
--- -----------------------
 CREATE TABLE tbl_instituicao (
   id          INT AUTO_INCREMENT PRIMARY KEY,
   nome        VARCHAR(200) NOT NULL,
@@ -131,7 +117,6 @@ CREATE TABLE tbl_instituicao_endereco (
   CONSTRAINT fk_iend_end  FOREIGN KEY (id_endereco)    REFERENCES tbl_endereco(id)    ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- redes sociais
 CREATE TABLE tbl_rede_social_usuario (
   id               INT AUTO_INCREMENT PRIMARY KEY,
   link_perfil      VARCHAR(255),
@@ -156,9 +141,6 @@ CREATE TABLE tbl_rede_social_instituicao (
   CONSTRAINT fk_rsi_rede_social FOREIGN KEY (id_rede_social) REFERENCES tbl_rede_social(id)
 ) ENGINE=InnoDB;
 
--- -----------------------
--- Tipos de instituição
--- -----------------------
 CREATE TABLE tbl_tipo_instituicao (
   id   TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   nome VARCHAR(80) NOT NULL UNIQUE
@@ -178,11 +160,9 @@ INSERT IGNORE INTO tbl_tipo_instituicao (nome) VALUES
   ('Escola Pública'),
   ('Escola Privada'),
   ('Centro Esportivo'),
-  ('Centro Cultural');
+  ('Centro Cultural')
+;
 
--- -----------------------
--- Categorias / Atividades / Aulas
--- -----------------------
 CREATE TABLE tbl_categoria (
   id   SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   nome VARCHAR(100) NOT NULL UNIQUE
@@ -227,9 +207,9 @@ CREATE TABLE tbl_aulas_atividade (
   CONSTRAINT fk_aula_ativ  FOREIGN KEY (id_atividade) REFERENCES tbl_atividades(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- -----------------------
+
 -- Inscrições
--- -----------------------
+
 CREATE TABLE tbl_status_inscricao (
   id   TINYINT UNSIGNED PRIMARY KEY,
   nome VARCHAR(40) NOT NULL UNIQUE
@@ -260,9 +240,9 @@ CREATE TABLE tbl_inscricao (
 
 SET FOREIGN_KEY_CHECKS = 1;
 
--- -----------------------
+
 -- Views
--- -----------------------
+
 CREATE OR REPLACE VIEW vw_detalhes_usuario AS
 SELECT
   u.id, u.nome, u.email, u.data_nascimento, u.cpf, u.criado_em,
@@ -342,9 +322,9 @@ JOIN tbl_atividades atv      ON atv.id = aa.id_atividade
 JOIN tbl_categoria cat       ON cat.id = atv.id_categoria
 JOIN tbl_instituicao inst    ON inst.id = atv.id_instituicao;
 
--- -----------------------
+
 -- Triggers: vagas_disponiveis
--- -----------------------
+
 DELIMITER $$
 
 CREATE TRIGGER trg_insc_ai
@@ -386,9 +366,9 @@ END$$
 
 DELIMITER ;
 
--- -----------------------
+
 -- Procedures de busca (com paginação)
--- -----------------------
+
 DELIMITER $$
 
 -- Instituições por nome OU endereço; ordena pela distância quando houver lat/lng
@@ -502,9 +482,9 @@ BEGIN
 END $$
 DELIMITER ;
 
--- -----------------------
+
 -- Exemplos de uso
--- -----------------------
+
 -- CALL sp_buscar_instituicoes('Vila Mariana', -23.55, -46.63, 5, 1, 20);
 -- CALL sp_buscar_instituicoes(NULL, -23.55, -46.63, 3, 1, 10);
 -- CALL sp_buscar_atividades_proximas(-23.55, -46.63, 5, 12, TRUE, NULL, 1, 20);

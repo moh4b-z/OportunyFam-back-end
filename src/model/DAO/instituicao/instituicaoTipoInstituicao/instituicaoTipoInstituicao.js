@@ -3,7 +3,7 @@ const prismaMySQL = new MySQLClient()
 
 async function insertInstituicaoTipoInstituicao(dados){
     try {
-        let result = await prismaMySQL.instituicao_tipo_instituicao.create({
+        let result = await prismaMySQL.tbl_instituicao_tipo_instituicao.create({
             data: {
                 id_instituicao: dados.id_instituicao,
                 id_tipo_instituicao: dados.id_tipo_instituicao

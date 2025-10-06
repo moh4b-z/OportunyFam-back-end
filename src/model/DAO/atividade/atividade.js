@@ -3,7 +3,7 @@ const prismaMySQL = new MySQLClient()
 
 async function insertAtividade(atividade){
     try {
-        return await prismaMySQL.atividades.create({
+        return await prismaMySQL.tbl_atividades.create({
             data: {
                 id_instituicao: atividade.id_instituicao,
                 id_categoria: atividade.id_categoria,
@@ -38,7 +38,7 @@ async function updateAtividade(atividade){
         if (atividade.id_instituicao) data.id_instituicao = atividade.id_instituicao
         if (atividade.id_categoria) data.id_categoria = atividade.id_categoria
 
-        return await prismaMySQL.atividades.update({
+        return await prismaMySQL.tbl_atividades.update({
             where: { id: atividade.id },
             data: data
         })
@@ -50,7 +50,7 @@ async function updateAtividade(atividade){
 
 async function deleteAtividade(id){
     try {
-        await prismaMySQL.atividades.delete({ where: { id: id } })
+        await prismaMySQL.tbl_atividades.delete({ where: { id: id } })
         return true
     } catch (error) {
         console.error("Erro ao deletar atividade:", error)
