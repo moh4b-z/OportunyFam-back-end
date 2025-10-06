@@ -11,6 +11,7 @@ const routesResponsavel = require('./usuario/routesResponsavel')
 const routesRedeSocial = require('./redeSocial/routesRedeSocial')
 const routesRedeSocialUsuario = require('./usuario/routesRedeSocialUsuario')
 const routesRedeSocialInstituicao = require('./instituicao/routesRedeSocialInstituicao')
+const routesTipoInstituicao = require('./instituicao/routesTipoInstituicao')
 
 router.use('/sexo', routesSexo)
 router.use('/tipoNivel', routesTipoNivel)
@@ -22,5 +23,6 @@ router.use('/responsavel', routesResponsavel)
 router.use('/redeSocial', routesRedeSocial)
 router.use('/redeSocialUsuario', routesRedeSocialUsuario)
 router.use('/redeSocialInstituicao', routesRedeSocialInstituicao)
+router.use('/tipoInstituicao', routesTipoInstituicao)
 
 module.exports = router
