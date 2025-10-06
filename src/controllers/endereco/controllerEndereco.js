@@ -1,5 +1,5 @@
 const servicesEndereco = require("../../services/API/endereco/servicesEndereco")
-const osmService = require("../services/openStreetMap/openStreetMapService")
+const osmService = require("../../services/openStreetMap/openStreetMapService") 
 
 const postEndereco = async (request, response) => {
     let contentType = request.headers['content-type']
@@ -39,13 +39,21 @@ const putEndereco = async (request, response) => {
 }
 
 async function getInstituicoes(request, response){
-  const { lat, lon, tipo, raio } = request.query
-  if (!lat || !lon) {
-    return response.status(400).json({ message: "Latitude e longitude são obrigatórios" })
-  }
+    const { lat, lon, tipo, raio } = request.query
+    if (!lat || !lon) {
+        return response.status(MENSAGE.ERROR_REQUIRED_FIELDS.status_code).json(MENSAGE.ERROR_REQUIRED_FIELDS)
+    }
 
-  const result = await osmService.buscarInstituicoes(lat, lon, tipo, raio)
-  response.status(result.status_code).json(result)
+    // Garante que lat e lon são números
+    const latitude = parseFloat(lat)
+    const longitude = parseFloat(lon)
+
+    if (isNaN(latitude) || isNaN(longitude)) {
+        return response.status(MENSAGE.ERROR_REQUIRED_FIELDS.status_code).json({ ...MENSAGE.ERROR_REQUIRED_FIELDS, message: "Latitude e longitude devem ser valores numéricos." })
+    }
+
+    const result = await osmService.buscarInstituicoes(latitude, longitude, tipo, raio)
+    response.status(result.status_code).json(result)
 }
 
 
