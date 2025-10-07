@@ -61,25 +61,25 @@ CREATE TABLE tbl_responsavel (
 ) ENGINE=InnoDB;
 
 CREATE TABLE tbl_endereco (
-  id           INT AUTO_INCREMENT PRIMARY KEY,
-  osm_id       BIGINT,
-  nome         VARCHAR(200),
-  tipo         VARCHAR(100),
-  cep          VARCHAR(9),
-  logradouro   VARCHAR(200),
-  numero       VARCHAR(20),
-  complemento  VARCHAR(100),
-  bairro       VARCHAR(100),
-  cidade       VARCHAR(100),
-  estado       VARCHAR(2),
-  telefone     VARCHAR(50),
-  site VARCHAR(255),
-  latitude     DECIMAL(10,7) NOT NULL,
-  longitude    DECIMAL(10,7) NOT NULL,
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  osm_id BIGINT,
+  nome VARCHAR(200),
+  tipo VARCHAR(100),
+  cep VARCHAR(9),
+  logradouro VARCHAR(200),
+  numero VARCHAR(20),
+  complemento VARCHAR(100),
+  bairro VARCHAR(100),
+  cidade VARCHAR(100),
+  estado VARCHAR(2),
+  telefone VARCHAR(50),
+  site VARCHAR(255), 
+  latitude DECIMAL(10,7) NOT NULL,
+  longitude DECIMAL(10,7) NOT NULL,
   -- coluna geográfica gerada (SRID 4326)
-  geo          POINT AS (ST_SRID(POINT(longitude, latitude), 4326)) STORED,
+  geo POINT AS (ST_SRID(POINT(longitude, latitude), 4326)) STORED not null,
   atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  criado_em     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY uk_end_osm (osm_id),
   SPATIAL INDEX spx_end_geo (geo),
   FULLTEXT KEY ft_end (nome, logradouro, bairro, cidade)
@@ -208,36 +208,6 @@ CREATE TABLE tbl_aulas_atividade (
 ) ENGINE=InnoDB;
 
 
--- Inscrições
-
-CREATE TABLE tbl_status_inscricao (
-  id   TINYINT UNSIGNED PRIMARY KEY,
-  nome VARCHAR(40) NOT NULL UNIQUE
-) ENGINE=InnoDB;
-
-INSERT IGNORE INTO tbl_status_inscricao (nome) VALUES
-  ('pendente'),
-  ('aprovada'),
-  ('negada'),
-  ('cancelada'),
-  ('concluida');
-
-CREATE TABLE tbl_inscricao (
-  id                 BIGINT AUTO_INCREMENT PRIMARY KEY,
-  id_responsavel     INT NOT NULL,
-  id_crianca         INT NOT NULL,
-  id_aula_atividade  INT NOT NULL,
-  id_status          TINYINT UNSIGNED NOT NULL DEFAULT 1,
-  observacao         VARCHAR(300),
-  criado_em          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  atualizado_em      TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
-  UNIQUE KEY uk_insc (id_crianca, id_aula_atividade),
-  CONSTRAINT fk_insc_crianca  FOREIGN KEY (id_crianca)        REFERENCES tbl_crianca(id)         ON DELETE CASCADE,
-  CONSTRAINT fk_insc_aula     FOREIGN KEY (id_aula_atividade) REFERENCES tbl_aulas_atividade(id) ON DELETE CASCADE,
-  CONSTRAINT fk_insc_status   FOREIGN KEY (id_status)         REFERENCES tbl_status_inscricao(id) ON DELETE RESTRICT,
-  CONSTRAINT fk_insc_resp     FOREIGN KEY (id_responsavel)    REFERENCES tbl_responsavel(id)     ON DELETE CASCADE
-) ENGINE=InnoDB;
-
 SET FOREIGN_KEY_CHECKS = 1;
 
 
@@ -306,68 +276,6 @@ LEFT JOIN tbl_aulas_atividade aa ON aa.id_atividade = a.id
 GROUP BY a.id, a.titulo, a.descricao, a.faixa_etaria_min, a.faixa_etaria_max,
          a.gratuita, a.preco, a.ativo, c.nome, i.id, i.nome, e.cidade, e.estado;
 
-
-CREATE OR REPLACE VIEW vw_inscricoes AS
-SELECT
-  ins.id, ins.criado_em, st.nome AS status,
-  cri.id AS crianca_id, cri.nome AS crianca,
-  TIMESTAMPDIFF(YEAR, cri.data_nascimento, CURDATE()) AS idade,
-  atv.id AS atividade_id, atv.titulo AS atividade, cat.nome AS categoria,
-  inst.id AS instituicao_id, inst.nome AS instituicao,
-  aa.id AS aula_id, aa.dia_semana, aa.hora_inicio, aa.hora_fim
-FROM tbl_inscricao ins
-JOIN tbl_status_inscricao st ON st.id = ins.id_status
-JOIN tbl_crianca cri         ON cri.id = ins.id_crianca
-JOIN tbl_aulas_atividade aa  ON aa.id = ins.id_aula_atividade
-JOIN tbl_atividades atv      ON atv.id = aa.id_atividade
-JOIN tbl_categoria cat       ON cat.id = atv.id_categoria
-JOIN tbl_instituicao inst    ON inst.id = atv.id_instituicao;
-
-
--- Triggers: vagas_disponiveis
-
-DELIMITER $$
-
-CREATE TRIGGER trg_insc_ai
-AFTER INSERT ON tbl_inscricao
-FOR EACH ROW
-BEGIN
-  IF NEW.id_status = 2 THEN
-    UPDATE tbl_aulas_atividade
-      SET vagas_disponiveis = GREATEST(vagas_disponiveis - 1, 0)
-    WHERE id = NEW.id_aula_atividade;
-  END IF;
-END$$
-
-CREATE TRIGGER trg_insc_au
-AFTER UPDATE ON tbl_inscricao
-FOR EACH ROW
-BEGIN
-  IF OLD.id_status <> 2 AND NEW.id_status = 2 THEN
-    UPDATE tbl_aulas_atividade
-      SET vagas_disponiveis = GREATEST(vagas_disponiveis - 1, 0)
-    WHERE id = NEW.id_aula_atividade;
-  ELSEIF OLD.id_status = 2 AND NEW.id_status <> 2 THEN
-    UPDATE tbl_aulas_atividade
-      SET vagas_disponiveis = LEAST(vagas_disponiveis + 1, vagas_total)
-    WHERE id = NEW.id_aula_atividade;
-  END IF;
-END$$
-
-CREATE TRIGGER trg_insc_ad
-AFTER DELETE ON tbl_inscricao
-FOR EACH ROW
-BEGIN
-  IF OLD.id_status = 2 THEN
-    UPDATE tbl_aulas_atividade
-      SET vagas_disponiveis = LEAST(vagas_disponiveis + 1, vagas_total)
-    WHERE id = OLD.id_aula_atividade;
-  END IF;
-END$$
-
-DELIMITER ;
-
-
 -- Procedures de busca (com paginação)
 
 DELIMITER $$
@@ -430,62 +338,4 @@ BEGIN
   SELECT COUNT(*) AS total FROM filtrada;
 END $$
 
--- Atividades próximas (paginada)
-DROP PROCEDURE IF EXISTS sp_buscar_atividades_proximas $$
-CREATE PROCEDURE sp_buscar_atividades_proximas (
-  IN p_lat DECIMAL(10,7),
-  IN p_lng DECIMAL(10,7),
-  IN p_raio_km DECIMAL(10,3),
-  IN p_idade TINYINT UNSIGNED,
-  IN p_gratuita_only BOOLEAN,
-  IN p_id_categoria SMALLINT UNSIGNED,
-  IN p_pagina INT,
-  IN p_tamanho INT
-)
-BEGIN
-  DECLARE v_limite INT DEFAULT IFNULL(p_tamanho,20);
-  DECLARE v_offset INT DEFAULT GREATEST(IFNULL(p_pagina,1)-1,0) * IFNULL(p_tamanho,20);
-  DECLARE v_raio_deg DOUBLE;
 
-  IF p_raio_km IS NOT NULL THEN
-    SET v_raio_deg = p_raio_km / 111.32;
-  END IF;
-
-  WITH base AS (
-    SELECT
-      a.id AS atividade_id, a.titulo, a.descricao,
-      a.faixa_etaria_min, a.faixa_etaria_max,
-      a.gratuita, a.preco,
-      c.nome AS categoria,
-      i.id AS instituicao_id, i.nome AS instituicao,
-      e.cidade, e.estado,
-      ST_Distance_Sphere(e.geo, ST_SRID(POINT(p_lng,p_lat),4326))/1000 AS distancia_km
-    FROM tbl_atividades a
-    JOIN tbl_categoria  c ON c.id = a.id_categoria
-    JOIN tbl_instituicao i ON i.id = a.id_instituicao
-    JOIN tbl_endereco   e ON e.id = i.id_endereco
-    WHERE a.ativo = TRUE
-      AND (p_id_categoria IS NULL OR a.id_categoria = p_id_categoria)
-      AND (p_gratuita_only = FALSE OR a.gratuita = TRUE)
-      AND (p_idade IS NULL OR (a.faixa_etaria_min <= p_idade AND p_idade <= a.faixa_etaria_max))
-      AND (p_raio_km IS NULL OR MBRWithin(e.geo, ST_Buffer(ST_SRID(POINT(p_lng,p_lat),4326), v_raio_deg)))
-  ),
-  filtrada AS (
-    SELECT * FROM base
-    WHERE (p_raio_km IS NULL OR distancia_km <= p_raio_km)
-  )
-  SELECT *
-  FROM filtrada
-  ORDER BY distancia_km ASC, titulo ASC
-  LIMIT v_limite OFFSET v_offset;
-
-  SELECT COUNT(*) AS total FROM filtrada;
-END $$
-DELIMITER ;
-
-
--- Exemplos de uso
-
--- CALL sp_buscar_instituicoes('Vila Mariana', -23.55, -46.63, 5, 1, 20);
--- CALL sp_buscar_instituicoes(NULL, -23.55, -46.63, 3, 1, 10);
--- CALL sp_buscar_atividades_proximas(-23.55, -46.63, 5, 12, TRUE, NULL, 1, 20);
