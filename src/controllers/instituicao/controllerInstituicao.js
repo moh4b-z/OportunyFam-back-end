@@ -45,11 +45,19 @@ const postLoginInstituicao = async (request, response) => {
     response.json(result)
 }
 
+const getSearchInstituicoes = async (request, response) => {
+    let params = request.query
+    let result = await servicesInstituicao.buscarInstituicoesPorNome(params)
+    response.status(result.status_code)
+    response.json(result)
+}
+
 module.exports = {
     postInstituicao,
     putInstituicao,
     deleteInstituicao,
     getSearchAllInstituicao,
     getSearchInstituicao,
-    postLoginInstituicao
+    postLoginInstituicao,
+    getSearchInstituicoes
 }

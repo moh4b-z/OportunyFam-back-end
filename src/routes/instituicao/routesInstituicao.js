@@ -28,9 +28,14 @@ router.get(
     controllerInstituicao.getSearchInstituicao
 )
 
-router.post(
+router.put(
     '/login',
     controllerInstituicao.postLoginInstituicao
+)
+
+router.get(
+    '', 
+    controllerInstituicao.getSearchInstituicoes
 )
 
 module.exports = router

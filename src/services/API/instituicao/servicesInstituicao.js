@@ -248,11 +248,93 @@ async function loginInstituicao(dadosLogin, contentType){
     }
 }
 
+async function buscarInstituicoesPorNome(params) {
+    try {
+        const nomeBusca = params.busca || null
+        const pagina = params.pagina || 1
+        const tamanho = params.tamanho || 20
+
+        // Validação básica de paginação
+        if (!CORRECTION.CHECK_ID(pagina) || !CORRECTION.CHECK_ID(tamanho)) {
+            return MENSAGE.ERROR_INVALID_PARAM
+        }
+
+        const resultDAO = await instituicaoDAO.selectSearchInstituicoesByNome(nomeBusca, pagina, tamanho)
+
+        if (!resultDAO) {
+            return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
+        }
+
+        const { instituicoes, total } = resultDAO
+        const tamanhoInt = parseInt(tamanho)
+        const paginaAtualInt = parseInt(pagina)
+        const totalPaginas = Math.ceil(total / tamanhoInt)
+
+        if (instituicoes.length === 0) {
+            return MENSAGE.ERROR_NOT_FOUND
+        }
+
+        // --- Lógica de URL para a Próxima Página ---
+        let nextUrl = null
+        if (paginaAtualInt < totalPaginas) {
+            const nextPage = paginaAtualInt + 1
+            
+            const queryParams = new URLSearchParams()
+            
+            // Adiciona a busca (se existir)
+            if (nomeBusca) {
+                queryParams.append('busca', nomeBusca)
+            }
+            // Adiciona o tamanho (se for diferente do padrão 20)
+            if (tamanhoInt !== 20) {
+                 queryParams.append('tamanho', tamanhoInt.toString())
+            }
+            
+            // Adiciona o número da próxima página
+            queryParams.append('pagina', nextPage.toString())
+
+            let nextUrl = null
+            if (paginaAtualInt < totalPaginas) {
+                const nextParams = new URLSearchParams(queryParams.toString()) // Copia os parâmetros base
+                nextParams.append('pagina', (paginaAtualInt + 1).toString())
+                nextUrl = `${MENSAGE.API_BASE_URL}/v1/oportunyfam/instituicoes?${queryParams.toString()}`
+            }
+
+            let prevUrl = null
+            if (paginaAtualInt > 1) {
+                const prevParams = new URLSearchParams(queryParams.toString()) // Copia os parâmetros base
+                prevParams.append('pagina', (paginaAtualInt - 1).toString())
+                prevUrl = `${baseUrlPath}?${prevParams.toString()}`
+            }
+        }
+        
+        // Retorno formatado
+        return {
+            ...MENSAGE.SUCCESS_REQUEST,
+            metadata: {
+                pagina_atual: paginaAtualInt,
+                tamanho_pagina: tamanhoInt,
+                total_registros: total,
+                total_paginas: totalPaginas,
+                link_proxima_pagina: nextUrl,
+                link_pagina_anterior: prevUrl
+            },
+            instituicoes: instituicoes
+        }
+
+    } catch (error) {
+        console.error(error)
+        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
+    }
+}
+
+
 module.exports = {
     inserirInstituicao,
     atualizarInstituicao,
     excluirInstituicao,
     listarTodasInstituicoes,
     buscarInstituicao,
-    loginInstituicao
+    loginInstituicao,
+    buscarInstituicoesPorNome
 }

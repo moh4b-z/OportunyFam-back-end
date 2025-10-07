@@ -1,4 +1,7 @@
 
+const API_BASE_URL = 'http://localhost:8080'
+
+
 /************************* MENSAGENS DE ERRO *************************/
 
 const ERROR_REQUIRED_FIELDS = {
@@ -77,6 +80,8 @@ const SUCCESS_LOGIN = {
 
 
 module.exports = {
+    API_BASE_URL,
+
     ERROR_REQUIRED_FIELDS,
     ERROR_INTERNAL_SERVER_MODEL,
     ERROR_INTERNAL_SERVER_SERVICES,
