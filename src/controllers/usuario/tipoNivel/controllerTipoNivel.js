@@ -1,5 +1,4 @@
-// src/controllers/tipoNivel/controllerTipoNivel.js
-const servicesTipoNivel = require("../../services/API/tipoNivel/servicesTipoNivel")
+const servicesTipoNivel = require("../../../services/API/usuario/tipoNivel/servicesTipoNivel")
 
 const postTipoNivel = async (request, response) => {
     let contentType = request.headers['content-type']

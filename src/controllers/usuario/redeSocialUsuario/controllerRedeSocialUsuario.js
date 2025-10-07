@@ -1,6 +1,4 @@
-// src/controllers/redeSocialUsuario/controllerRedeSocialUsuario.js
-
-const servicesRedeSocialUsuario = require("../../services/API/redeSocialUsuario/servicesRedeSocialUsuario")
+const servicesRedeSocialUsuario = require("../../../services/API/usuario/redeSocialUsuario/servicesRedeSocialUsuario")
 
 const postRedeSocialUsuario = async (request, response) => {
     let contentType = request.headers['content-type']

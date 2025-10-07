@@ -3,9 +3,9 @@ const CORRECTION = require("../../../utils/inputCheck")
 const TableCORRECTION = require("../../../utils/tablesCheck")
 const encryptionFunction = require("../../../utils/encryptionFunction")
 const instituicaoDAO = require("../../../model/DAO/instituicao/instituicao")
-const usuarioDAO = require("../../../model/DAO/usuario/usuario") // Reutiliza a função de validação de e-mail
-const instituicaoEnderecoDAO = require("../../../model/DAO/instituicaoEndereco/instituicaoEndereco") 
-const instituicaoTipoInstituicaoDAO = require("../../../model/DAO/instituicao/instituicaoTipoInstituicao/instituicaoTipoInstituicao") // NOVO DAO
+const usuarioDAO = require("../../../model/DAO/usuario/usuario")
+const instituicaoEnderecoDAO = require("../../../model/DAO/instituicao/instituicaoEndereco/instituicaoEndereco") 
+const instituicaoTipoInstituicaoDAO = require("../../../model/DAO/instituicao/instituicaoTipoInstituicao/instituicaoTipoInstituicao") 
 const servicesEndereco = require("../endereco/servicesEndereco")
 
 async function inserirInstituicao(dadosInstituicao, contentType){

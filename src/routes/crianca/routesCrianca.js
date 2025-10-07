@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const controllerCrianca = require('../../controllers/crianca')
+const controllerCrianca = require('../../controllers/crianca/controllerCrianca')
 
 router.post(
     '/',

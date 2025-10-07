@@ -9,18 +9,8 @@ datasource mysql {
   url      = env("DATABASE_URL_MYSQL")
 }
 
-datasource mongo {
-  provider = "mongodb"
-  url      = env("DATABASE_URL_MONGO")
-}
-
 generator client {
   provider = "prisma-client-js"
   output   = "./generated/mysql" 
   previewFeatures = ["multiSchema"]
-}
-
-generator mongoClient {
-  provider = "prisma-client-js"
-  output   = "./generated/mongo" 
 }

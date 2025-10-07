@@ -1,6 +1,5 @@
-// src/model/DAO/atividade/aula.js
-const { PrismaClient: MySQLClient } = require('../../../generated/mysql')
-const prismaMySQL = new MySQLClient()
+const { PrismaClient } = require('@prisma/client')
+const prismaMySQL = PrismaClient
 
 async function insertAula(aula){
     try {

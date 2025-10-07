@@ -1,7 +1,7 @@
-const MENSAGE = require("../../../modulo/config")
-const CORRECTION = require("../../../utils/inputCheck")
-const TableCORRECTION = require("../../../utils/tablesCheck")
-const tipoNivelDAO = require("../../../model/DAO/usuario/tipoNivel/tipoNivel")
+const MENSAGE = require("../../../../modulo/config")
+const CORRECTION = require("../../../../utils/inputCheck")
+const TableCORRECTION = require("../../../../utils/tablesCheck")
+const tipoNivelDAO = require("../../../../model/DAO/usuario/tipoNivel/tipoNivel")
 
 async function inserirTipoNivel(dadosTipoNivel, contentType){
     try {

@@ -1,4 +1,3 @@
-// src/controllers/usuario/controllerUsuario.js
 const servicesUsuario = require("../../services/API/usuario/servicesUsuario")
 
 const postUsuario = async (request, response) => {

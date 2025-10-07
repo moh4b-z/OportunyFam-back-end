@@ -1,5 +1,5 @@
-const MENSAGE = require("../../../modulo/config")
-const CORRECTION = require("../../../utils/inputCheck")
+const MENSAGE = require("../../../../modulo/config")
+const CORRECTION = require("../../../../utils/inputCheck")
 const tipoInstituicaoDAO = require("../../../../model/DAO/instituicao/tipoInstituicao/tipoInstituicao")
 
 async function inserirTipoInstituicao(dadosTipo, contentType){
