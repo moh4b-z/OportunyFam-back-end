@@ -99,6 +99,7 @@ CREATE TABLE tbl_instituicao (
   nome        VARCHAR(200) NOT NULL,
   logo        VARCHAR(400),
   cnpj        VARCHAR(14) NOT NULL,
+  telefone VARCHAR(16) NOT NULL,
   email       VARCHAR(150) NOT NULL UNIQUE,
   senha       VARCHAR(256) NOT NULL,
   descricao   TEXT,

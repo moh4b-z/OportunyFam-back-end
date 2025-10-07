@@ -1,5 +1,5 @@
 const { PrismaClient } = require('@prisma/client')
-const prismaMySQL = PrismaClient
+const prismaMySQ = new PrismaClient()
 
 async function  insertCrianca(crianca){
     try {

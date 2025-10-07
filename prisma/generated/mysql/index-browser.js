@@ -120,9 +120,279 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.Tbl_atividadesScalarFieldEnum = {
+  id: 'id',
+  id_instituicao: 'id_instituicao',
+  id_categoria: 'id_categoria',
+  titulo: 'titulo',
+  descricao: 'descricao',
+  faixa_etaria_min: 'faixa_etaria_min',
+  faixa_etaria_max: 'faixa_etaria_max',
+  gratuita: 'gratuita',
+  preco: 'preco',
+  ativo: 'ativo'
+};
+
+exports.Prisma.Tbl_aulas_atividadeScalarFieldEnum = {
+  id: 'id',
+  id_atividade: 'id_atividade',
+  dia_semana: 'dia_semana',
+  hora_inicio: 'hora_inicio',
+  hora_fim: 'hora_fim',
+  vagas_total: 'vagas_total',
+  vagas_disponiveis: 'vagas_disponiveis',
+  ativo: 'ativo'
+};
+
+exports.Prisma.Tbl_categoriaScalarFieldEnum = {
+  id: 'id',
+  nome: 'nome'
+};
+
+exports.Prisma.Tbl_criancaScalarFieldEnum = {
+  id: 'id',
+  nome: 'nome',
+  foto_perfil: 'foto_perfil',
+  email: 'email',
+  cpf: 'cpf',
+  senha: 'senha',
+  data_nascimento: 'data_nascimento',
+  criado_em: 'criado_em',
+  id_sexo: 'id_sexo'
+};
+
+exports.Prisma.Tbl_enderecoScalarFieldEnum = {
+  id: 'id',
+  osm_id: 'osm_id',
+  nome: 'nome',
+  tipo: 'tipo',
+  cep: 'cep',
+  logradouro: 'logradouro',
+  numero: 'numero',
+  complemento: 'complemento',
+  bairro: 'bairro',
+  cidade: 'cidade',
+  estado: 'estado',
+  telefone: 'telefone',
+  site: 'site',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  atualizado_em: 'atualizado_em',
+  criado_em: 'criado_em'
+};
+
+exports.Prisma.Tbl_instituicaoScalarFieldEnum = {
+  id: 'id',
+  nome: 'nome',
+  logo: 'logo',
+  cnpj: 'cnpj',
+  telefone: 'telefone',
+  email: 'email',
+  senha: 'senha',
+  descricao: 'descricao',
+  criado_em: 'criado_em',
+  id_endereco: 'id_endereco'
+};
+
+exports.Prisma.Tbl_instituicao_enderecoScalarFieldEnum = {
+  id: 'id',
+  descricao: 'descricao',
+  id_instituicao: 'id_instituicao',
+  id_endereco: 'id_endereco'
+};
+
+exports.Prisma.Tbl_instituicao_tipo_instituicaoScalarFieldEnum = {
+  id: 'id',
+  id_instituicao: 'id_instituicao',
+  id_tipo_instituicao: 'id_tipo_instituicao'
+};
+
+exports.Prisma.Tbl_rede_socialScalarFieldEnum = {
+  id: 'id',
+  nome: 'nome',
+  icone: 'icone'
+};
+
+exports.Prisma.Tbl_rede_social_instituicaoScalarFieldEnum = {
+  id: 'id',
+  link_perfil: 'link_perfil',
+  link_abreviado: 'link_abreviado',
+  numero_telefone: 'numero_telefone',
+  descricao: 'descricao',
+  id_instituicao: 'id_instituicao',
+  id_rede_social: 'id_rede_social'
+};
+
+exports.Prisma.Tbl_rede_social_usuarioScalarFieldEnum = {
+  id: 'id',
+  link_perfil: 'link_perfil',
+  link_abreviado: 'link_abreviado',
+  numero_telefone: 'numero_telefone',
+  descricao: 'descricao',
+  id_usuario: 'id_usuario',
+  id_rede_social: 'id_rede_social'
+};
+
+exports.Prisma.Tbl_responsavelScalarFieldEnum = {
+  id: 'id',
+  criado_em: 'criado_em',
+  id_usuario: 'id_usuario',
+  id_crianca: 'id_crianca'
+};
+
+exports.Prisma.Tbl_sexoScalarFieldEnum = {
+  id: 'id',
+  nome: 'nome'
+};
+
+exports.Prisma.Tbl_tipo_instituicaoScalarFieldEnum = {
+  id: 'id',
+  nome: 'nome'
+};
+
+exports.Prisma.Tbl_tipo_nivelScalarFieldEnum = {
+  id: 'id',
+  nivel: 'nivel'
+};
+
+exports.Prisma.Tbl_usuarioScalarFieldEnum = {
+  id: 'id',
+  nome: 'nome',
+  foto_perfil: 'foto_perfil',
+  email: 'email',
+  senha: 'senha',
+  data_nascimento: 'data_nascimento',
+  cpf: 'cpf',
+  criado_em: 'criado_em',
+  atualizado_em: 'atualizado_em',
+  id_sexo: 'id_sexo',
+  id_tipo_nivel: 'id_tipo_nivel'
+};
+
+exports.Prisma.Tbl_usuario_enderecoScalarFieldEnum = {
+  id: 'id',
+  descricao: 'descricao',
+  id_usuario: 'id_usuario',
+  id_endereco: 'id_endereco'
+};
+
+exports.Prisma.SortOrder = {
+  asc: 'asc',
+  desc: 'desc'
+};
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+
+exports.Prisma.tbl_atividadesOrderByRelevanceFieldEnum = {
+  titulo: 'titulo',
+  descricao: 'descricao'
+};
+
+exports.Prisma.tbl_categoriaOrderByRelevanceFieldEnum = {
+  nome: 'nome'
+};
+
+exports.Prisma.tbl_criancaOrderByRelevanceFieldEnum = {
+  nome: 'nome',
+  foto_perfil: 'foto_perfil',
+  email: 'email',
+  cpf: 'cpf',
+  senha: 'senha'
+};
+
+exports.Prisma.tbl_enderecoOrderByRelevanceFieldEnum = {
+  nome: 'nome',
+  tipo: 'tipo',
+  cep: 'cep',
+  logradouro: 'logradouro',
+  numero: 'numero',
+  complemento: 'complemento',
+  bairro: 'bairro',
+  cidade: 'cidade',
+  estado: 'estado',
+  telefone: 'telefone',
+  site: 'site'
+};
+
+exports.Prisma.tbl_instituicaoOrderByRelevanceFieldEnum = {
+  nome: 'nome',
+  logo: 'logo',
+  cnpj: 'cnpj',
+  telefone: 'telefone',
+  email: 'email',
+  senha: 'senha',
+  descricao: 'descricao'
+};
+
+exports.Prisma.tbl_instituicao_enderecoOrderByRelevanceFieldEnum = {
+  descricao: 'descricao'
+};
+
+exports.Prisma.tbl_rede_socialOrderByRelevanceFieldEnum = {
+  nome: 'nome',
+  icone: 'icone'
+};
+
+exports.Prisma.tbl_rede_social_instituicaoOrderByRelevanceFieldEnum = {
+  link_perfil: 'link_perfil',
+  link_abreviado: 'link_abreviado',
+  numero_telefone: 'numero_telefone',
+  descricao: 'descricao'
+};
+
+exports.Prisma.tbl_rede_social_usuarioOrderByRelevanceFieldEnum = {
+  link_perfil: 'link_perfil',
+  link_abreviado: 'link_abreviado',
+  numero_telefone: 'numero_telefone',
+  descricao: 'descricao'
+};
+
+exports.Prisma.tbl_sexoOrderByRelevanceFieldEnum = {
+  nome: 'nome'
+};
+
+exports.Prisma.tbl_tipo_instituicaoOrderByRelevanceFieldEnum = {
+  nome: 'nome'
+};
+
+exports.Prisma.tbl_tipo_nivelOrderByRelevanceFieldEnum = {
+  nivel: 'nivel'
+};
+
+exports.Prisma.tbl_usuarioOrderByRelevanceFieldEnum = {
+  nome: 'nome',
+  foto_perfil: 'foto_perfil',
+  email: 'email',
+  senha: 'senha',
+  cpf: 'cpf'
+};
+
+exports.Prisma.tbl_usuario_enderecoOrderByRelevanceFieldEnum = {
+  descricao: 'descricao'
+};
+
 
 exports.Prisma.ModelName = {
-
+  tbl_atividades: 'tbl_atividades',
+  tbl_aulas_atividade: 'tbl_aulas_atividade',
+  tbl_categoria: 'tbl_categoria',
+  tbl_crianca: 'tbl_crianca',
+  tbl_endereco: 'tbl_endereco',
+  tbl_instituicao: 'tbl_instituicao',
+  tbl_instituicao_endereco: 'tbl_instituicao_endereco',
+  tbl_instituicao_tipo_instituicao: 'tbl_instituicao_tipo_instituicao',
+  tbl_rede_social: 'tbl_rede_social',
+  tbl_rede_social_instituicao: 'tbl_rede_social_instituicao',
+  tbl_rede_social_usuario: 'tbl_rede_social_usuario',
+  tbl_responsavel: 'tbl_responsavel',
+  tbl_sexo: 'tbl_sexo',
+  tbl_tipo_instituicao: 'tbl_tipo_instituicao',
+  tbl_tipo_nivel: 'tbl_tipo_nivel',
+  tbl_usuario: 'tbl_usuario',
+  tbl_usuario_endereco: 'tbl_usuario_endereco'
 };
 
 /**

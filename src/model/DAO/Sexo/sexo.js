@@ -1,5 +1,5 @@
-const { PrismaClient } = require('@prisma/client')
-const prismaMySQL = PrismaClient
+const { PrismaClient } = require('../../../../prisma/generated/mysql')
+const prismaMySQL = new PrismaClient()
 
 async function insertSexo(sexo) {
     try {

@@ -1,16 +1,243 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+generator client {
+  provider        = "prisma-client-js"
+  output          = "./generated/mysql"
+  previewFeatures = ["multiSchema"]
+}
 
 datasource mysql {
   provider = "mysql"
   url      = env("DATABASE_URL_MYSQL")
 }
 
-generator client {
-  provider        = "prisma-client-js"
-  output          = "./generated/mysql"
-  previewFeatures = ["multiSchema"]
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model tbl_atividades {
+  id                  Int                   @id @default(autoincrement())
+  id_instituicao      Int
+  id_categoria        Int                   @mysql.UnsignedSmallInt
+  titulo              String                @mysql.VarChar(140)
+  descricao           String?               @mysql.Text
+  faixa_etaria_min    Int                   @mysql.UnsignedInt
+  faixa_etaria_max    Int                   @mysql.UnsignedInt
+  gratuita            Boolean               @default(true)
+  preco               Decimal               @default(0.00) @mysql.Decimal(10, 2)
+  ativo               Boolean               @default(true)
+  tbl_categoria       tbl_categoria         @relation(fields: [id_categoria], references: [id], onUpdate: NoAction, map: "fk_ativ_cat")
+  tbl_instituicao     tbl_instituicao       @relation(fields: [id_instituicao], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_ativ_inst")
+  tbl_aulas_atividade tbl_aulas_atividade[]
+
+  @@index([id_categoria], map: "fk_ativ_cat")
+  @@index([id_instituicao], map: "fk_ativ_inst")
+  @@fulltext([titulo, descricao], map: "ft_ativ")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model tbl_aulas_atividade {
+  id                Int            @id @default(autoincrement())
+  id_atividade      Int
+  dia_semana        Int            @mysql.TinyInt
+  hora_inicio       DateTime       @mysql.Time(0)
+  hora_fim          DateTime       @mysql.Time(0)
+  vagas_total       Int            @mysql.UnsignedSmallInt
+  vagas_disponiveis Int            @mysql.UnsignedSmallInt
+  ativo             Boolean        @default(true)
+  tbl_atividades    tbl_atividades @relation(fields: [id_atividade], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_aula_ativ")
+
+  @@index([id_atividade], map: "fk_aula_ativ")
+}
+
+model tbl_categoria {
+  id             Int              @id @default(autoincrement()) @mysql.UnsignedSmallInt
+  nome           String           @unique(map: "nome") @mysql.VarChar(100)
+  tbl_atividades tbl_atividades[]
+}
+
+model tbl_crianca {
+  id              Int               @id @default(autoincrement())
+  nome            String            @mysql.VarChar(150)
+  foto_perfil     String?           @mysql.VarChar(400)
+  email           String?           @unique(map: "email") @mysql.VarChar(150)
+  cpf             String            @mysql.VarChar(11)
+  senha           String            @mysql.VarChar(256)
+  data_nascimento DateTime          @mysql.Date
+  criado_em       DateTime          @default(now()) @mysql.Timestamp(0)
+  id_sexo         Int
+  tbl_sexo        tbl_sexo          @relation(fields: [id_sexo], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_crianca_sexo")
+  tbl_responsavel tbl_responsavel[]
+
+  @@index([id_sexo], map: "fk_crianca_sexo")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model tbl_endereco {
+  id                       Int                        @id @default(autoincrement())
+  osm_id                   BigInt?                    @unique(map: "uk_end_osm")
+  nome                     String?                    @mysql.VarChar(200)
+  tipo                     String?                    @mysql.VarChar(100)
+  cep                      String?                    @mysql.VarChar(9)
+  logradouro               String?                    @mysql.VarChar(200)
+  numero                   String?                    @mysql.VarChar(20)
+  complemento              String?                    @mysql.VarChar(100)
+  bairro                   String?                    @mysql.VarChar(100)
+  cidade                   String?                    @mysql.VarChar(100)
+  estado                   String?                    @mysql.VarChar(2)
+  telefone                 String?                    @mysql.VarChar(50)
+  site                     String?                    @mysql.VarChar(255)
+  latitude                 Decimal                    @mysql.Decimal(10, 7)
+  longitude                Decimal                    @mysql.Decimal(10, 7)
+  geo                      Unsupported("point")
+  atualizado_em            DateTime                   @default(now()) @mysql.Timestamp(0)
+  criado_em                DateTime                   @default(now()) @mysql.Timestamp(0)
+  tbl_instituicao          tbl_instituicao[]
+  tbl_instituicao_endereco tbl_instituicao_endereco[]
+  tbl_usuario_endereco     tbl_usuario_endereco[]
+
+  @@index([geo(length: 32)], map: "spx_end_geo")
+  @@fulltext([nome, logradouro, bairro, cidade], map: "ft_end")
+}
+
+model tbl_instituicao {
+  id                               Int                                @id @default(autoincrement())
+  nome                             String                             @mysql.VarChar(200)
+  logo                             String?                            @mysql.VarChar(400)
+  cnpj                             String                             @mysql.VarChar(14)
+  telefone                         String                             @mysql.VarChar(16)
+  email                            String                             @unique(map: "email") @mysql.VarChar(150)
+  senha                            String                             @mysql.VarChar(256)
+  descricao                        String?                            @mysql.Text
+  criado_em                        DateTime                           @default(now()) @mysql.Timestamp(0)
+  id_endereco                      Int
+  tbl_atividades                   tbl_atividades[]
+  tbl_endereco                     tbl_endereco                       @relation(fields: [id_endereco], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_inst_endereco")
+  tbl_instituicao_endereco         tbl_instituicao_endereco[]
+  tbl_instituicao_tipo_instituicao tbl_instituicao_tipo_instituicao[]
+  tbl_rede_social_instituicao      tbl_rede_social_instituicao[]
+
+  @@index([id_endereco], map: "fk_inst_endereco")
+  @@fulltext([nome, descricao], map: "ft_inst")
+}
+
+model tbl_instituicao_endereco {
+  id              Int             @id @default(autoincrement())
+  descricao       String?         @mysql.VarChar(500)
+  id_instituicao  Int
+  id_endereco     Int
+  tbl_endereco    tbl_endereco    @relation(fields: [id_endereco], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_iend_end")
+  tbl_instituicao tbl_instituicao @relation(fields: [id_instituicao], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_iend_inst")
+
+  @@index([id_endereco], map: "fk_iend_end")
+  @@index([id_instituicao], map: "fk_iend_inst")
+}
+
+model tbl_instituicao_tipo_instituicao {
+  id                   Int                  @id @default(autoincrement())
+  id_instituicao       Int
+  id_tipo_instituicao  Int                  @mysql.UnsignedTinyInt
+  tbl_instituicao      tbl_instituicao      @relation(fields: [id_instituicao], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_it_inst")
+  tbl_tipo_instituicao tbl_tipo_instituicao @relation(fields: [id_tipo_instituicao], references: [id], onUpdate: NoAction, map: "fk_it_tipo")
+
+  @@unique([id_instituicao, id_tipo_instituicao], map: "uk_inst_tipo")
+  @@index([id_tipo_instituicao], map: "fk_it_tipo")
+}
+
+model tbl_rede_social {
+  id                          Int                           @id @default(autoincrement())
+  nome                        String                        @mysql.VarChar(100)
+  icone                       String                        @mysql.VarChar(300)
+  tbl_rede_social_instituicao tbl_rede_social_instituicao[]
+  tbl_rede_social_usuario     tbl_rede_social_usuario[]
+}
+
+model tbl_rede_social_instituicao {
+  id              Int             @id @default(autoincrement())
+  link_perfil     String?         @mysql.VarChar(255)
+  link_abreviado  String?         @mysql.VarChar(20)
+  numero_telefone String?         @mysql.VarChar(20)
+  descricao       String?         @mysql.Text
+  id_instituicao  Int
+  id_rede_social  Int
+  tbl_instituicao tbl_instituicao @relation(fields: [id_instituicao], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_rsi_inst")
+  tbl_rede_social tbl_rede_social @relation(fields: [id_rede_social], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rsi_rede_social")
+
+  @@index([id_instituicao], map: "fk_rsi_inst")
+  @@index([id_rede_social], map: "fk_rsi_rede_social")
+}
+
+model tbl_rede_social_usuario {
+  id              Int             @id @default(autoincrement())
+  link_perfil     String?         @mysql.VarChar(255)
+  link_abreviado  String?         @mysql.VarChar(20)
+  numero_telefone String?         @mysql.VarChar(20)
+  descricao       String?         @mysql.Text
+  id_usuario      Int
+  id_rede_social  Int
+  tbl_rede_social tbl_rede_social @relation(fields: [id_rede_social], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rsu_rede_social")
+  tbl_usuario     tbl_usuario     @relation(fields: [id_usuario], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_rsu_usuario")
+
+  @@index([id_rede_social], map: "fk_rsu_rede_social")
+  @@index([id_usuario], map: "fk_rsu_usuario")
+}
+
+model tbl_responsavel {
+  id          Int         @id @default(autoincrement())
+  criado_em   DateTime    @default(now()) @mysql.Timestamp(0)
+  id_usuario  Int
+  id_crianca  Int
+  tbl_crianca tbl_crianca @relation(fields: [id_crianca], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_resp_crianca")
+  tbl_usuario tbl_usuario @relation(fields: [id_usuario], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_resp_usuario")
+
+  @@index([id_crianca], map: "fk_resp_crianca")
+  @@index([id_usuario], map: "fk_resp_usuario")
+}
+
+model tbl_sexo {
+  id          Int           @id @default(autoincrement())
+  nome        String        @unique(map: "nome") @mysql.VarChar(50)
+  tbl_crianca tbl_crianca[]
+  tbl_usuario tbl_usuario[]
+}
+
+model tbl_tipo_instituicao {
+  id                               Int                                @id @default(autoincrement()) @mysql.UnsignedTinyInt
+  nome                             String                             @unique(map: "nome") @mysql.VarChar(80)
+  tbl_instituicao_tipo_instituicao tbl_instituicao_tipo_instituicao[]
+}
+
+model tbl_tipo_nivel {
+  id          Int           @id @default(autoincrement())
+  nivel       String        @unique(map: "nivel") @mysql.VarChar(100)
+  tbl_usuario tbl_usuario[]
+}
+
+model tbl_usuario {
+  id                      Int                       @id @default(autoincrement())
+  nome                    String                    @mysql.VarChar(100)
+  foto_perfil             String?                   @mysql.VarChar(400)
+  email                   String                    @unique(map: "email") @mysql.VarChar(150)
+  senha                   String                    @mysql.VarChar(256)
+  data_nascimento         DateTime                  @mysql.Date
+  cpf                     String                    @mysql.VarChar(11)
+  criado_em               DateTime                  @default(now()) @mysql.Timestamp(0)
+  atualizado_em           DateTime?                 @mysql.Timestamp(0)
+  id_sexo                 Int
+  id_tipo_nivel           Int
+  tbl_rede_social_usuario tbl_rede_social_usuario[]
+  tbl_responsavel         tbl_responsavel[]
+  tbl_sexo                tbl_sexo                  @relation(fields: [id_sexo], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_usuario_sexo")
+  tbl_tipo_nivel          tbl_tipo_nivel            @relation(fields: [id_tipo_nivel], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_usuario_tipo_nivel")
+  tbl_usuario_endereco    tbl_usuario_endereco[]
+
+  @@index([id_sexo], map: "fk_usuario_sexo")
+  @@index([id_tipo_nivel], map: "fk_usuario_tipo_nivel")
+}
+
+model tbl_usuario_endereco {
+  id           Int          @id @default(autoincrement())
+  descricao    String?      @mysql.VarChar(500)
+  id_usuario   Int
+  id_endereco  Int
+  tbl_endereco tbl_endereco @relation(fields: [id_endereco], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_uend_endereco")
+  tbl_usuario  tbl_usuario  @relation(fields: [id_usuario], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_uend_usuario")
+
+  @@index([id_endereco], map: "fk_uend_endereco")
+  @@index([id_usuario], map: "fk_uend_usuario")
 }

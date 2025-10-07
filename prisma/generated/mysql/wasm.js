@@ -92,9 +92,279 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.Tbl_atividadesScalarFieldEnum = {
+  id: 'id',
+  id_instituicao: 'id_instituicao',
+  id_categoria: 'id_categoria',
+  titulo: 'titulo',
+  descricao: 'descricao',
+  faixa_etaria_min: 'faixa_etaria_min',
+  faixa_etaria_max: 'faixa_etaria_max',
+  gratuita: 'gratuita',
+  preco: 'preco',
+  ativo: 'ativo'
+};
+
+exports.Prisma.Tbl_aulas_atividadeScalarFieldEnum = {
+  id: 'id',
+  id_atividade: 'id_atividade',
+  dia_semana: 'dia_semana',
+  hora_inicio: 'hora_inicio',
+  hora_fim: 'hora_fim',
+  vagas_total: 'vagas_total',
+  vagas_disponiveis: 'vagas_disponiveis',
+  ativo: 'ativo'
+};
+
+exports.Prisma.Tbl_categoriaScalarFieldEnum = {
+  id: 'id',
+  nome: 'nome'
+};
+
+exports.Prisma.Tbl_criancaScalarFieldEnum = {
+  id: 'id',
+  nome: 'nome',
+  foto_perfil: 'foto_perfil',
+  email: 'email',
+  cpf: 'cpf',
+  senha: 'senha',
+  data_nascimento: 'data_nascimento',
+  criado_em: 'criado_em',
+  id_sexo: 'id_sexo'
+};
+
+exports.Prisma.Tbl_enderecoScalarFieldEnum = {
+  id: 'id',
+  osm_id: 'osm_id',
+  nome: 'nome',
+  tipo: 'tipo',
+  cep: 'cep',
+  logradouro: 'logradouro',
+  numero: 'numero',
+  complemento: 'complemento',
+  bairro: 'bairro',
+  cidade: 'cidade',
+  estado: 'estado',
+  telefone: 'telefone',
+  site: 'site',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  atualizado_em: 'atualizado_em',
+  criado_em: 'criado_em'
+};
+
+exports.Prisma.Tbl_instituicaoScalarFieldEnum = {
+  id: 'id',
+  nome: 'nome',
+  logo: 'logo',
+  cnpj: 'cnpj',
+  telefone: 'telefone',
+  email: 'email',
+  senha: 'senha',
+  descricao: 'descricao',
+  criado_em: 'criado_em',
+  id_endereco: 'id_endereco'
+};
+
+exports.Prisma.Tbl_instituicao_enderecoScalarFieldEnum = {
+  id: 'id',
+  descricao: 'descricao',
+  id_instituicao: 'id_instituicao',
+  id_endereco: 'id_endereco'
+};
+
+exports.Prisma.Tbl_instituicao_tipo_instituicaoScalarFieldEnum = {
+  id: 'id',
+  id_instituicao: 'id_instituicao',
+  id_tipo_instituicao: 'id_tipo_instituicao'
+};
+
+exports.Prisma.Tbl_rede_socialScalarFieldEnum = {
+  id: 'id',
+  nome: 'nome',
+  icone: 'icone'
+};
+
+exports.Prisma.Tbl_rede_social_instituicaoScalarFieldEnum = {
+  id: 'id',
+  link_perfil: 'link_perfil',
+  link_abreviado: 'link_abreviado',
+  numero_telefone: 'numero_telefone',
+  descricao: 'descricao',
+  id_instituicao: 'id_instituicao',
+  id_rede_social: 'id_rede_social'
+};
+
+exports.Prisma.Tbl_rede_social_usuarioScalarFieldEnum = {
+  id: 'id',
+  link_perfil: 'link_perfil',
+  link_abreviado: 'link_abreviado',
+  numero_telefone: 'numero_telefone',
+  descricao: 'descricao',
+  id_usuario: 'id_usuario',
+  id_rede_social: 'id_rede_social'
+};
+
+exports.Prisma.Tbl_responsavelScalarFieldEnum = {
+  id: 'id',
+  criado_em: 'criado_em',
+  id_usuario: 'id_usuario',
+  id_crianca: 'id_crianca'
+};
+
+exports.Prisma.Tbl_sexoScalarFieldEnum = {
+  id: 'id',
+  nome: 'nome'
+};
+
+exports.Prisma.Tbl_tipo_instituicaoScalarFieldEnum = {
+  id: 'id',
+  nome: 'nome'
+};
+
+exports.Prisma.Tbl_tipo_nivelScalarFieldEnum = {
+  id: 'id',
+  nivel: 'nivel'
+};
+
+exports.Prisma.Tbl_usuarioScalarFieldEnum = {
+  id: 'id',
+  nome: 'nome',
+  foto_perfil: 'foto_perfil',
+  email: 'email',
+  senha: 'senha',
+  data_nascimento: 'data_nascimento',
+  cpf: 'cpf',
+  criado_em: 'criado_em',
+  atualizado_em: 'atualizado_em',
+  id_sexo: 'id_sexo',
+  id_tipo_nivel: 'id_tipo_nivel'
+};
+
+exports.Prisma.Tbl_usuario_enderecoScalarFieldEnum = {
+  id: 'id',
+  descricao: 'descricao',
+  id_usuario: 'id_usuario',
+  id_endereco: 'id_endereco'
+};
+
+exports.Prisma.SortOrder = {
+  asc: 'asc',
+  desc: 'desc'
+};
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+
+exports.Prisma.tbl_atividadesOrderByRelevanceFieldEnum = {
+  titulo: 'titulo',
+  descricao: 'descricao'
+};
+
+exports.Prisma.tbl_categoriaOrderByRelevanceFieldEnum = {
+  nome: 'nome'
+};
+
+exports.Prisma.tbl_criancaOrderByRelevanceFieldEnum = {
+  nome: 'nome',
+  foto_perfil: 'foto_perfil',
+  email: 'email',
+  cpf: 'cpf',
+  senha: 'senha'
+};
+
+exports.Prisma.tbl_enderecoOrderByRelevanceFieldEnum = {
+  nome: 'nome',
+  tipo: 'tipo',
+  cep: 'cep',
+  logradouro: 'logradouro',
+  numero: 'numero',
+  complemento: 'complemento',
+  bairro: 'bairro',
+  cidade: 'cidade',
+  estado: 'estado',
+  telefone: 'telefone',
+  site: 'site'
+};
+
+exports.Prisma.tbl_instituicaoOrderByRelevanceFieldEnum = {
+  nome: 'nome',
+  logo: 'logo',
+  cnpj: 'cnpj',
+  telefone: 'telefone',
+  email: 'email',
+  senha: 'senha',
+  descricao: 'descricao'
+};
+
+exports.Prisma.tbl_instituicao_enderecoOrderByRelevanceFieldEnum = {
+  descricao: 'descricao'
+};
+
+exports.Prisma.tbl_rede_socialOrderByRelevanceFieldEnum = {
+  nome: 'nome',
+  icone: 'icone'
+};
+
+exports.Prisma.tbl_rede_social_instituicaoOrderByRelevanceFieldEnum = {
+  link_perfil: 'link_perfil',
+  link_abreviado: 'link_abreviado',
+  numero_telefone: 'numero_telefone',
+  descricao: 'descricao'
+};
+
+exports.Prisma.tbl_rede_social_usuarioOrderByRelevanceFieldEnum = {
+  link_perfil: 'link_perfil',
+  link_abreviado: 'link_abreviado',
+  numero_telefone: 'numero_telefone',
+  descricao: 'descricao'
+};
+
+exports.Prisma.tbl_sexoOrderByRelevanceFieldEnum = {
+  nome: 'nome'
+};
+
+exports.Prisma.tbl_tipo_instituicaoOrderByRelevanceFieldEnum = {
+  nome: 'nome'
+};
+
+exports.Prisma.tbl_tipo_nivelOrderByRelevanceFieldEnum = {
+  nivel: 'nivel'
+};
+
+exports.Prisma.tbl_usuarioOrderByRelevanceFieldEnum = {
+  nome: 'nome',
+  foto_perfil: 'foto_perfil',
+  email: 'email',
+  senha: 'senha',
+  cpf: 'cpf'
+};
+
+exports.Prisma.tbl_usuario_enderecoOrderByRelevanceFieldEnum = {
+  descricao: 'descricao'
+};
+
 
 exports.Prisma.ModelName = {
-
+  tbl_atividades: 'tbl_atividades',
+  tbl_aulas_atividade: 'tbl_aulas_atividade',
+  tbl_categoria: 'tbl_categoria',
+  tbl_crianca: 'tbl_crianca',
+  tbl_endereco: 'tbl_endereco',
+  tbl_instituicao: 'tbl_instituicao',
+  tbl_instituicao_endereco: 'tbl_instituicao_endereco',
+  tbl_instituicao_tipo_instituicao: 'tbl_instituicao_tipo_instituicao',
+  tbl_rede_social: 'tbl_rede_social',
+  tbl_rede_social_instituicao: 'tbl_rede_social_instituicao',
+  tbl_rede_social_usuario: 'tbl_rede_social_usuario',
+  tbl_responsavel: 'tbl_responsavel',
+  tbl_sexo: 'tbl_sexo',
+  tbl_tipo_instituicao: 'tbl_tipo_instituicao',
+  tbl_tipo_nivel: 'tbl_tipo_nivel',
+  tbl_usuario: 'tbl_usuario',
+  tbl_usuario_endereco: 'tbl_usuario_endereco'
 };
 /**
  * Create the Client
@@ -146,13 +416,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ndatasource mysql {\n  provider = \"mysql\"\n  url      = env(\"DATABASE_URL_MYSQL\")\n}\n\ngenerator client {\n  provider        = \"prisma-client-js\"\n  output          = \"./generated/mysql\"\n  previewFeatures = [\"multiSchema\"]\n}\n",
-  "inlineSchemaHash": "b2f3b2dbd95e025def45e1dd81e5f5bf9e645bd39d1c636d23c695b9c6c24404",
+  "inlineSchema": "generator client {\n  provider        = \"prisma-client-js\"\n  output          = \"./generated/mysql\"\n  previewFeatures = [\"multiSchema\"]\n}\n\ndatasource mysql {\n  provider = \"mysql\"\n  url      = env(\"DATABASE_URL_MYSQL\")\n}\n\n/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.\nmodel tbl_atividades {\n  id                  Int                   @id @default(autoincrement())\n  id_instituicao      Int\n  id_categoria        Int                   @mysql.UnsignedSmallInt\n  titulo              String                @mysql.VarChar(140)\n  descricao           String?               @mysql.Text\n  faixa_etaria_min    Int                   @mysql.UnsignedInt\n  faixa_etaria_max    Int                   @mysql.UnsignedInt\n  gratuita            Boolean               @default(true)\n  preco               Decimal               @default(0.00) @mysql.Decimal(10, 2)\n  ativo               Boolean               @default(true)\n  tbl_categoria       tbl_categoria         @relation(fields: [id_categoria], references: [id], onUpdate: NoAction, map: \"fk_ativ_cat\")\n  tbl_instituicao     tbl_instituicao       @relation(fields: [id_instituicao], references: [id], onDelete: Cascade, onUpdate: NoAction, map: \"fk_ativ_inst\")\n  tbl_aulas_atividade tbl_aulas_atividade[]\n\n  @@index([id_categoria], map: \"fk_ativ_cat\")\n  @@index([id_instituicao], map: \"fk_ativ_inst\")\n  @@fulltext([titulo, descricao], map: \"ft_ativ\")\n}\n\n/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.\nmodel tbl_aulas_atividade {\n  id                Int            @id @default(autoincrement())\n  id_atividade      Int\n  dia_semana        Int            @mysql.TinyInt\n  hora_inicio       DateTime       @mysql.Time(0)\n  hora_fim          DateTime       @mysql.Time(0)\n  vagas_total       Int            @mysql.UnsignedSmallInt\n  vagas_disponiveis Int            @mysql.UnsignedSmallInt\n  ativo             Boolean        @default(true)\n  tbl_atividades    tbl_atividades @relation(fields: [id_atividade], references: [id], onDelete: Cascade, onUpdate: NoAction, map: \"fk_aula_ativ\")\n\n  @@index([id_atividade], map: \"fk_aula_ativ\")\n}\n\nmodel tbl_categoria {\n  id             Int              @id @default(autoincrement()) @mysql.UnsignedSmallInt\n  nome           String           @unique(map: \"nome\") @mysql.VarChar(100)\n  tbl_atividades tbl_atividades[]\n}\n\nmodel tbl_crianca {\n  id              Int               @id @default(autoincrement())\n  nome            String            @mysql.VarChar(150)\n  foto_perfil     String?           @mysql.VarChar(400)\n  email           String?           @unique(map: \"email\") @mysql.VarChar(150)\n  cpf             String            @mysql.VarChar(11)\n  senha           String            @mysql.VarChar(256)\n  data_nascimento DateTime          @mysql.Date\n  criado_em       DateTime          @default(now()) @mysql.Timestamp(0)\n  id_sexo         Int\n  tbl_sexo        tbl_sexo          @relation(fields: [id_sexo], references: [id], onDelete: NoAction, onUpdate: NoAction, map: \"fk_crianca_sexo\")\n  tbl_responsavel tbl_responsavel[]\n\n  @@index([id_sexo], map: \"fk_crianca_sexo\")\n}\n\n/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.\nmodel tbl_endereco {\n  id                       Int                        @id @default(autoincrement())\n  osm_id                   BigInt?                    @unique(map: \"uk_end_osm\")\n  nome                     String?                    @mysql.VarChar(200)\n  tipo                     String?                    @mysql.VarChar(100)\n  cep                      String?                    @mysql.VarChar(9)\n  logradouro               String?                    @mysql.VarChar(200)\n  numero                   String?                    @mysql.VarChar(20)\n  complemento              String?                    @mysql.VarChar(100)\n  bairro                   String?                    @mysql.VarChar(100)\n  cidade                   String?                    @mysql.VarChar(100)\n  estado                   String?                    @mysql.VarChar(2)\n  telefone                 String?                    @mysql.VarChar(50)\n  site                     String?                    @mysql.VarChar(255)\n  latitude                 Decimal                    @mysql.Decimal(10, 7)\n  longitude                Decimal                    @mysql.Decimal(10, 7)\n  geo                      Unsupported(\"point\")\n  atualizado_em            DateTime                   @default(now()) @mysql.Timestamp(0)\n  criado_em                DateTime                   @default(now()) @mysql.Timestamp(0)\n  tbl_instituicao          tbl_instituicao[]\n  tbl_instituicao_endereco tbl_instituicao_endereco[]\n  tbl_usuario_endereco     tbl_usuario_endereco[]\n\n  @@index([geo(length: 32)], map: \"spx_end_geo\")\n  @@fulltext([nome, logradouro, bairro, cidade], map: \"ft_end\")\n}\n\nmodel tbl_instituicao {\n  id                               Int                                @id @default(autoincrement())\n  nome                             String                             @mysql.VarChar(200)\n  logo                             String?                            @mysql.VarChar(400)\n  cnpj                             String                             @mysql.VarChar(14)\n  telefone                         String                             @mysql.VarChar(16)\n  email                            String                             @unique(map: \"email\") @mysql.VarChar(150)\n  senha                            String                             @mysql.VarChar(256)\n  descricao                        String?                            @mysql.Text\n  criado_em                        DateTime                           @default(now()) @mysql.Timestamp(0)\n  id_endereco                      Int\n  tbl_atividades                   tbl_atividades[]\n  tbl_endereco                     tbl_endereco                       @relation(fields: [id_endereco], references: [id], onDelete: NoAction, onUpdate: NoAction, map: \"fk_inst_endereco\")\n  tbl_instituicao_endereco         tbl_instituicao_endereco[]\n  tbl_instituicao_tipo_instituicao tbl_instituicao_tipo_instituicao[]\n  tbl_rede_social_instituicao      tbl_rede_social_instituicao[]\n\n  @@index([id_endereco], map: \"fk_inst_endereco\")\n  @@fulltext([nome, descricao], map: \"ft_inst\")\n}\n\nmodel tbl_instituicao_endereco {\n  id              Int             @id @default(autoincrement())\n  descricao       String?         @mysql.VarChar(500)\n  id_instituicao  Int\n  id_endereco     Int\n  tbl_endereco    tbl_endereco    @relation(fields: [id_endereco], references: [id], onDelete: Cascade, onUpdate: NoAction, map: \"fk_iend_end\")\n  tbl_instituicao tbl_instituicao @relation(fields: [id_instituicao], references: [id], onDelete: Cascade, onUpdate: NoAction, map: \"fk_iend_inst\")\n\n  @@index([id_endereco], map: \"fk_iend_end\")\n  @@index([id_instituicao], map: \"fk_iend_inst\")\n}\n\nmodel tbl_instituicao_tipo_instituicao {\n  id                   Int                  @id @default(autoincrement())\n  id_instituicao       Int\n  id_tipo_instituicao  Int                  @mysql.UnsignedTinyInt\n  tbl_instituicao      tbl_instituicao      @relation(fields: [id_instituicao], references: [id], onDelete: Cascade, onUpdate: NoAction, map: \"fk_it_inst\")\n  tbl_tipo_instituicao tbl_tipo_instituicao @relation(fields: [id_tipo_instituicao], references: [id], onUpdate: NoAction, map: \"fk_it_tipo\")\n\n  @@unique([id_instituicao, id_tipo_instituicao], map: \"uk_inst_tipo\")\n  @@index([id_tipo_instituicao], map: \"fk_it_tipo\")\n}\n\nmodel tbl_rede_social {\n  id                          Int                           @id @default(autoincrement())\n  nome                        String                        @mysql.VarChar(100)\n  icone                       String                        @mysql.VarChar(300)\n  tbl_rede_social_instituicao tbl_rede_social_instituicao[]\n  tbl_rede_social_usuario     tbl_rede_social_usuario[]\n}\n\nmodel tbl_rede_social_instituicao {\n  id              Int             @id @default(autoincrement())\n  link_perfil     String?         @mysql.VarChar(255)\n  link_abreviado  String?         @mysql.VarChar(20)\n  numero_telefone String?         @mysql.VarChar(20)\n  descricao       String?         @mysql.Text\n  id_instituicao  Int\n  id_rede_social  Int\n  tbl_instituicao tbl_instituicao @relation(fields: [id_instituicao], references: [id], onDelete: Cascade, onUpdate: NoAction, map: \"fk_rsi_inst\")\n  tbl_rede_social tbl_rede_social @relation(fields: [id_rede_social], references: [id], onDelete: NoAction, onUpdate: NoAction, map: \"fk_rsi_rede_social\")\n\n  @@index([id_instituicao], map: \"fk_rsi_inst\")\n  @@index([id_rede_social], map: \"fk_rsi_rede_social\")\n}\n\nmodel tbl_rede_social_usuario {\n  id              Int             @id @default(autoincrement())\n  link_perfil     String?         @mysql.VarChar(255)\n  link_abreviado  String?         @mysql.VarChar(20)\n  numero_telefone String?         @mysql.VarChar(20)\n  descricao       String?         @mysql.Text\n  id_usuario      Int\n  id_rede_social  Int\n  tbl_rede_social tbl_rede_social @relation(fields: [id_rede_social], references: [id], onDelete: NoAction, onUpdate: NoAction, map: \"fk_rsu_rede_social\")\n  tbl_usuario     tbl_usuario     @relation(fields: [id_usuario], references: [id], onDelete: Cascade, onUpdate: NoAction, map: \"fk_rsu_usuario\")\n\n  @@index([id_rede_social], map: \"fk_rsu_rede_social\")\n  @@index([id_usuario], map: \"fk_rsu_usuario\")\n}\n\nmodel tbl_responsavel {\n  id          Int         @id @default(autoincrement())\n  criado_em   DateTime    @default(now()) @mysql.Timestamp(0)\n  id_usuario  Int\n  id_crianca  Int\n  tbl_crianca tbl_crianca @relation(fields: [id_crianca], references: [id], onDelete: Cascade, onUpdate: NoAction, map: \"fk_resp_crianca\")\n  tbl_usuario tbl_usuario @relation(fields: [id_usuario], references: [id], onDelete: Cascade, onUpdate: NoAction, map: \"fk_resp_usuario\")\n\n  @@index([id_crianca], map: \"fk_resp_crianca\")\n  @@index([id_usuario], map: \"fk_resp_usuario\")\n}\n\nmodel tbl_sexo {\n  id          Int           @id @default(autoincrement())\n  nome        String        @unique(map: \"nome\") @mysql.VarChar(50)\n  tbl_crianca tbl_crianca[]\n  tbl_usuario tbl_usuario[]\n}\n\nmodel tbl_tipo_instituicao {\n  id                               Int                                @id @default(autoincrement()) @mysql.UnsignedTinyInt\n  nome                             String                             @unique(map: \"nome\") @mysql.VarChar(80)\n  tbl_instituicao_tipo_instituicao tbl_instituicao_tipo_instituicao[]\n}\n\nmodel tbl_tipo_nivel {\n  id          Int           @id @default(autoincrement())\n  nivel       String        @unique(map: \"nivel\") @mysql.VarChar(100)\n  tbl_usuario tbl_usuario[]\n}\n\nmodel tbl_usuario {\n  id                      Int                       @id @default(autoincrement())\n  nome                    String                    @mysql.VarChar(100)\n  foto_perfil             String?                   @mysql.VarChar(400)\n  email                   String                    @unique(map: \"email\") @mysql.VarChar(150)\n  senha                   String                    @mysql.VarChar(256)\n  data_nascimento         DateTime                  @mysql.Date\n  cpf                     String                    @mysql.VarChar(11)\n  criado_em               DateTime                  @default(now()) @mysql.Timestamp(0)\n  atualizado_em           DateTime?                 @mysql.Timestamp(0)\n  id_sexo                 Int\n  id_tipo_nivel           Int\n  tbl_rede_social_usuario tbl_rede_social_usuario[]\n  tbl_responsavel         tbl_responsavel[]\n  tbl_sexo                tbl_sexo                  @relation(fields: [id_sexo], references: [id], onDelete: NoAction, onUpdate: NoAction, map: \"fk_usuario_sexo\")\n  tbl_tipo_nivel          tbl_tipo_nivel            @relation(fields: [id_tipo_nivel], references: [id], onDelete: NoAction, onUpdate: NoAction, map: \"fk_usuario_tipo_nivel\")\n  tbl_usuario_endereco    tbl_usuario_endereco[]\n\n  @@index([id_sexo], map: \"fk_usuario_sexo\")\n  @@index([id_tipo_nivel], map: \"fk_usuario_tipo_nivel\")\n}\n\nmodel tbl_usuario_endereco {\n  id           Int          @id @default(autoincrement())\n  descricao    String?      @mysql.VarChar(500)\n  id_usuario   Int\n  id_endereco  Int\n  tbl_endereco tbl_endereco @relation(fields: [id_endereco], references: [id], onDelete: Cascade, onUpdate: NoAction, map: \"fk_uend_endereco\")\n  tbl_usuario  tbl_usuario  @relation(fields: [id_usuario], references: [id], onDelete: Cascade, onUpdate: NoAction, map: \"fk_uend_usuario\")\n\n  @@index([id_endereco], map: \"fk_uend_endereco\")\n  @@index([id_usuario], map: \"fk_uend_usuario\")\n}\n",
+  "inlineSchemaHash": "fc92d1d54e755edabbbfbb80d43e8eaaf5fca3b4702aea178bf4fb33b230f1b2",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"tbl_atividades\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"id_instituicao\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"id_categoria\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"titulo\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"descricao\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"faixa_etaria_min\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"faixa_etaria_max\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"gratuita\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"preco\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"ativo\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"tbl_categoria\",\"kind\":\"object\",\"type\":\"tbl_categoria\",\"relationName\":\"tbl_atividadesTotbl_categoria\"},{\"name\":\"tbl_instituicao\",\"kind\":\"object\",\"type\":\"tbl_instituicao\",\"relationName\":\"tbl_atividadesTotbl_instituicao\"},{\"name\":\"tbl_aulas_atividade\",\"kind\":\"object\",\"type\":\"tbl_aulas_atividade\",\"relationName\":\"tbl_atividadesTotbl_aulas_atividade\"}],\"dbName\":null},\"tbl_aulas_atividade\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"id_atividade\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"dia_semana\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"hora_inicio\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"hora_fim\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"vagas_total\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"vagas_disponiveis\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"ativo\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"tbl_atividades\",\"kind\":\"object\",\"type\":\"tbl_atividades\",\"relationName\":\"tbl_atividadesTotbl_aulas_atividade\"}],\"dbName\":null},\"tbl_categoria\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"nome\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tbl_atividades\",\"kind\":\"object\",\"type\":\"tbl_atividades\",\"relationName\":\"tbl_atividadesTotbl_categoria\"}],\"dbName\":null},\"tbl_crianca\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"nome\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"foto_perfil\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"cpf\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"senha\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"data_nascimento\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"criado_em\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"id_sexo\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"tbl_sexo\",\"kind\":\"object\",\"type\":\"tbl_sexo\",\"relationName\":\"tbl_criancaTotbl_sexo\"},{\"name\":\"tbl_responsavel\",\"kind\":\"object\",\"type\":\"tbl_responsavel\",\"relationName\":\"tbl_criancaTotbl_responsavel\"}],\"dbName\":null},\"tbl_endereco\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"osm_id\",\"kind\":\"scalar\",\"type\":\"BigInt\"},{\"name\":\"nome\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tipo\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"cep\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"logradouro\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"numero\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"complemento\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"bairro\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"cidade\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"estado\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"telefone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"site\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"latitude\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"longitude\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"atualizado_em\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"criado_em\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"tbl_instituicao\",\"kind\":\"object\",\"type\":\"tbl_instituicao\",\"relationName\":\"tbl_enderecoTotbl_instituicao\"},{\"name\":\"tbl_instituicao_endereco\",\"kind\":\"object\",\"type\":\"tbl_instituicao_endereco\",\"relationName\":\"tbl_enderecoTotbl_instituicao_endereco\"},{\"name\":\"tbl_usuario_endereco\",\"kind\":\"object\",\"type\":\"tbl_usuario_endereco\",\"relationName\":\"tbl_enderecoTotbl_usuario_endereco\"}],\"dbName\":null},\"tbl_instituicao\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"nome\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"logo\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"cnpj\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"telefone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"senha\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"descricao\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"criado_em\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"id_endereco\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"tbl_atividades\",\"kind\":\"object\",\"type\":\"tbl_atividades\",\"relationName\":\"tbl_atividadesTotbl_instituicao\"},{\"name\":\"tbl_endereco\",\"kind\":\"object\",\"type\":\"tbl_endereco\",\"relationName\":\"tbl_enderecoTotbl_instituicao\"},{\"name\":\"tbl_instituicao_endereco\",\"kind\":\"object\",\"type\":\"tbl_instituicao_endereco\",\"relationName\":\"tbl_instituicaoTotbl_instituicao_endereco\"},{\"name\":\"tbl_instituicao_tipo_instituicao\",\"kind\":\"object\",\"type\":\"tbl_instituicao_tipo_instituicao\",\"relationName\":\"tbl_instituicaoTotbl_instituicao_tipo_instituicao\"},{\"name\":\"tbl_rede_social_instituicao\",\"kind\":\"object\",\"type\":\"tbl_rede_social_instituicao\",\"relationName\":\"tbl_instituicaoTotbl_rede_social_instituicao\"}],\"dbName\":null},\"tbl_instituicao_endereco\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"descricao\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"id_instituicao\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"id_endereco\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"tbl_endereco\",\"kind\":\"object\",\"type\":\"tbl_endereco\",\"relationName\":\"tbl_enderecoTotbl_instituicao_endereco\"},{\"name\":\"tbl_instituicao\",\"kind\":\"object\",\"type\":\"tbl_instituicao\",\"relationName\":\"tbl_instituicaoTotbl_instituicao_endereco\"}],\"dbName\":null},\"tbl_instituicao_tipo_instituicao\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"id_instituicao\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"id_tipo_instituicao\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"tbl_instituicao\",\"kind\":\"object\",\"type\":\"tbl_instituicao\",\"relationName\":\"tbl_instituicaoTotbl_instituicao_tipo_instituicao\"},{\"name\":\"tbl_tipo_instituicao\",\"kind\":\"object\",\"type\":\"tbl_tipo_instituicao\",\"relationName\":\"tbl_instituicao_tipo_instituicaoTotbl_tipo_instituicao\"}],\"dbName\":null},\"tbl_rede_social\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"nome\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"icone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tbl_rede_social_instituicao\",\"kind\":\"object\",\"type\":\"tbl_rede_social_instituicao\",\"relationName\":\"tbl_rede_socialTotbl_rede_social_instituicao\"},{\"name\":\"tbl_rede_social_usuario\",\"kind\":\"object\",\"type\":\"tbl_rede_social_usuario\",\"relationName\":\"tbl_rede_socialTotbl_rede_social_usuario\"}],\"dbName\":null},\"tbl_rede_social_instituicao\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"link_perfil\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"link_abreviado\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"numero_telefone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"descricao\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"id_instituicao\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"id_rede_social\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"tbl_instituicao\",\"kind\":\"object\",\"type\":\"tbl_instituicao\",\"relationName\":\"tbl_instituicaoTotbl_rede_social_instituicao\"},{\"name\":\"tbl_rede_social\",\"kind\":\"object\",\"type\":\"tbl_rede_social\",\"relationName\":\"tbl_rede_socialTotbl_rede_social_instituicao\"}],\"dbName\":null},\"tbl_rede_social_usuario\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"link_perfil\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"link_abreviado\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"numero_telefone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"descricao\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"id_usuario\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"id_rede_social\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"tbl_rede_social\",\"kind\":\"object\",\"type\":\"tbl_rede_social\",\"relationName\":\"tbl_rede_socialTotbl_rede_social_usuario\"},{\"name\":\"tbl_usuario\",\"kind\":\"object\",\"type\":\"tbl_usuario\",\"relationName\":\"tbl_rede_social_usuarioTotbl_usuario\"}],\"dbName\":null},\"tbl_responsavel\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"criado_em\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"id_usuario\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"id_crianca\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"tbl_crianca\",\"kind\":\"object\",\"type\":\"tbl_crianca\",\"relationName\":\"tbl_criancaTotbl_responsavel\"},{\"name\":\"tbl_usuario\",\"kind\":\"object\",\"type\":\"tbl_usuario\",\"relationName\":\"tbl_responsavelTotbl_usuario\"}],\"dbName\":null},\"tbl_sexo\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"nome\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tbl_crianca\",\"kind\":\"object\",\"type\":\"tbl_crianca\",\"relationName\":\"tbl_criancaTotbl_sexo\"},{\"name\":\"tbl_usuario\",\"kind\":\"object\",\"type\":\"tbl_usuario\",\"relationName\":\"tbl_sexoTotbl_usuario\"}],\"dbName\":null},\"tbl_tipo_instituicao\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"nome\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tbl_instituicao_tipo_instituicao\",\"kind\":\"object\",\"type\":\"tbl_instituicao_tipo_instituicao\",\"relationName\":\"tbl_instituicao_tipo_instituicaoTotbl_tipo_instituicao\"}],\"dbName\":null},\"tbl_tipo_nivel\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"nivel\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tbl_usuario\",\"kind\":\"object\",\"type\":\"tbl_usuario\",\"relationName\":\"tbl_tipo_nivelTotbl_usuario\"}],\"dbName\":null},\"tbl_usuario\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"nome\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"foto_perfil\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"senha\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"data_nascimento\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"cpf\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"criado_em\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"atualizado_em\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"id_sexo\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"id_tipo_nivel\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"tbl_rede_social_usuario\",\"kind\":\"object\",\"type\":\"tbl_rede_social_usuario\",\"relationName\":\"tbl_rede_social_usuarioTotbl_usuario\"},{\"name\":\"tbl_responsavel\",\"kind\":\"object\",\"type\":\"tbl_responsavel\",\"relationName\":\"tbl_responsavelTotbl_usuario\"},{\"name\":\"tbl_sexo\",\"kind\":\"object\",\"type\":\"tbl_sexo\",\"relationName\":\"tbl_sexoTotbl_usuario\"},{\"name\":\"tbl_tipo_nivel\",\"kind\":\"object\",\"type\":\"tbl_tipo_nivel\",\"relationName\":\"tbl_tipo_nivelTotbl_usuario\"},{\"name\":\"tbl_usuario_endereco\",\"kind\":\"object\",\"type\":\"tbl_usuario_endereco\",\"relationName\":\"tbl_usuarioTotbl_usuario_endereco\"}],\"dbName\":null},\"tbl_usuario_endereco\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"descricao\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"id_usuario\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"id_endereco\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"tbl_endereco\",\"kind\":\"object\",\"type\":\"tbl_endereco\",\"relationName\":\"tbl_enderecoTotbl_usuario_endereco\"},{\"name\":\"tbl_usuario\",\"kind\":\"object\",\"type\":\"tbl_usuario\",\"relationName\":\"tbl_usuarioTotbl_usuario_endereco\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),
