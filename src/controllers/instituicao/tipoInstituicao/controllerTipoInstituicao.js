@@ -31,7 +31,8 @@ async function deleteTipoInstituicao(request, response) {
 
 async function getSearchAllTipoInstituicao(request, response) {
     let result = await servicesTipoInstituicao.listarTodosTipoInstituicao();
-
+    // console.log(result);
+    
     response.status(result.status_code);
     response.json(result);
 }

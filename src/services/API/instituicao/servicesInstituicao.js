@@ -9,11 +9,18 @@ const instituicaoTipoInstituicaoDAO = require("../../../model/DAO/instituicao/in
 const servicesEndereco = require("../endereco/servicesEndereco")
 
 async function inserirInstituicao(dadosInstituicao, contentType){
-    try {
-        if (contentType == "application/json") {
-            // Verifica se a estrutura básica da instituição e o CEP foram fornecidos
-            // E verifica se 'tipos_instituicao' é um array de IDs (mesmo que vazio, se não for obrigatório no front)
-            if (dadosInstituicao.cep && dadosInstituicao.tipos_instituicao && Array.isArray(dadosInstituicao.tipos_instituicao) && TableCORRECTION.CHECK_tbl_instituicao(dadosInstituicao)) {
+    try { 
+        // console.log("-"+contentType+"-");
+        // console.log(contentType == "application/json", contentType == "application/json; charset=UTF-8");
+               
+        if (contentType == "application/json" || contentType == "application/json; charset=UTF-8") {
+            
+            if (
+                dadosInstituicao.cep && 
+                dadosInstituicao.tipos_instituicao && 
+                Array.isArray(dadosInstituicao.tipos_instituicao) && 
+                TableCORRECTION.CHECK_tbl_instituicao(dadosInstituicao)
+            ) {
                 
                 // 1. Verifica unicidade do email
                 const emailExists = await usuarioDAO.verifyEmailExists(dadosInstituicao.email)
@@ -215,6 +222,8 @@ async function buscarInstituicao(id){
 
 async function loginInstituicao(dadosLogin, contentType){
     try {
+        console.log(dadosLogin);
+        
         if (contentType == "application/json") {
             const { email, senha } = dadosLogin
             

@@ -78,6 +78,11 @@ const SUCCESS_LOGIN = {
     messagem: "Login realizado com sucesso"
 }
 
+const SUCCESS_REQUEST = {
+    status: true,
+    status_code: 200,
+    messagem: "Requisição feita com sucesso"
+}
 
 module.exports = {
     API_BASE_URL,
@@ -95,5 +100,6 @@ module.exports = {
     SUCCESS_CEATED_ITEM,
     SUCCESS_DELETE_ITEM,
     SUCCESS_UPDATED_ITEM,
-    SUCCESS_LOGIN
+    SUCCESS_LOGIN,
+    SUCCESS_REQUEST
 }

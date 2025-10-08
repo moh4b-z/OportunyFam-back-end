@@ -1,4 +1,3 @@
-// src/controllers/sexo/controllerSexo.js
 const servicesSexo = require("../../services/API/sexo/servicesSexo")
 
 async function postSexo(request, response) {

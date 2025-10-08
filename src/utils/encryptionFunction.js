@@ -9,7 +9,7 @@ function hashPassword(password) {
         senha_salt, 
         100000, 
         64, 
-        'oportunyfam'
+        'sha512'
     ).toString('hex')
     
     return { senha_salt, senha_hash: hashedPassword } 
@@ -22,7 +22,7 @@ function verifyPassword(password, salt, storedHash) {
         salt, 
         100000, 
         64, 
-        'oportunyfam'
+        'sha512'
     ).toString('hex')
     return newHashedPassword === storedHash
 }

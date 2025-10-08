@@ -83,6 +83,9 @@ async function excluirTipoInstituicao(id){
 async function listarTodosTipoInstituicao(){
     try {
         let result = await tipoInstituicaoDAO.selectAllTipoInstituicao()
+
+        // console.log(MENSAGE.SUCCESS_REQUEST );
+        
         
         if (result) {
             return result.length > 0 ? { ...MENSAGE.SUCCESS_REQUEST, tipos_instituicao: result } : MENSAGE.ERROR_NOT_FOUND

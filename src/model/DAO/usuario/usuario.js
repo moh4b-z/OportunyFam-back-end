@@ -93,8 +93,8 @@ async function selectByEmail(email){
 async function verifyEmailExists(email){
     try {
         let usuario = await prismaMySQL.tbl_usuario.findUnique({ where: { email } })
-        let crianca = await prismaMySQL.crianca.findUnique({ where: { email } })
-        let instituicao = await prismaMySQL.instituicao.findUnique({ where: { email } })
+        let crianca = await prismaMySQL.tbl_crianca.findUnique({ where: { email } })
+        let instituicao = await prismaMySQL.tbl_instituicao.findUnique({ where: { email } })
         
         let result = usuario || crianca || instituicao
         return result
