@@ -156,27 +156,10 @@ CREATE TABLE tbl_instituicao_tipo_instituicao (
   CONSTRAINT fk_it_tipo FOREIGN KEY (id_tipo_instituicao) REFERENCES tbl_tipo_instituicao(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
-INSERT IGNORE INTO tbl_tipo_instituicao (nome) VALUES
-  ('ONG'),
-  ('Escola Pública'),
-  ('Escola Privada'),
-  ('Centro Esportivo'),
-  ('Centro Cultural')
-;
-
 CREATE TABLE tbl_categoria (
   id   SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   nome VARCHAR(100) NOT NULL UNIQUE
 ) ENGINE=InnoDB;
-
-INSERT IGNORE INTO tbl_categoria (nome) VALUES
-  ('Esporte'),
-  ('Reforço Escolar'),
-  ('Música'),
-  ('Dança'),
-  ('Teatro'),
-  ('Tecnologia'),
-  ('Artes Visuais');
 
 CREATE TABLE tbl_atividades (
   id                INT AUTO_INCREMENT PRIMARY KEY,
