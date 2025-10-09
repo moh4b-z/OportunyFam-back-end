@@ -45,11 +45,20 @@ const postLoginUsuario = async (request, response) => {
     response.json(result)
 }
 
+const postLoginUniversal = async (request, response) => {
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let result = await servicesUsuario.loginUniversal(dadosBody, contentType)
+    response.status(result.status_code)
+    response.json(result)
+}
+
 module.exports = {
     postUsuario,
     putUsuario,
     deleteUsuario,
     getSearchAllUsuario,
     getSearchUsuario,
-    postLoginUsuario
+    postLoginUsuario,
+    postLoginUniversal
 }

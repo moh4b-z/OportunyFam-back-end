@@ -1,16 +1,14 @@
--- Inserção de dados para tbl_sexo
 INSERT INTO tbl_sexo (nome) VALUES
 ('Feminino'),
 ('Masculino'),
 ('Outro'),
 ('Prefiro não informar');
 
--- Inserção de dados para tbl_tipo_nivel
 INSERT INTO tbl_tipo_nivel (nivel) VALUES
-('Família (Padrão)'),     -- Nível padrão para usuários comuns (pais/responsáveis)
-('Instituição (Pend.)'),  -- Para instituições que aguardam aprovação/validação
-('Instituição (Ativa)'),  -- Para instituições validadas e ativas
-('Admin Master');         -- Nível máximo de administrador do sistema
+('Família (Padrão)'), 
+('Instituição (Pend.)'),  
+('Instituição (Ativa)'), 
+('Admin Master');         
 INSERT INTO tbl_tipo_instituicao (nome) VALUES
   ('ONG'),
   ('Escola Pública'),

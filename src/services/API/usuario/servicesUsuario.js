@@ -9,27 +9,27 @@ const servicesEndereco = require("../endereco/servicesEndereco")
 async function inserirUsuario(dadosUsuario, contentType){
     try {
         if (contentType == "application/json") {
-            // Validação básica do usuário (campos obrigatórios) e do CEP
             if (dadosUsuario.cep && TableCORRECTION.CHECK_tbl_usuario(dadosUsuario)) {
                 
-                // 1. Verifica unicidade do email
                 const emailExists = await usuarioDAO.verifyEmailExists(dadosUsuario.email)
                 if (emailExists) {
                     return MENSAGE.ERROR_EMAIL_ALREADY_EXISTS
                 }
                 
-                // 2. Criptografa a senha
                 const senha_hash = encryptionFunction.hashPassword(dadosUsuario.senha)
                 dadosUsuario.senha = senha_hash
 
-                // 3. Insere o Endereço (repassando dados para o service de Endereço)
-                const dadosEnderecoParaInserir = { 
-                    cep: dadosUsuario.cep,
-                    numero: dadosUsuario.numero, // Repassando numero e complemento para o service
-                    complemento: dadosUsuario.complemento
+                let endereco = { 
+                    cep: dadosUsuario.cep, 
+                    numero: dadosUsuario.numero, 
+                    complemento: dadosUsuario.complemento,
+                    cidade: dadosUsuario.cidade,
+                    bairro: dadosUsuario.bairro,
+                    logradouro: dadosUsuario.logradouro,
+                    estado: dadosUsuario.estado,
                 }
 
-                const enderecoCriado = await servicesEndereco.inserirEndereco(dadosEnderecoParaInserir, contentType)
+                const enderecoCriado = await servicesEndereco.inserirEndereco(endereco, contentType)
 
                 if (enderecoCriado.status_code == MENSAGE.SUCCESS_CEATED_ITEM.status_code) {
                     const idEndereco = enderecoCriado.endereco.id
@@ -206,11 +206,49 @@ async function loginUsuario(dadosLogin, contentType){
     }
 }
 
+async function loginUniversal(dadosLogin, contentType) {
+    try {
+        if (contentType == "application/json") {
+            const { email, senha } = dadosLogin
+
+            if (email && senha) {
+                // Criptografa a senha no formato esperado
+                const { senha_salt, senha_hash } = encryptionFunction.hashPassword(senha)
+                const senhaFinal = `${senha_salt}:${senha_hash}`
+
+                // Busca nas 3 tabelas
+                const result = await usuarioDAO.loginUniversal(email, senhaFinal)
+
+                if (result) {
+                    // Remove a senha do retorno
+                    if (result.dados.senha) delete result.dados.senha
+
+                    return {
+                        ...MENSAGE.SUCCESS_LOGIN,
+                        tipo: result.tipo,
+                        usuario: result.dados
+                    }
+                } else {
+                    return MENSAGE.ERROR_INVALID_CREDENTIALS
+                }
+            } else {
+                return MENSAGE.ERROR_REQUIRED_FIELDS
+            }
+        } else {
+            return MENSAGE.ERROR_CONTENT_TYPE
+        }
+    } catch (error) {
+        console.error("Erro SERVICE: Erro ao realizar login universal.", error)
+        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
+    }
+}
+
 module.exports = {
     inserirUsuario,
     atualizarUsuario,
     excluirUsuario,
     listarTodosUsuarios,
     buscarUsuario,
-    loginUsuario
+    loginUsuario,
+    loginUniversal
 }

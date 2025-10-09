@@ -106,7 +106,6 @@ async function verifyEmailExists(email){
 
 async function loginUniversal(email, senha) {
     try {
-        // Busca o e-mail nas três tabelas
         const usuario = await prismaMySQL.tbl_usuario.findFirst({
             where: { email: email, senha: senha }
         })
@@ -119,7 +118,6 @@ async function loginUniversal(email, senha) {
             where: { email: email, senha: senha }
         })
 
-        // Verifica qual tipo foi encontrado
         if (usuario) {
             return { tipo: 'usuario', dados: usuario }
         } else if (crianca) {
@@ -127,7 +125,7 @@ async function loginUniversal(email, senha) {
         } else if (instituicao) {
             return { tipo: 'instituicao', dados: instituicao }
         } else {
-            return false // não encontrado
+            return false 
         }
     } catch (error) {
         console.error("Erro DAO: Erro ao realizar login universal.", error)
