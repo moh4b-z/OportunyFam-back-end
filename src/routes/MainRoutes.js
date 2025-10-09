@@ -29,6 +29,6 @@ router.use('/redeSocialInstituicao', routesRedeSocialInstituicao)
 router.use('/tipoInstituicao', routesTipoInstituicao)
 router.use('/atividade', routesAtividade)
 router.use('/categoria', routesCategoria)
-router.use('', routesLogin)
+router.use('/login', routesLogin)
 
 module.exports = router

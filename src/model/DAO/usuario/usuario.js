@@ -117,6 +117,8 @@ async function loginUniversal(email, senha) {
         const instituicao = await prismaMySQL.tbl_instituicao.findFirst({
             where: { email: email, senha: senha }
         })
+        // console.log(usuario, crianca, instituicao);
+        
 
         if (usuario) {
             return { tipo: 'usuario', dados: usuario }

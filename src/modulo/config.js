@@ -34,6 +34,11 @@ const ERROR_CONTENT_TYPE = {
     status_code: 415,
     messagem: "Não foi possivel processar a requisição, pois, o formato de dados encaminhado não surpotado pelo servidor. Favor encaminhar apenas json."
 }
+const ERROR_INVALID_CREDENTIALS = {
+    status: false,
+    status_code: 415,
+    messagem: "Cradencias erradas"
+}
 
 const ERROR_INTERNAL_SERVER_MODEL = {
     status: false,
@@ -96,6 +101,7 @@ module.exports = {
     ERROR_NOT_FOUND_FOREIGN_KEY,
     ERROR_NOT_DELETE,
     ERROR_CEP_NOT_FOUND,
+    ERROR_INVALID_CREDENTIALS,
 
     SUCCESS_CEATED_ITEM,
     SUCCESS_DELETE_ITEM,

@@ -180,8 +180,6 @@ async function atualizarInstituicao(dadosInstituicao, id, contentType){
     }
 }
 
-
-// Manter as demais funções (excluirInstituicao, listarTodasInstituicoes, buscarInstituicao, loginInstituicao) inalteradas
 async function excluirInstituicao(id){
     try {
         if (CORRECTION.CHECK_ID(id)) {
@@ -241,11 +239,11 @@ async function loginInstituicao(dadosLogin, contentType){
         
         if (contentType == "application/json") {
             const { email, senha } = dadosLogin
-            console.log(email && senha);
+            // console.log(email && senha);
             
             if (email && senha) {
                 const instituicao = await instituicaoDAO.selectByEmail(email)
-                console.log(senha, instituicao.senha);
+                // console.log(senha, instituicao.senha);
                 
                 
                 if (instituicao) {

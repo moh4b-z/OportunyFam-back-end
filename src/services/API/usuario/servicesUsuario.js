@@ -5,6 +5,8 @@ const encryptionFunction = require("../../../utils/encryptionFunction")
 const usuarioDAO = require("../../../model/DAO/usuario/usuario")
 const usuarioEnderecoDAO = require("../../../model/DAO/usuario/usuarioEndereco/usuarioEndereco") 
 const servicesEndereco = require("../endereco/servicesEndereco") 
+const servicesInstituicao = require("../instituicao/servicesInstituicao") 
+const servicesCrianca = require("../crianca/servicesCrianca") 
 
 async function inserirUsuario(dadosUsuario, contentType){
     try {
@@ -206,22 +208,29 @@ async function loginUsuario(dadosLogin, contentType){
     }
 }
 
+
+
 async function loginUniversal(dadosLogin, contentType) {
     try {
         if (contentType == "application/json") {
-            const { email, senha } = dadosLogin
 
             if (email && senha) {
-                // Criptografa a senha no formato esperado
-                const { senha_salt, senha_hash } = encryptionFunction.hashPassword(senha)
-                const senhaFinal = `${senha_salt}:${senha_hash}`
+                
+                let usuario = loginUsuario(dadosLogin, contentType)
+                let crianca = servicesInstituicao.loginInstituicao(dadosLogin, contentType)
+                let instituicao = servicesCrianca.loginCrianca(dadosLogin, contentType)
+                let result = false
 
-                // Busca nas 3 tabelas
-                const result = await usuarioDAO.loginUniversal(email, senhaFinal)
+                if (usuario.status_code = 200) {
+                    result = { ...usuario, tipo: 'usuario' }
+                } else if (crianca.status_code = 200) {
+                    result = { ...crianca, tipo: 'crianca'  }
+                } else if (instituicao.status_code = 200) {
+                    result = { ...instituicao, tipo: 'instituicao'}
+                }
+                
 
                 if (result) {
-                    // Remove a senha do retorno
-                    if (result.dados.senha) delete result.dados.senha
 
                     return {
                         ...MENSAGE.SUCCESS_LOGIN,
@@ -229,6 +238,7 @@ async function loginUniversal(dadosLogin, contentType) {
                         usuario: result.dados
                     }
                 } else {
+                    
                     return MENSAGE.ERROR_INVALID_CREDENTIALS
                 }
             } else {

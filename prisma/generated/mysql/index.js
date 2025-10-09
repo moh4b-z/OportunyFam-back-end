@@ -378,7 +378,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/24122313/Documents/Mohammad/OportunyFam-back-end/prisma/generated/mysql",
+      "value": "C:\\Users\\24122313\\Documents\\Mohammad\\TCC\\OportunyFam-back-end\\prisma\\generated\\mysql",
       "fromEnvVar": null
     },
     "config": {
@@ -387,18 +387,19 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "darwin",
+        "value": "windows",
         "native": true
       }
     ],
     "previewFeatures": [
       "multiSchema"
     ],
-    "sourceFilePath": "/Users/24122313/Documents/Mohammad/OportunyFam-back-end/prisma/schema.prisma",
+    "sourceFilePath": "C:\\Users\\24122313\\Documents\\Mohammad\\TCC\\OportunyFam-back-end\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null
+    "rootEnvPath": null,
+    "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../..",
   "clientVersion": "6.16.2",
@@ -407,7 +408,7 @@ const config = {
     "mysql"
   ],
   "activeProvider": "mysql",
-  "postinstall": true,
+  "postinstall": false,
   "inlineDatasources": {
     "mysql": {
       "url": {
@@ -456,8 +457,8 @@ exports.PrismaClient = PrismaClient
 Object.assign(exports, Prisma)
 
 // file annotations for bundling tools to include these files
-path.join(__dirname, "libquery_engine-darwin.dylib.node");
-path.join(process.cwd(), "prisma/generated/mysql/libquery_engine-darwin.dylib.node")
+path.join(__dirname, "query_engine-windows.dll.node");
+path.join(process.cwd(), "prisma/generated/mysql/query_engine-windows.dll.node")
 // file annotations for bundling tools to include these files
 path.join(__dirname, "schema.prisma");
 path.join(process.cwd(), "prisma/generated/mysql/schema.prisma")
