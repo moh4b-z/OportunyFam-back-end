@@ -19,7 +19,7 @@ async function inserirUsuario(dadosUsuario, contentType){
                 }
                 
                 // 2. Criptografa a senha
-                const { senha_hash } = encryptionFunction.hashPassword(dadosUsuario.senha)
+                const senha_hash = encryptionFunction.hashPassword(dadosUsuario.senha)
                 dadosUsuario.senha = senha_hash
 
                 // 3. Insere o Endereço (repassando dados para o service de Endereço)
@@ -182,7 +182,7 @@ async function loginUsuario(dadosLogin, contentType){
                 const usuario = await usuarioDAO.selectByEmail(email)
                 
                 if (usuario) {
-                    const senhaValida = encryptionFunction.verifyPassword(senha, usuario.senha_salt, usuario.senha_hash)
+                    const senhaValida = encryptionFunction.verifyPassword(senha, usuario.senha)
                     
                     if (senhaValida) {
                         delete usuario.senha

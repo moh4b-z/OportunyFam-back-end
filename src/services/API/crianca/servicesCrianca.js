@@ -14,7 +14,7 @@ async function inserirCrianca(dadosCrianca, contentType) {
                     return MENSAGE.ERROR_EMAIL_ALREADY_EXISTS
                 }
 
-                let { senha_hash } = encryptionFunction.hashPassword(dadosCrianca.senha)
+                let senha_hash  = encryptionFunction.hashPassword(dadosCrianca.senha)
                 dadosCrianca.senha = senha_hash
 
                 let result = await criancaDAO.insertCrianca(dadosCrianca)
@@ -44,7 +44,7 @@ async function atualizarCrianca(dadosCrianca, id, contentType) {
                         }
                     }
 
-                    let { senha_hash } = encryptionFunction.hashPassword(dadosCrianca.senha)
+                    let senha_hash = encryptionFunction.hashPassword(dadosCrianca.senha)
                     dadosCrianca.senha = senha_hash
                     dadosCrianca.id = parseInt(id)
 
@@ -129,7 +129,7 @@ async function loginCrianca(dadosLogin, contentType) {
                 return MENSAGE.ERROR_INVALID_CREDENTIALS
             }
 
-            const senhaValida = encryptionFunction.verifyPassword(senha, crianca.senha_salt, crianca.senha_hash)
+            const senhaValida = encryptionFunction.verifyPassword(senha, crianca.senha)
             if (!senhaValida) {
                 return MENSAGE.ERROR_INVALID_CREDENTIALS
             }

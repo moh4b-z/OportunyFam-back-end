@@ -150,7 +150,7 @@ async function atualizarInstituicao(dadosInstituicao, id, contentType){
 
                     // 2. Criptografa a senha (só se a senha for passada)
                     if(dadosInstituicao.senha){
-                         const { senha_hash } = encryptionFunction.hashPassword(dadosInstituicao.senha)
+                         const senha_hash = encryptionFunction.hashPassword(dadosInstituicao.senha)
                          dadosInstituicao.senha = senha_hash
                     } else {
                          // Se a senha não for passada, garantimos que ela não vá para o DAO update (partial update)
