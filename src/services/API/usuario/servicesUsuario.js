@@ -126,8 +126,6 @@ async function excluirUsuario(id){
             let resultSearch = await buscarUsuario(parseInt(id))
             
             if (resultSearch.status_code == MENSAGE.SUCCESS_REQUEST.status_code) {
-                // OBS: O deleteUsuario do DAO deve gerenciar a exclusão do Endereço relacionado, se necessário.
-                // Como tbl_usuario_endereco tem CASCADE ON DELETE, deletar o usuário deleta a relação.
 
                 let result = await usuarioDAO.deleteUsuario(parseInt(id))
                 return result ? MENSAGE.SUCCESS_DELETE_ITEM : MENSAGE.ERROR_NOT_DELETE

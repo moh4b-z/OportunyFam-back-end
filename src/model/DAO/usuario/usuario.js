@@ -104,6 +104,38 @@ async function verifyEmailExists(email){
     }
 }
 
+async function loginUniversal(email, senha) {
+    try {
+        // Busca o e-mail nas três tabelas
+        const usuario = await prismaMySQL.tbl_usuario.findFirst({
+            where: { email: email, senha: senha }
+        })
+
+        const crianca = await prismaMySQL.tbl_crianca.findFirst({
+            where: { email: email, senha: senha }
+        })
+
+        const instituicao = await prismaMySQL.tbl_instituicao.findFirst({
+            where: { email: email, senha: senha }
+        })
+
+        // Verifica qual tipo foi encontrado
+        if (usuario) {
+            return { tipo: 'usuario', dados: usuario }
+        } else if (crianca) {
+            return { tipo: 'crianca', dados: crianca }
+        } else if (instituicao) {
+            return { tipo: 'instituicao', dados: instituicao }
+        } else {
+            return false // não encontrado
+        }
+    } catch (error) {
+        console.error("Erro DAO: Erro ao realizar login universal.", error)
+        return false
+    }
+}
+
+
 module.exports = {
     insertUsuario,
     updateUsuario,
@@ -111,5 +143,6 @@ module.exports = {
     selectAllUsuario,
     selectByIdUsuario,
     selectByEmail,
-    verifyEmailExists
+    verifyEmailExists,
+    loginUniversal
 }
