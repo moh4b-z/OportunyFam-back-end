@@ -29,7 +29,7 @@ async function inserirInstituicao(dadosInstituicao, contentType){
                 }
                 
                 // 2. Criptografa a senha
-                const { senha_hash } = encryptionFunction.hashPassword(dadosInstituicao.senha)
+                const senha_hash = encryptionFunction.hashPassword(dadosInstituicao.senha)
                 dadosInstituicao.senha = senha_hash
 
                 // Armazena a lista de tipos de instituição antes de passar 'dadosInstituicao' adiante
@@ -49,7 +49,7 @@ async function inserirInstituicao(dadosInstituicao, contentType){
                 }
                 
                 const enderecoCriado = await servicesEndereco.inserirEndereco(endereco, contentType)
-                console.log(enderecoCriado);
+                // console.log(enderecoCriado);
                 
                 if (enderecoCriado.status_code == MENSAGE.SUCCESS_CEATED_ITEM.status_code) {
                     const idEndereco = enderecoCriado.endereco.id
@@ -241,12 +241,15 @@ async function loginInstituicao(dadosLogin, contentType){
         
         if (contentType == "application/json") {
             const { email, senha } = dadosLogin
+            console.log(email && senha);
             
             if (email && senha) {
                 const instituicao = await instituicaoDAO.selectByEmail(email)
+                console.log(senha, instituicao.senha);
+                
                 
                 if (instituicao) {
-                    const senhaValida = encryptionFunction.verifyPassword(senha, instituicao.senha_salt, instituicao.senha_hash)
+                    const senhaValida = encryptionFunction.verifyPassword(senha, instituicao.senha)
                     
                     if (senhaValida) {
                         delete instituicao.senha

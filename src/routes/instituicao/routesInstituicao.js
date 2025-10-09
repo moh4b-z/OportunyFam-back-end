@@ -28,7 +28,7 @@ router.get(
     controllerInstituicao.getSearchInstituicao
 )
 
-router.put(
+router.post(
     '/login',
     controllerInstituicao.postLoginInstituicao
 )

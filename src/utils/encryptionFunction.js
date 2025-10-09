@@ -1,33 +1,17 @@
-const crypto = require('crypto')
+const crypto = require('crypto');
 
 function hashPassword(password) {
-    // Gera um salt aleatório de 16 bytes e converte para hexadecimal
-    const senha_salt = crypto.randomBytes(16).toString('hex')
-    // Gera o hash com PBKDF2, 100000 iterações, 64 bytes
-    const hashedPassword = crypto.pbkdf2Sync(
-        password, 
-        senha_salt, 
-        100000, 
-        64, 
-        'sha512'
-    ).toString('hex')
-    
-    return { senha_salt, senha_hash: hashedPassword } 
+    const salt = crypto.randomBytes(16).toString('hex');
+    const hash = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
+    // Armazena como "salt:hash"
+    return `${salt}:${hash}`;
 }
 
-function verifyPassword(password, salt, storedHash) {
-    // Recria o hash usando o mesmo salt e as mesmas configurações
-    const newHashedPassword = crypto.pbkdf2Sync(
-        password, 
-        salt, 
-        100000, 
-        64, 
-        'sha512'
-    ).toString('hex')
-    return newHashedPassword === storedHash
+function verifyPassword(password, stored) {
+    // stored = "salt:hash"
+    const [salt, hash] = stored.split(':');
+    const newHash = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
+    return newHash === hash;
 }
 
-module.exports = {    
-    hashPassword,
-    verifyPassword
-}
+module.exports = { hashPassword, verifyPassword };

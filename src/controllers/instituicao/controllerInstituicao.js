@@ -4,6 +4,8 @@ const postInstituicao = async (request, response) => {
     let contentType = request.headers['content-type']
     let dadosBody = request.body
     let result = await servicesInstituicao.inserirInstituicao(dadosBody, contentType)
+    // console.log(result);
+    
     response.status(result.status_code)
     response.json(result)
 }
@@ -40,7 +42,7 @@ const getSearchInstituicao = async (request, response) => {
 const postLoginInstituicao = async (request, response) => {
     let contentType = request.headers['content-type']
     let dadosBody = request.body
-    // console.log(dadosBody);
+    console.log(dadosBody);
     
     let result = await servicesInstituicao.loginInstituicao(dadosBody, contentType)
     response.status(result.status_code)
