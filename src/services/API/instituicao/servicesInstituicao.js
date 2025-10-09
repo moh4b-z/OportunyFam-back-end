@@ -13,7 +13,7 @@ async function inserirInstituicao(dadosInstituicao, contentType){
         // console.log("-"+contentType+"-");
         // console.log(contentType == "application/json", contentType == "application/json; charset=UTF-8");
                
-        if (contentType == "application/json" || contentType == "application/json; charset=UTF-8") {
+        if (contentType == "application/json") {
             
             if (
                 dadosInstituicao.cep && 
@@ -37,13 +37,25 @@ async function inserirInstituicao(dadosInstituicao, contentType){
                 delete dadosInstituicao.tipos_instituicao // Remove do objeto principal para não atrapalhar o DAO
 
                 // 3. Insere o Endereço
-                const enderecoCriado = await servicesEndereco.inserirEndereco({ cep: dadosInstituicao.cep, numero: dadosInstituicao.numero, complemento: dadosInstituicao.complemento }, contentType)
+                // console.log(dadosInstituicao);
+                let endereco = { 
+                    cep: dadosInstituicao.cep, 
+                    numero: dadosInstituicao.numero, 
+                    complemento: dadosInstituicao.complemento,
+                    cidade: dadosInstituicao.cidade,
+                    bairro: dadosInstituicao.bairro,
+                    logradouro: dadosInstituicao.logradouro,
+                    estado: dadosInstituicao.estado,
+                }
+                
+                const enderecoCriado = await servicesEndereco.inserirEndereco(endereco, contentType)
+                console.log(enderecoCriado);
                 
                 if (enderecoCriado.status_code == MENSAGE.SUCCESS_CEATED_ITEM.status_code) {
                     const idEndereco = enderecoCriado.endereco.id
                     
                     // 4. Insere a Instituição (sem id_tipo_instituicao)
-                    let resultInstituicao = await instituicaoDAO.insertInstituicao(dadosInstituicao)
+                    let resultInstituicao = await instituicaoDAO.insertInstituicao(dadosInstituicao, enderecoCriado.endereco.id)
                     
                     if (resultInstituicao) {
                         const idInstituicao = resultInstituicao.id
@@ -66,7 +78,8 @@ async function inserirInstituicao(dadosInstituicao, contentType){
                                     }
                                 }
                             }
-
+                            console.log(relacoesCriadas);
+                            
                             if (relacoesCriadas) {
                                 // SUCESSO TOTAL
                                 return {
@@ -90,12 +103,14 @@ async function inserirInstituicao(dadosInstituicao, contentType){
                         return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
                     }
                 } else {
-                    return enderecoCriado // Retorna o erro do service de endereço (ex: CEP not found)
+                    return enderecoCriado 
                 }
             } else {
                 return MENSAGE.ERROR_REQUIRED_FIELDS
             }
         } else {
+            console.log('oi');
+            
             return MENSAGE.ERROR_CONTENT_TYPE
         }
     } catch (error) {

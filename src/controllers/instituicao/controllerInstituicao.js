@@ -40,7 +40,7 @@ const getSearchInstituicao = async (request, response) => {
 const postLoginInstituicao = async (request, response) => {
     let contentType = request.headers['content-type']
     let dadosBody = request.body
-    console.log(dadosBody);
+    // console.log(dadosBody);
     
     let result = await servicesInstituicao.loginInstituicao(dadosBody, contentType)
     response.status(result.status_code)

@@ -3,36 +3,38 @@ const CORRECTION = require("../../../utils/inputCheck")
 const TableCORRECTION = require("../../../utils/tablesCheck")
 const enderecoDAO = require("../../../model/DAO/endereco/endereco")
 // const viaCepService = require('../../viaCEP/buscarDadosViaCep')
+const nominatimService = require('../../openStreetMap/nominatimService')
 
 async function inserirEndereco(dadosEndereco, contentType){
     try {
-        if (contentType == "application/json") {
-            // A validação espera que o Front-end envie o endereço completo (cep, logradouro, bairro, cidade, estado)
-            if (TableCORRECTION.CHECK_tbl_endereco(dadosEndereco) && dadosEndereco.cep && dadosEndereco.logradouro && dadosEndereco.cidade && dadosEndereco.estado) {
-                
-                const novoEndereco = {
-                    cep: dadosEndereco.cep,
-                    logradouro: dadosEndereco.logradouro,
-                    bairro: dadosEndereco.bairro || null,
-                    cidade: dadosEndereco.cidade,
-                    estado: dadosEndereco.estado,
-                    numero: dadosEndereco.numero || null,
-                    complemento: dadosEndereco.complemento || null
-                }
-                
-                let result = await enderecoDAO.insertEndereco(novoEndereco)
-                return result ? { ...MENSAGE.SUCCESS_CEATED_ITEM, endereco: result } : MENSAGE.ERROR_INTERNAL_SERVER_MODEL
-                
-            } else {
-                return MENSAGE.ERROR_REQUIRED_FIELDS 
-            }
-        } else {
-            return MENSAGE.ERROR_CONTENT_TYPE
+        if (contentType != "application/json") return MENSAGE.ERROR_CONTENT_TYPE;
+
+        if (!(TableCORRECTION.CHECK_tbl_endereco(dadosEndereco) && dadosEndereco.cep && dadosEndereco.logradouro && dadosEndereco.cidade && dadosEndereco.estado)) {
+            return MENSAGE.ERROR_REQUIRED_FIELDS;
         }
+
+        const novoEndereco = {
+            cep: dadosEndereco.cep,
+            logradouro: dadosEndereco.logradouro,
+            bairro: dadosEndereco.bairro || null,
+            cidade: dadosEndereco.cidade,
+            estado: dadosEndereco.estado,
+            numero: dadosEndereco.numero || null,
+            complemento: dadosEndereco.complemento || null
+        };
+
+        const coords = await nominatimService.buscarCoordenadas(novoEndereco);
+        novoEndereco.latitude = coords.latitude ?? 0.0;
+        novoEndereco.longitude = coords.longitude ?? 0.0;
+
+        // console.log(novoEndereco);
+        
+        let result = await enderecoDAO.insertEndereco(novoEndereco);
+        return result ? { ...MENSAGE.SUCCESS_CEATED_ITEM, endereco: result } : MENSAGE.ERROR_INTERNAL_SERVER_MODEL;
+
     } catch (error) {
-        console.error(error)
-        // Se ocorrer um erro no DAO, provavelmente é falha de conexão ou dados
-        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES 
+        console.error(error);
+        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES;
     }
 }
 

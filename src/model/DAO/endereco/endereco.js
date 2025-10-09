@@ -1,4 +1,4 @@
-const { PrismaClient } = require('../../../../prisma/generated/mysql')
+const { PrismaClient, Decimal  } = require('../../../../prisma/generated/mysql')
 const prismaMySQL = new PrismaClient()
 
 async function insertEndereco(endereco){
@@ -11,7 +11,9 @@ async function insertEndereco(endereco){
                 complemento: endereco.complemento,
                 bairro: endereco.bairro,
                 cidade: endereco.cidade,
-                estado: endereco.estado
+                estado: endereco.estado,
+                latitude: new Decimal(endereco.latitude),
+                longitude: new Decimal(endereco.longitude)
             }
         })
     } catch (error) {
@@ -31,7 +33,9 @@ async function updateEndereco(endereco){
                 complemento: endereco.complemento,
                 bairro: endereco.bairro,
                 cidade: endereco.cidade,
-                estado: endereco.estado
+                estado: endereco.estado,
+                latitude: new Decimal(endereco.latitude),
+                longitude: new Decimal(endereco.longitude)
             }
         })
     } catch (error) {
@@ -39,6 +43,7 @@ async function updateEndereco(endereco){
         return false
     }
 }
+
 
 async function deleteEndereco(id){
     try {

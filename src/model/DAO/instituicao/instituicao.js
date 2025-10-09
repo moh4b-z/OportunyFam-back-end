@@ -1,16 +1,21 @@
 const { PrismaClient } = require('../../../../prisma/generated/mysql')
 const prismaMySQL = new PrismaClient()
 
-async function insertInstituicao(instituicao){
+async function insertInstituicao(instituicao, id_endereco){
     try {
-        return await prismaMySQL.tbl_instituicao.create({
-            data: {
-                nome: instituicao.nome,
-                cnpj: instituicao.cnpj,
-                email: instituicao.email,
-                senha: instituicao.senha,
-                descricao: instituicao.descricao
+        const novoInstituicao = {
+            nome: instituicao.nome,
+            cnpj: instituicao.cnpj,
+            email: instituicao.email,
+            senha: instituicao.senha,
+            descricao: instituicao.descricao || null,
+            telefone: instituicao.telefone || null,
+            tbl_endereco: {
+                connect: { id: id_endereco } 
             }
+        }
+        return await prismaMySQL.tbl_instituicao.create({
+            data: novoInstituicao
         })
     } catch (error) {
         console.error("Erro ao inserir instituição:", error)

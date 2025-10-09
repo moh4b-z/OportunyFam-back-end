@@ -1153,6 +1153,14 @@ export namespace Prisma {
             args: Prisma.tbl_enderecoFindManyArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$tbl_enderecoPayload>[]
           }
+          create: {
+            args: Prisma.tbl_enderecoCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$tbl_enderecoPayload>
+          }
+          createMany: {
+            args: Prisma.tbl_enderecoCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
           delete: {
             args: Prisma.tbl_enderecoDeleteArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$tbl_enderecoPayload>
@@ -1168,6 +1176,10 @@ export namespace Prisma {
           updateMany: {
             args: Prisma.tbl_enderecoUpdateManyArgs<ExtArgs>
             result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.tbl_enderecoUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$tbl_enderecoPayload>
           }
           aggregate: {
             args: Prisma.Tbl_enderecoAggregateArgs<ExtArgs>
@@ -7096,6 +7108,34 @@ export namespace Prisma {
     findMany<T extends tbl_enderecoFindManyArgs>(args?: SelectSubset<T, tbl_enderecoFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$tbl_enderecoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
+     * Create a Tbl_endereco.
+     * @param {tbl_enderecoCreateArgs} args - Arguments to create a Tbl_endereco.
+     * @example
+     * // Create one Tbl_endereco
+     * const Tbl_endereco = await prisma.tbl_endereco.create({
+     *   data: {
+     *     // ... data to create a Tbl_endereco
+     *   }
+     * })
+     * 
+     */
+    create<T extends tbl_enderecoCreateArgs>(args: SelectSubset<T, tbl_enderecoCreateArgs<ExtArgs>>): Prisma__tbl_enderecoClient<$Result.GetResult<Prisma.$tbl_enderecoPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Tbl_enderecos.
+     * @param {tbl_enderecoCreateManyArgs} args - Arguments to create many Tbl_enderecos.
+     * @example
+     * // Create many Tbl_enderecos
+     * const tbl_endereco = await prisma.tbl_endereco.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends tbl_enderecoCreateManyArgs>(args?: SelectSubset<T, tbl_enderecoCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
      * Delete a Tbl_endereco.
      * @param {tbl_enderecoDeleteArgs} args - Arguments to delete one Tbl_endereco.
      * @example
@@ -7158,6 +7198,25 @@ export namespace Prisma {
      * 
      */
     updateMany<T extends tbl_enderecoUpdateManyArgs>(args: SelectSubset<T, tbl_enderecoUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Tbl_endereco.
+     * @param {tbl_enderecoUpsertArgs} args - Arguments to update or create a Tbl_endereco.
+     * @example
+     * // Update or create a Tbl_endereco
+     * const tbl_endereco = await prisma.tbl_endereco.upsert({
+     *   create: {
+     *     // ... data to create a Tbl_endereco
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Tbl_endereco we want to update
+     *   }
+     * })
+     */
+    upsert<T extends tbl_enderecoUpsertArgs>(args: SelectSubset<T, tbl_enderecoUpsertArgs<ExtArgs>>): Prisma__tbl_enderecoClient<$Result.GetResult<Prisma.$tbl_enderecoPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
 
     /**
@@ -7548,6 +7607,39 @@ export namespace Prisma {
   }
 
   /**
+   * tbl_endereco create
+   */
+  export type tbl_enderecoCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the tbl_endereco
+     */
+    select?: tbl_enderecoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the tbl_endereco
+     */
+    omit?: tbl_enderecoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: tbl_enderecoInclude<ExtArgs> | null
+    /**
+     * The data needed to create a tbl_endereco.
+     */
+    data: XOR<tbl_enderecoCreateInput, tbl_enderecoUncheckedCreateInput>
+  }
+
+  /**
+   * tbl_endereco createMany
+   */
+  export type tbl_enderecoCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many tbl_enderecos.
+     */
+    data: tbl_enderecoCreateManyInput | tbl_enderecoCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
    * tbl_endereco update
    */
   export type tbl_enderecoUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7589,6 +7681,36 @@ export namespace Prisma {
      * Limit how many tbl_enderecos to update.
      */
     limit?: number
+  }
+
+  /**
+   * tbl_endereco upsert
+   */
+  export type tbl_enderecoUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the tbl_endereco
+     */
+    select?: tbl_enderecoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the tbl_endereco
+     */
+    omit?: tbl_enderecoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: tbl_enderecoInclude<ExtArgs> | null
+    /**
+     * The filter to search for the tbl_endereco to update in case it exists.
+     */
+    where: tbl_enderecoWhereUniqueInput
+    /**
+     * In case the tbl_endereco found by the `where` argument doesn't exist, create a new tbl_endereco with this data.
+     */
+    create: XOR<tbl_enderecoCreateInput, tbl_enderecoUncheckedCreateInput>
+    /**
+     * In case the tbl_endereco was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<tbl_enderecoUpdateInput, tbl_enderecoUncheckedUpdateInput>
   }
 
   /**
@@ -21565,6 +21687,51 @@ export namespace Prisma {
     id_sexo?: IntFieldUpdateOperationsInput | number
   }
 
+  export type tbl_enderecoCreateInput = {
+    osm_id?: bigint | number | null
+    nome?: string | null
+    tipo?: string | null
+    cep?: string | null
+    logradouro?: string | null
+    numero?: string | null
+    complemento?: string | null
+    bairro?: string | null
+    cidade?: string | null
+    estado?: string | null
+    telefone?: string | null
+    site?: string | null
+    latitude: Decimal | DecimalJsLike | number | string
+    longitude: Decimal | DecimalJsLike | number | string
+    atualizado_em?: Date | string
+    criado_em?: Date | string
+    tbl_instituicao?: tbl_instituicaoCreateNestedManyWithoutTbl_enderecoInput
+    tbl_instituicao_endereco?: tbl_instituicao_enderecoCreateNestedManyWithoutTbl_enderecoInput
+    tbl_usuario_endereco?: tbl_usuario_enderecoCreateNestedManyWithoutTbl_enderecoInput
+  }
+
+  export type tbl_enderecoUncheckedCreateInput = {
+    id?: number
+    osm_id?: bigint | number | null
+    nome?: string | null
+    tipo?: string | null
+    cep?: string | null
+    logradouro?: string | null
+    numero?: string | null
+    complemento?: string | null
+    bairro?: string | null
+    cidade?: string | null
+    estado?: string | null
+    telefone?: string | null
+    site?: string | null
+    latitude: Decimal | DecimalJsLike | number | string
+    longitude: Decimal | DecimalJsLike | number | string
+    atualizado_em?: Date | string
+    criado_em?: Date | string
+    tbl_instituicao?: tbl_instituicaoUncheckedCreateNestedManyWithoutTbl_enderecoInput
+    tbl_instituicao_endereco?: tbl_instituicao_enderecoUncheckedCreateNestedManyWithoutTbl_enderecoInput
+    tbl_usuario_endereco?: tbl_usuario_enderecoUncheckedCreateNestedManyWithoutTbl_enderecoInput
+  }
+
   export type tbl_enderecoUpdateInput = {
     osm_id?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     nome?: NullableStringFieldUpdateOperationsInput | string | null
@@ -21608,6 +21775,26 @@ export namespace Prisma {
     tbl_instituicao?: tbl_instituicaoUncheckedUpdateManyWithoutTbl_enderecoNestedInput
     tbl_instituicao_endereco?: tbl_instituicao_enderecoUncheckedUpdateManyWithoutTbl_enderecoNestedInput
     tbl_usuario_endereco?: tbl_usuario_enderecoUncheckedUpdateManyWithoutTbl_enderecoNestedInput
+  }
+
+  export type tbl_enderecoCreateManyInput = {
+    id?: number
+    osm_id?: bigint | number | null
+    nome?: string | null
+    tipo?: string | null
+    cep?: string | null
+    logradouro?: string | null
+    numero?: string | null
+    complemento?: string | null
+    bairro?: string | null
+    cidade?: string | null
+    estado?: string | null
+    telefone?: string | null
+    site?: string | null
+    latitude: Decimal | DecimalJsLike | number | string
+    longitude: Decimal | DecimalJsLike | number | string
+    atualizado_em?: Date | string
+    criado_em?: Date | string
   }
 
   export type tbl_enderecoUpdateManyMutationInput = {
@@ -23654,6 +23841,48 @@ export namespace Prisma {
     deleteMany?: tbl_responsavelScalarWhereInput | tbl_responsavelScalarWhereInput[]
   }
 
+  export type tbl_instituicaoCreateNestedManyWithoutTbl_enderecoInput = {
+    create?: XOR<tbl_instituicaoCreateWithoutTbl_enderecoInput, tbl_instituicaoUncheckedCreateWithoutTbl_enderecoInput> | tbl_instituicaoCreateWithoutTbl_enderecoInput[] | tbl_instituicaoUncheckedCreateWithoutTbl_enderecoInput[]
+    connectOrCreate?: tbl_instituicaoCreateOrConnectWithoutTbl_enderecoInput | tbl_instituicaoCreateOrConnectWithoutTbl_enderecoInput[]
+    createMany?: tbl_instituicaoCreateManyTbl_enderecoInputEnvelope
+    connect?: tbl_instituicaoWhereUniqueInput | tbl_instituicaoWhereUniqueInput[]
+  }
+
+  export type tbl_instituicao_enderecoCreateNestedManyWithoutTbl_enderecoInput = {
+    create?: XOR<tbl_instituicao_enderecoCreateWithoutTbl_enderecoInput, tbl_instituicao_enderecoUncheckedCreateWithoutTbl_enderecoInput> | tbl_instituicao_enderecoCreateWithoutTbl_enderecoInput[] | tbl_instituicao_enderecoUncheckedCreateWithoutTbl_enderecoInput[]
+    connectOrCreate?: tbl_instituicao_enderecoCreateOrConnectWithoutTbl_enderecoInput | tbl_instituicao_enderecoCreateOrConnectWithoutTbl_enderecoInput[]
+    createMany?: tbl_instituicao_enderecoCreateManyTbl_enderecoInputEnvelope
+    connect?: tbl_instituicao_enderecoWhereUniqueInput | tbl_instituicao_enderecoWhereUniqueInput[]
+  }
+
+  export type tbl_usuario_enderecoCreateNestedManyWithoutTbl_enderecoInput = {
+    create?: XOR<tbl_usuario_enderecoCreateWithoutTbl_enderecoInput, tbl_usuario_enderecoUncheckedCreateWithoutTbl_enderecoInput> | tbl_usuario_enderecoCreateWithoutTbl_enderecoInput[] | tbl_usuario_enderecoUncheckedCreateWithoutTbl_enderecoInput[]
+    connectOrCreate?: tbl_usuario_enderecoCreateOrConnectWithoutTbl_enderecoInput | tbl_usuario_enderecoCreateOrConnectWithoutTbl_enderecoInput[]
+    createMany?: tbl_usuario_enderecoCreateManyTbl_enderecoInputEnvelope
+    connect?: tbl_usuario_enderecoWhereUniqueInput | tbl_usuario_enderecoWhereUniqueInput[]
+  }
+
+  export type tbl_instituicaoUncheckedCreateNestedManyWithoutTbl_enderecoInput = {
+    create?: XOR<tbl_instituicaoCreateWithoutTbl_enderecoInput, tbl_instituicaoUncheckedCreateWithoutTbl_enderecoInput> | tbl_instituicaoCreateWithoutTbl_enderecoInput[] | tbl_instituicaoUncheckedCreateWithoutTbl_enderecoInput[]
+    connectOrCreate?: tbl_instituicaoCreateOrConnectWithoutTbl_enderecoInput | tbl_instituicaoCreateOrConnectWithoutTbl_enderecoInput[]
+    createMany?: tbl_instituicaoCreateManyTbl_enderecoInputEnvelope
+    connect?: tbl_instituicaoWhereUniqueInput | tbl_instituicaoWhereUniqueInput[]
+  }
+
+  export type tbl_instituicao_enderecoUncheckedCreateNestedManyWithoutTbl_enderecoInput = {
+    create?: XOR<tbl_instituicao_enderecoCreateWithoutTbl_enderecoInput, tbl_instituicao_enderecoUncheckedCreateWithoutTbl_enderecoInput> | tbl_instituicao_enderecoCreateWithoutTbl_enderecoInput[] | tbl_instituicao_enderecoUncheckedCreateWithoutTbl_enderecoInput[]
+    connectOrCreate?: tbl_instituicao_enderecoCreateOrConnectWithoutTbl_enderecoInput | tbl_instituicao_enderecoCreateOrConnectWithoutTbl_enderecoInput[]
+    createMany?: tbl_instituicao_enderecoCreateManyTbl_enderecoInputEnvelope
+    connect?: tbl_instituicao_enderecoWhereUniqueInput | tbl_instituicao_enderecoWhereUniqueInput[]
+  }
+
+  export type tbl_usuario_enderecoUncheckedCreateNestedManyWithoutTbl_enderecoInput = {
+    create?: XOR<tbl_usuario_enderecoCreateWithoutTbl_enderecoInput, tbl_usuario_enderecoUncheckedCreateWithoutTbl_enderecoInput> | tbl_usuario_enderecoCreateWithoutTbl_enderecoInput[] | tbl_usuario_enderecoUncheckedCreateWithoutTbl_enderecoInput[]
+    connectOrCreate?: tbl_usuario_enderecoCreateOrConnectWithoutTbl_enderecoInput | tbl_usuario_enderecoCreateOrConnectWithoutTbl_enderecoInput[]
+    createMany?: tbl_usuario_enderecoCreateManyTbl_enderecoInputEnvelope
+    connect?: tbl_usuario_enderecoWhereUniqueInput | tbl_usuario_enderecoWhereUniqueInput[]
+  }
+
   export type NullableBigIntFieldUpdateOperationsInput = {
     set?: bigint | number | null
     increment?: bigint | number
@@ -23754,6 +23983,8 @@ export namespace Prisma {
   }
 
   export type tbl_enderecoCreateNestedOneWithoutTbl_instituicaoInput = {
+    create?: XOR<tbl_enderecoCreateWithoutTbl_instituicaoInput, tbl_enderecoUncheckedCreateWithoutTbl_instituicaoInput>
+    connectOrCreate?: tbl_enderecoCreateOrConnectWithoutTbl_instituicaoInput
     connect?: tbl_enderecoWhereUniqueInput
   }
 
@@ -23821,6 +24052,9 @@ export namespace Prisma {
   }
 
   export type tbl_enderecoUpdateOneRequiredWithoutTbl_instituicaoNestedInput = {
+    create?: XOR<tbl_enderecoCreateWithoutTbl_instituicaoInput, tbl_enderecoUncheckedCreateWithoutTbl_instituicaoInput>
+    connectOrCreate?: tbl_enderecoCreateOrConnectWithoutTbl_instituicaoInput
+    upsert?: tbl_enderecoUpsertWithoutTbl_instituicaoInput
     connect?: tbl_enderecoWhereUniqueInput
     update?: XOR<XOR<tbl_enderecoUpdateToOneWithWhereWithoutTbl_instituicaoInput, tbl_enderecoUpdateWithoutTbl_instituicaoInput>, tbl_enderecoUncheckedUpdateWithoutTbl_instituicaoInput>
   }
@@ -23924,6 +24158,8 @@ export namespace Prisma {
   }
 
   export type tbl_enderecoCreateNestedOneWithoutTbl_instituicao_enderecoInput = {
+    create?: XOR<tbl_enderecoCreateWithoutTbl_instituicao_enderecoInput, tbl_enderecoUncheckedCreateWithoutTbl_instituicao_enderecoInput>
+    connectOrCreate?: tbl_enderecoCreateOrConnectWithoutTbl_instituicao_enderecoInput
     connect?: tbl_enderecoWhereUniqueInput
   }
 
@@ -23934,6 +24170,9 @@ export namespace Prisma {
   }
 
   export type tbl_enderecoUpdateOneRequiredWithoutTbl_instituicao_enderecoNestedInput = {
+    create?: XOR<tbl_enderecoCreateWithoutTbl_instituicao_enderecoInput, tbl_enderecoUncheckedCreateWithoutTbl_instituicao_enderecoInput>
+    connectOrCreate?: tbl_enderecoCreateOrConnectWithoutTbl_instituicao_enderecoInput
+    upsert?: tbl_enderecoUpsertWithoutTbl_instituicao_enderecoInput
     connect?: tbl_enderecoWhereUniqueInput
     update?: XOR<XOR<tbl_enderecoUpdateToOneWithWhereWithoutTbl_instituicao_enderecoInput, tbl_enderecoUpdateWithoutTbl_instituicao_enderecoInput>, tbl_enderecoUncheckedUpdateWithoutTbl_instituicao_enderecoInput>
   }
@@ -24469,6 +24708,8 @@ export namespace Prisma {
   }
 
   export type tbl_enderecoCreateNestedOneWithoutTbl_usuario_enderecoInput = {
+    create?: XOR<tbl_enderecoCreateWithoutTbl_usuario_enderecoInput, tbl_enderecoUncheckedCreateWithoutTbl_usuario_enderecoInput>
+    connectOrCreate?: tbl_enderecoCreateOrConnectWithoutTbl_usuario_enderecoInput
     connect?: tbl_enderecoWhereUniqueInput
   }
 
@@ -24479,6 +24720,9 @@ export namespace Prisma {
   }
 
   export type tbl_enderecoUpdateOneRequiredWithoutTbl_usuario_enderecoNestedInput = {
+    create?: XOR<tbl_enderecoCreateWithoutTbl_usuario_enderecoInput, tbl_enderecoUncheckedCreateWithoutTbl_usuario_enderecoInput>
+    connectOrCreate?: tbl_enderecoCreateOrConnectWithoutTbl_usuario_enderecoInput
+    upsert?: tbl_enderecoUpsertWithoutTbl_usuario_enderecoInput
     connect?: tbl_enderecoWhereUniqueInput
     update?: XOR<XOR<tbl_enderecoUpdateToOneWithWhereWithoutTbl_usuario_enderecoInput, tbl_enderecoUpdateWithoutTbl_usuario_enderecoInput>, tbl_enderecoUncheckedUpdateWithoutTbl_usuario_enderecoInput>
   }
@@ -25159,15 +25403,57 @@ export namespace Prisma {
     create: XOR<tbl_instituicaoCreateWithoutTbl_enderecoInput, tbl_instituicaoUncheckedCreateWithoutTbl_enderecoInput>
   }
 
+  export type tbl_instituicaoCreateManyTbl_enderecoInputEnvelope = {
+    data: tbl_instituicaoCreateManyTbl_enderecoInput | tbl_instituicaoCreateManyTbl_enderecoInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type tbl_instituicao_enderecoCreateWithoutTbl_enderecoInput = {
+    descricao?: string | null
+    tbl_instituicao: tbl_instituicaoCreateNestedOneWithoutTbl_instituicao_enderecoInput
+  }
+
+  export type tbl_instituicao_enderecoUncheckedCreateWithoutTbl_enderecoInput = {
+    id?: number
+    descricao?: string | null
+    id_instituicao: number
+  }
+
+  export type tbl_instituicao_enderecoCreateOrConnectWithoutTbl_enderecoInput = {
+    where: tbl_instituicao_enderecoWhereUniqueInput
+    create: XOR<tbl_instituicao_enderecoCreateWithoutTbl_enderecoInput, tbl_instituicao_enderecoUncheckedCreateWithoutTbl_enderecoInput>
+  }
+
+  export type tbl_instituicao_enderecoCreateManyTbl_enderecoInputEnvelope = {
+    data: tbl_instituicao_enderecoCreateManyTbl_enderecoInput | tbl_instituicao_enderecoCreateManyTbl_enderecoInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type tbl_usuario_enderecoCreateWithoutTbl_enderecoInput = {
+    descricao?: string | null
+    tbl_usuario: tbl_usuarioCreateNestedOneWithoutTbl_usuario_enderecoInput
+  }
+
+  export type tbl_usuario_enderecoUncheckedCreateWithoutTbl_enderecoInput = {
+    id?: number
+    descricao?: string | null
+    id_usuario: number
+  }
+
+  export type tbl_usuario_enderecoCreateOrConnectWithoutTbl_enderecoInput = {
+    where: tbl_usuario_enderecoWhereUniqueInput
+    create: XOR<tbl_usuario_enderecoCreateWithoutTbl_enderecoInput, tbl_usuario_enderecoUncheckedCreateWithoutTbl_enderecoInput>
+  }
+
+  export type tbl_usuario_enderecoCreateManyTbl_enderecoInputEnvelope = {
+    data: tbl_usuario_enderecoCreateManyTbl_enderecoInput | tbl_usuario_enderecoCreateManyTbl_enderecoInput[]
+    skipDuplicates?: boolean
+  }
+
   export type tbl_instituicaoUpsertWithWhereUniqueWithoutTbl_enderecoInput = {
     where: tbl_instituicaoWhereUniqueInput
     update: XOR<tbl_instituicaoUpdateWithoutTbl_enderecoInput, tbl_instituicaoUncheckedUpdateWithoutTbl_enderecoInput>
     create: XOR<tbl_instituicaoCreateWithoutTbl_enderecoInput, tbl_instituicaoUncheckedCreateWithoutTbl_enderecoInput>
-  }
-
-  export type tbl_instituicaoCreateManyTbl_enderecoInputEnvelope = {
-    data: tbl_instituicaoCreateManyTbl_enderecoInput | tbl_instituicaoCreateManyTbl_enderecoInput[]
-    skipDuplicates?: boolean
   }
 
   export type tbl_instituicaoUpdateWithWhereUniqueWithoutTbl_enderecoInput = {
@@ -25196,31 +25482,10 @@ export namespace Prisma {
     id_endereco?: IntFilter<"tbl_instituicao"> | number
   }
 
-  export type tbl_instituicao_enderecoCreateWithoutTbl_enderecoInput = {
-    descricao?: string | null
-    tbl_instituicao: tbl_instituicaoCreateNestedOneWithoutTbl_instituicao_enderecoInput
-  }
-
-  export type tbl_instituicao_enderecoUncheckedCreateWithoutTbl_enderecoInput = {
-    id?: number
-    descricao?: string | null
-    id_instituicao: number
-  }
-
-  export type tbl_instituicao_enderecoCreateOrConnectWithoutTbl_enderecoInput = {
-    where: tbl_instituicao_enderecoWhereUniqueInput
-    create: XOR<tbl_instituicao_enderecoCreateWithoutTbl_enderecoInput, tbl_instituicao_enderecoUncheckedCreateWithoutTbl_enderecoInput>
-  }
-
   export type tbl_instituicao_enderecoUpsertWithWhereUniqueWithoutTbl_enderecoInput = {
     where: tbl_instituicao_enderecoWhereUniqueInput
     update: XOR<tbl_instituicao_enderecoUpdateWithoutTbl_enderecoInput, tbl_instituicao_enderecoUncheckedUpdateWithoutTbl_enderecoInput>
     create: XOR<tbl_instituicao_enderecoCreateWithoutTbl_enderecoInput, tbl_instituicao_enderecoUncheckedCreateWithoutTbl_enderecoInput>
-  }
-
-  export type tbl_instituicao_enderecoCreateManyTbl_enderecoInputEnvelope = {
-    data: tbl_instituicao_enderecoCreateManyTbl_enderecoInput | tbl_instituicao_enderecoCreateManyTbl_enderecoInput[]
-    skipDuplicates?: boolean
   }
 
   export type tbl_instituicao_enderecoUpdateWithWhereUniqueWithoutTbl_enderecoInput = {
@@ -25243,31 +25508,10 @@ export namespace Prisma {
     id_endereco?: IntFilter<"tbl_instituicao_endereco"> | number
   }
 
-  export type tbl_usuario_enderecoCreateWithoutTbl_enderecoInput = {
-    descricao?: string | null
-    tbl_usuario: tbl_usuarioCreateNestedOneWithoutTbl_usuario_enderecoInput
-  }
-
-  export type tbl_usuario_enderecoUncheckedCreateWithoutTbl_enderecoInput = {
-    id?: number
-    descricao?: string | null
-    id_usuario: number
-  }
-
-  export type tbl_usuario_enderecoCreateOrConnectWithoutTbl_enderecoInput = {
-    where: tbl_usuario_enderecoWhereUniqueInput
-    create: XOR<tbl_usuario_enderecoCreateWithoutTbl_enderecoInput, tbl_usuario_enderecoUncheckedCreateWithoutTbl_enderecoInput>
-  }
-
   export type tbl_usuario_enderecoUpsertWithWhereUniqueWithoutTbl_enderecoInput = {
     where: tbl_usuario_enderecoWhereUniqueInput
     update: XOR<tbl_usuario_enderecoUpdateWithoutTbl_enderecoInput, tbl_usuario_enderecoUncheckedUpdateWithoutTbl_enderecoInput>
     create: XOR<tbl_usuario_enderecoCreateWithoutTbl_enderecoInput, tbl_usuario_enderecoUncheckedCreateWithoutTbl_enderecoInput>
-  }
-
-  export type tbl_usuario_enderecoCreateManyTbl_enderecoInputEnvelope = {
-    data: tbl_usuario_enderecoCreateManyTbl_enderecoInput | tbl_usuario_enderecoCreateManyTbl_enderecoInput[]
-    skipDuplicates?: boolean
   }
 
   export type tbl_usuario_enderecoUpdateWithWhereUniqueWithoutTbl_enderecoInput = {
@@ -25323,6 +25567,54 @@ export namespace Prisma {
   export type tbl_atividadesCreateManyTbl_instituicaoInputEnvelope = {
     data: tbl_atividadesCreateManyTbl_instituicaoInput | tbl_atividadesCreateManyTbl_instituicaoInput[]
     skipDuplicates?: boolean
+  }
+
+  export type tbl_enderecoCreateWithoutTbl_instituicaoInput = {
+    osm_id?: bigint | number | null
+    nome?: string | null
+    tipo?: string | null
+    cep?: string | null
+    logradouro?: string | null
+    numero?: string | null
+    complemento?: string | null
+    bairro?: string | null
+    cidade?: string | null
+    estado?: string | null
+    telefone?: string | null
+    site?: string | null
+    latitude: Decimal | DecimalJsLike | number | string
+    longitude: Decimal | DecimalJsLike | number | string
+    atualizado_em?: Date | string
+    criado_em?: Date | string
+    tbl_instituicao_endereco?: tbl_instituicao_enderecoCreateNestedManyWithoutTbl_enderecoInput
+    tbl_usuario_endereco?: tbl_usuario_enderecoCreateNestedManyWithoutTbl_enderecoInput
+  }
+
+  export type tbl_enderecoUncheckedCreateWithoutTbl_instituicaoInput = {
+    id?: number
+    osm_id?: bigint | number | null
+    nome?: string | null
+    tipo?: string | null
+    cep?: string | null
+    logradouro?: string | null
+    numero?: string | null
+    complemento?: string | null
+    bairro?: string | null
+    cidade?: string | null
+    estado?: string | null
+    telefone?: string | null
+    site?: string | null
+    latitude: Decimal | DecimalJsLike | number | string
+    longitude: Decimal | DecimalJsLike | number | string
+    atualizado_em?: Date | string
+    criado_em?: Date | string
+    tbl_instituicao_endereco?: tbl_instituicao_enderecoUncheckedCreateNestedManyWithoutTbl_enderecoInput
+    tbl_usuario_endereco?: tbl_usuario_enderecoUncheckedCreateNestedManyWithoutTbl_enderecoInput
+  }
+
+  export type tbl_enderecoCreateOrConnectWithoutTbl_instituicaoInput = {
+    where: tbl_enderecoWhereUniqueInput
+    create: XOR<tbl_enderecoCreateWithoutTbl_instituicaoInput, tbl_enderecoUncheckedCreateWithoutTbl_instituicaoInput>
   }
 
   export type tbl_instituicao_enderecoCreateWithoutTbl_instituicaoInput = {
@@ -25406,6 +25698,12 @@ export namespace Prisma {
   export type tbl_atividadesUpdateManyWithWhereWithoutTbl_instituicaoInput = {
     where: tbl_atividadesScalarWhereInput
     data: XOR<tbl_atividadesUpdateManyMutationInput, tbl_atividadesUncheckedUpdateManyWithoutTbl_instituicaoInput>
+  }
+
+  export type tbl_enderecoUpsertWithoutTbl_instituicaoInput = {
+    update: XOR<tbl_enderecoUpdateWithoutTbl_instituicaoInput, tbl_enderecoUncheckedUpdateWithoutTbl_instituicaoInput>
+    create: XOR<tbl_enderecoCreateWithoutTbl_instituicaoInput, tbl_enderecoUncheckedCreateWithoutTbl_instituicaoInput>
+    where?: tbl_enderecoWhereInput
   }
 
   export type tbl_enderecoUpdateToOneWithWhereWithoutTbl_instituicaoInput = {
@@ -25526,6 +25824,54 @@ export namespace Prisma {
     id_rede_social?: IntFilter<"tbl_rede_social_instituicao"> | number
   }
 
+  export type tbl_enderecoCreateWithoutTbl_instituicao_enderecoInput = {
+    osm_id?: bigint | number | null
+    nome?: string | null
+    tipo?: string | null
+    cep?: string | null
+    logradouro?: string | null
+    numero?: string | null
+    complemento?: string | null
+    bairro?: string | null
+    cidade?: string | null
+    estado?: string | null
+    telefone?: string | null
+    site?: string | null
+    latitude: Decimal | DecimalJsLike | number | string
+    longitude: Decimal | DecimalJsLike | number | string
+    atualizado_em?: Date | string
+    criado_em?: Date | string
+    tbl_instituicao?: tbl_instituicaoCreateNestedManyWithoutTbl_enderecoInput
+    tbl_usuario_endereco?: tbl_usuario_enderecoCreateNestedManyWithoutTbl_enderecoInput
+  }
+
+  export type tbl_enderecoUncheckedCreateWithoutTbl_instituicao_enderecoInput = {
+    id?: number
+    osm_id?: bigint | number | null
+    nome?: string | null
+    tipo?: string | null
+    cep?: string | null
+    logradouro?: string | null
+    numero?: string | null
+    complemento?: string | null
+    bairro?: string | null
+    cidade?: string | null
+    estado?: string | null
+    telefone?: string | null
+    site?: string | null
+    latitude: Decimal | DecimalJsLike | number | string
+    longitude: Decimal | DecimalJsLike | number | string
+    atualizado_em?: Date | string
+    criado_em?: Date | string
+    tbl_instituicao?: tbl_instituicaoUncheckedCreateNestedManyWithoutTbl_enderecoInput
+    tbl_usuario_endereco?: tbl_usuario_enderecoUncheckedCreateNestedManyWithoutTbl_enderecoInput
+  }
+
+  export type tbl_enderecoCreateOrConnectWithoutTbl_instituicao_enderecoInput = {
+    where: tbl_enderecoWhereUniqueInput
+    create: XOR<tbl_enderecoCreateWithoutTbl_instituicao_enderecoInput, tbl_enderecoUncheckedCreateWithoutTbl_instituicao_enderecoInput>
+  }
+
   export type tbl_instituicaoCreateWithoutTbl_instituicao_enderecoInput = {
     nome: string
     logo?: string | null
@@ -25560,6 +25906,12 @@ export namespace Prisma {
   export type tbl_instituicaoCreateOrConnectWithoutTbl_instituicao_enderecoInput = {
     where: tbl_instituicaoWhereUniqueInput
     create: XOR<tbl_instituicaoCreateWithoutTbl_instituicao_enderecoInput, tbl_instituicaoUncheckedCreateWithoutTbl_instituicao_enderecoInput>
+  }
+
+  export type tbl_enderecoUpsertWithoutTbl_instituicao_enderecoInput = {
+    update: XOR<tbl_enderecoUpdateWithoutTbl_instituicao_enderecoInput, tbl_enderecoUncheckedUpdateWithoutTbl_instituicao_enderecoInput>
+    create: XOR<tbl_enderecoCreateWithoutTbl_instituicao_enderecoInput, tbl_enderecoUncheckedCreateWithoutTbl_instituicao_enderecoInput>
+    where?: tbl_enderecoWhereInput
   }
 
   export type tbl_enderecoUpdateToOneWithWhereWithoutTbl_instituicao_enderecoInput = {
@@ -26662,6 +27014,54 @@ export namespace Prisma {
     data: XOR<tbl_usuario_enderecoUpdateManyMutationInput, tbl_usuario_enderecoUncheckedUpdateManyWithoutTbl_usuarioInput>
   }
 
+  export type tbl_enderecoCreateWithoutTbl_usuario_enderecoInput = {
+    osm_id?: bigint | number | null
+    nome?: string | null
+    tipo?: string | null
+    cep?: string | null
+    logradouro?: string | null
+    numero?: string | null
+    complemento?: string | null
+    bairro?: string | null
+    cidade?: string | null
+    estado?: string | null
+    telefone?: string | null
+    site?: string | null
+    latitude: Decimal | DecimalJsLike | number | string
+    longitude: Decimal | DecimalJsLike | number | string
+    atualizado_em?: Date | string
+    criado_em?: Date | string
+    tbl_instituicao?: tbl_instituicaoCreateNestedManyWithoutTbl_enderecoInput
+    tbl_instituicao_endereco?: tbl_instituicao_enderecoCreateNestedManyWithoutTbl_enderecoInput
+  }
+
+  export type tbl_enderecoUncheckedCreateWithoutTbl_usuario_enderecoInput = {
+    id?: number
+    osm_id?: bigint | number | null
+    nome?: string | null
+    tipo?: string | null
+    cep?: string | null
+    logradouro?: string | null
+    numero?: string | null
+    complemento?: string | null
+    bairro?: string | null
+    cidade?: string | null
+    estado?: string | null
+    telefone?: string | null
+    site?: string | null
+    latitude: Decimal | DecimalJsLike | number | string
+    longitude: Decimal | DecimalJsLike | number | string
+    atualizado_em?: Date | string
+    criado_em?: Date | string
+    tbl_instituicao?: tbl_instituicaoUncheckedCreateNestedManyWithoutTbl_enderecoInput
+    tbl_instituicao_endereco?: tbl_instituicao_enderecoUncheckedCreateNestedManyWithoutTbl_enderecoInput
+  }
+
+  export type tbl_enderecoCreateOrConnectWithoutTbl_usuario_enderecoInput = {
+    where: tbl_enderecoWhereUniqueInput
+    create: XOR<tbl_enderecoCreateWithoutTbl_usuario_enderecoInput, tbl_enderecoUncheckedCreateWithoutTbl_usuario_enderecoInput>
+  }
+
   export type tbl_usuarioCreateWithoutTbl_usuario_enderecoInput = {
     nome: string
     foto_perfil?: string | null
@@ -26696,6 +27096,12 @@ export namespace Prisma {
   export type tbl_usuarioCreateOrConnectWithoutTbl_usuario_enderecoInput = {
     where: tbl_usuarioWhereUniqueInput
     create: XOR<tbl_usuarioCreateWithoutTbl_usuario_enderecoInput, tbl_usuarioUncheckedCreateWithoutTbl_usuario_enderecoInput>
+  }
+
+  export type tbl_enderecoUpsertWithoutTbl_usuario_enderecoInput = {
+    update: XOR<tbl_enderecoUpdateWithoutTbl_usuario_enderecoInput, tbl_enderecoUncheckedUpdateWithoutTbl_usuario_enderecoInput>
+    create: XOR<tbl_enderecoCreateWithoutTbl_usuario_enderecoInput, tbl_enderecoUncheckedCreateWithoutTbl_usuario_enderecoInput>
+    where?: tbl_enderecoWhereInput
   }
 
   export type tbl_enderecoUpdateToOneWithWhereWithoutTbl_usuario_enderecoInput = {
@@ -26899,6 +27305,30 @@ export namespace Prisma {
     id_usuario?: IntFieldUpdateOperationsInput | number
   }
 
+  export type tbl_instituicaoCreateManyTbl_enderecoInput = {
+    id?: number
+    nome: string
+    logo?: string | null
+    cnpj: string
+    telefone: string
+    email: string
+    senha: string
+    descricao?: string | null
+    criado_em?: Date | string
+  }
+
+  export type tbl_instituicao_enderecoCreateManyTbl_enderecoInput = {
+    id?: number
+    descricao?: string | null
+    id_instituicao: number
+  }
+
+  export type tbl_usuario_enderecoCreateManyTbl_enderecoInput = {
+    id?: number
+    descricao?: string | null
+    id_usuario: number
+  }
+
   export type tbl_instituicaoUpdateWithoutTbl_enderecoInput = {
     nome?: StringFieldUpdateOperationsInput | string
     logo?: NullableStringFieldUpdateOperationsInput | string | null
@@ -26930,18 +27360,6 @@ export namespace Prisma {
     tbl_rede_social_instituicao?: tbl_rede_social_instituicaoUncheckedUpdateManyWithoutTbl_instituicaoNestedInput
   }
 
-  export type tbl_instituicaoCreateManyTbl_enderecoInput = {
-    id?: number
-    nome: string
-    logo?: string | null
-    cnpj: string
-    telefone: string
-    email: string
-    senha: string
-    descricao?: string | null
-    criado_em?: Date | string
-  }
-
   export type tbl_instituicaoUncheckedUpdateManyWithoutTbl_enderecoInput = {
     id?: IntFieldUpdateOperationsInput | number
     nome?: StringFieldUpdateOperationsInput | string
@@ -26965,12 +27383,6 @@ export namespace Prisma {
     id_instituicao?: IntFieldUpdateOperationsInput | number
   }
 
-  export type tbl_instituicao_enderecoCreateManyTbl_enderecoInput = {
-    id?: number
-    descricao?: string | null
-    id_instituicao: number
-  }
-
   export type tbl_instituicao_enderecoUncheckedUpdateManyWithoutTbl_enderecoInput = {
     id?: IntFieldUpdateOperationsInput | number
     descricao?: NullableStringFieldUpdateOperationsInput | string | null
@@ -26986,12 +27398,6 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     descricao?: NullableStringFieldUpdateOperationsInput | string | null
     id_usuario?: IntFieldUpdateOperationsInput | number
-  }
-
-  export type tbl_usuario_enderecoCreateManyTbl_enderecoInput = {
-    id?: number
-    descricao?: string | null
-    id_usuario: number
   }
 
   export type tbl_usuario_enderecoUncheckedUpdateManyWithoutTbl_enderecoInput = {

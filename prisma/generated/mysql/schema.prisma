@@ -84,7 +84,7 @@ model tbl_endereco {
   site                     String?                    @mysql.VarChar(255)
   latitude                 Decimal                    @mysql.Decimal(10, 7)
   longitude                Decimal                    @mysql.Decimal(10, 7)
-  geo                      Unsupported("point")
+  geo                      Unsupported("point")?
   atualizado_em            DateTime                   @default(now()) @mysql.Timestamp(0)
   criado_em                DateTime                   @default(now()) @mysql.Timestamp(0)
   tbl_instituicao          tbl_instituicao[]
