@@ -3,7 +3,7 @@ const router = express.Router()
 const controllerAtividade = require('../../controllers/atividade/controllerAtividade')
 
 router.post(
-    '/', 
+    '', 
     controllerAtividade.postAtividade
 ) 
 
@@ -18,7 +18,7 @@ router.delete(
 )
 
 router.get(
-    '/', 
+    '', 
     controllerAtividade.getSearchAllAtividades
 )
 
@@ -30,7 +30,7 @@ router.get(
 
 
 router.post(
-    '/aulas/', 
+    '/aulas', 
     controllerAtividade.postAula
 ) 
 

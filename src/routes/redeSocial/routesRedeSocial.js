@@ -3,7 +3,7 @@ const router = express.Router()
 const controllerRedeSocial = require('../../controllers/redeSocial/controllerRedeSocial')
 
 router.post(
-    '/',
+    '',
     controllerRedeSocial.postRedeSocial
 )
 
@@ -18,7 +18,7 @@ router.put(
 )
 
 router.get(
-    '/',
+    '',
     controllerRedeSocial.getSearchAllRedeSocial
 )
 

@@ -4,7 +4,7 @@ const router = express.Router()
 const controllerTipoNivel = require('../../controllers/usuario/tipoNivel/controllerTipoNivel')
 
 router.post(
-    '/',
+    '',
     controllerTipoNivel.postTipoNivel
 )
 
@@ -19,7 +19,7 @@ router.put(
 )
 
 router.get(
-    '/',
+    '',
     controllerTipoNivel.getSearchAllTipoNivel
 )
 

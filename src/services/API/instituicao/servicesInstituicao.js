@@ -22,21 +22,17 @@ async function inserirInstituicao(dadosInstituicao, contentType){
                 TableCORRECTION.CHECK_tbl_instituicao(dadosInstituicao)
             ) {
                 
-                // 1. Verifica unicidade do email
                 const emailExists = await usuarioDAO.verifyEmailExists(dadosInstituicao.email)
                 if (emailExists) {
                     return MENSAGE.ERROR_EMAIL_ALREADY_EXISTS
                 }
-                
-                // 2. Criptografa a senha
+
                 const senha_hash = encryptionFunction.hashPassword(dadosInstituicao.senha)
                 dadosInstituicao.senha = senha_hash
-
-                // Armazena a lista de tipos de instituição antes de passar 'dadosInstituicao' adiante
+                
                 const tiposInstituicaoIds = dadosInstituicao.tipos_instituicao
-                delete dadosInstituicao.tipos_instituicao // Remove do objeto principal para não atrapalhar o DAO
+                delete dadosInstituicao.tipos_instituicao
 
-                // 3. Insere o Endereço
                 // console.log(dadosInstituicao);
                 let endereco = { 
                     cep: dadosInstituicao.cep, 
@@ -275,11 +271,10 @@ async function loginInstituicao(dadosLogin, contentType){
 
 async function buscarInstituicoesPorNome(params) {
     try {
-        const nomeBusca = params.busca || null
+        const nomeBusca = params.nome || null
         const pagina = params.pagina || 1
         const tamanho = params.tamanho || 20
 
-        // Validação básica de paginação
         if (!CORRECTION.CHECK_ID(pagina) || !CORRECTION.CHECK_ID(tamanho)) {
             return MENSAGE.ERROR_INVALID_PARAM
         }

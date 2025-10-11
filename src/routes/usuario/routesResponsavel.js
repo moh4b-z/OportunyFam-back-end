@@ -3,7 +3,7 @@ const router = express.Router()
 const controllerResponsavel = require('../../controllers/usuario/responsavel/controllerResponsavel')
 
 router.post(
-    '/',
+    '',
     controllerResponsavel.postResponsavel
 )
 
@@ -13,7 +13,7 @@ router.delete(
 )
 
 router.get(
-    '/',
+    '',
     controllerResponsavel.getSearchAllResponsavel
 )
 

@@ -3,7 +3,7 @@ const router = express.Router()
 const controllerEndereco = require('../../controllers/endereco/controllerEndereco')
 
 router.post(
-    '/',
+    '',
     controllerEndereco.postEndereco
 )
 
@@ -18,13 +18,8 @@ router.put(
 )
 
 router.get(
-    '/',
+    '',
     controllerEndereco.getSearchAllEndereco
-)
-
-router.get(
-    '/osm/',
-    controllerEndereco.getInstituicoes
 )
 
 router.get(

@@ -19,7 +19,7 @@ router.put(
 )
 
 router.get(
-    '/',
+    '',
     controllerSexo.getSearchAllSexo
 )
 

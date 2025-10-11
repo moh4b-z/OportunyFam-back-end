@@ -1,29 +1,29 @@
 const express = require('express')
 const router = express.Router()
-const controllerCategoria = require('../../../controllers/atividade/categoria/controllerCategoria')
+const controllerCategoria = require('../../controllers/atividade/categoria/controllerCategoria')
 
 router.post(
-    '/', 
+    '', 
     controllerCategoria.postCategoria
 )
 
 router.put(
-    '/categorias/:id', 
+    '/:id', 
     controllerCategoria.putCategoria
 )
 
 router.delete(
-    '/categorias/:id', 
+    '/:id', 
     controllerCategoria.deleteCategoria
 )
 
 router.get(
-    '/categorias', 
+    '', 
     controllerCategoria.getSearchAllCategorias
 )
 
 router.get(
-    '/categorias/:id', 
+    '/:id', 
     controllerCategoria.getSearchCategoria
 )
 

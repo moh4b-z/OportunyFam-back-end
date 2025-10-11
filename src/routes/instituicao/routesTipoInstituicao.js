@@ -3,7 +3,7 @@ const router = express.Router()
 const controllerTipoInstituicao = require('../../controllers/instituicao/tipoInstituicao/controllerTipoInstituicao')
 
 router.post(
-    '/',
+    '',
     controllerTipoInstituicao.postTipoInstituicao
 )
 
@@ -18,7 +18,7 @@ router.put(
 )
 
 router.get(
-    '/',
+    '',
     controllerTipoInstituicao.getSearchAllTipoInstituicao
 )
 

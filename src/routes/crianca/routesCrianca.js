@@ -3,7 +3,7 @@ const router = express.Router()
 const controllerCrianca = require('../../controllers/crianca/controllerCrianca')
 
 router.post(
-    '/',
+    '',
     controllerCrianca.postCrianca
 )
 
@@ -18,7 +18,7 @@ router.put(
 )
 
 router.get(
-    '/',
+    '',
     controllerCrianca.getSearchAllCrianca
 )
 

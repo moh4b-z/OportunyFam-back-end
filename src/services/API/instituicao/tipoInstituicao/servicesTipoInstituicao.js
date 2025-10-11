@@ -86,7 +86,6 @@ async function listarTodosTipoInstituicao(){
 
         // console.log(MENSAGE.SUCCESS_REQUEST );
         
-        
         if (result) {
             return result.length > 0 ? { ...MENSAGE.SUCCESS_REQUEST, tipos_instituicao: result } : MENSAGE.ERROR_NOT_FOUND
         } else {

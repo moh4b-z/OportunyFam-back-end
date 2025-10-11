@@ -4,7 +4,7 @@ const router = express.Router()
 const controllerUsuario = require('../../controllers/usuario/controllerUsuario')
 
 router.post(
-    '/login',
+    '',
     controllerUsuario.postLoginUniversal
 )
 

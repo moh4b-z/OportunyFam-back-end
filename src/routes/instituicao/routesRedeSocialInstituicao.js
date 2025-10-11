@@ -1,11 +1,9 @@
-// src/routes/routesRedeSocialInstituicao.js
-
 const express = require('express')
 const router = express.Router()
 const controllerRedeSocialInstituicao = require('../../controllers/instituicao/redeSocialInstituicao/controllerRedeSocialInstituicao')
 
 router.post(
-    '/',
+    '',
     controllerRedeSocialInstituicao.postRedeSocialInstituicao
 )
 
@@ -20,7 +18,7 @@ router.put(
 )
 
 router.get(
-    '/',
+    '',
     controllerRedeSocialInstituicao.getSearchAllRedeSocialInstituicao
 )
 

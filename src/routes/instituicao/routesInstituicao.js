@@ -8,6 +8,11 @@ router.post(
     controllerInstituicao.postInstituicao
 )
 
+router.post(
+    '/login',
+    controllerInstituicao.postLoginInstituicao
+)
+
 router.delete(
     '/:id',
     controllerInstituicao.deleteInstituicao
@@ -19,8 +24,13 @@ router.put(
 )
 
 router.get(
-    '/',
+    '',
     controllerInstituicao.getSearchAllInstituicao
+)
+
+router.get(
+    '/', 
+    controllerInstituicao.getSearchInstituicoesByName
 )
 
 router.get(
@@ -28,14 +38,9 @@ router.get(
     controllerInstituicao.getSearchInstituicao
 )
 
-router.post(
-    '/login',
-    controllerInstituicao.postLoginInstituicao
-)
-
 router.get(
-    '', 
-    controllerInstituicao.getSearchInstituicoes
+    '/osm/',
+    controllerInstituicao.getInstituicoesByAddress
 )
 
 module.exports = router

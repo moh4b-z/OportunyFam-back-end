@@ -1,11 +1,9 @@
-// src/routes/routesRedeSocialUsuario.js
-
 const express = require('express')
 const router = express.Router()
 const controllerRedeSocialUsuario = require('../../controllers/usuario/redeSocialUsuario/controllerRedeSocialUsuario')
 
 router.post(
-    '/',
+    '',
     controllerRedeSocialUsuario.postRedeSocialUsuario
 )
 
@@ -20,7 +18,7 @@ router.put(
 )
 
 router.get(
-    '/',
+    '',
     controllerRedeSocialUsuario.getSearchAllRedeSocialUsuario
 )
 
