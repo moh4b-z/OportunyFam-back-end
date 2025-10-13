@@ -4,11 +4,12 @@ const TableCORRECTION = require("../../../utils/tablesCheck")
 const encryptionFunction = require("../../../utils/encryptionFunction")
 const criancaDAO = require("../../../model/DAO/crianca/crianca")
 const usuarioDAO = require("../../../model/DAO/usuario/usuario")
+const responsavelDAO = require("../../../model/DAO/usuario/responsavel/responsavel")
 
 async function inserirCrianca(dadosCrianca, contentType) {
     try {
         if (contentType == "application/json") {
-            if (TableCORRECTION.CHECK_tbl_crianca(dadosCrianca)) {
+            if (TableCORRECTION.CHECK_tbl_crianca(dadosCrianca) && dadosCrianca.id_usuario) {
                 let emailExists = await usuarioDAO.verifyEmailExists(dadosCrianca.email)
                 if (emailExists) {
                     return MENSAGE.ERROR_EMAIL_ALREADY_EXISTS
@@ -18,7 +19,13 @@ async function inserirCrianca(dadosCrianca, contentType) {
                 dadosCrianca.senha = senha_hash
 
                 let result = await criancaDAO.insertCrianca(dadosCrianca)
-                return result ? { ...MENSAGE.SUCCESS_CEATED_ITEM, crianca: result } : MENSAGE.ERROR_INTERNAL_SERVER_MODEL
+                if(result){
+                    let resultResponsavel = await responsavelDAO.insertResponsavel({
+                        id_usuario: dadosCrianca.id_usuario,
+                        id_crianca: result.id
+                    })
+                    return result ? { ...MENSAGE.SUCCESS_CEATED_ITEM, crianca: result } : MENSAGE.ERROR_INTERNAL_SERVER_MODEL
+                }
             } else {
                 return MENSAGE.ERROR_REQUIRED_FIELDS
             }

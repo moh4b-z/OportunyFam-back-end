@@ -141,6 +141,7 @@ module.exports = {
     CHECK_DECIMAL_NOT_NULL,
     CHECK_TINYINT,
     CHECK_tbl_comentarios,
+    CHECK_NOT_NULL,
     CHECK_EMAIL,
     CHECK_CPF,
     CHECK_CNPJ

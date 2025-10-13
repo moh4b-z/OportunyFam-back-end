@@ -214,19 +214,25 @@ async function loginUniversal(dadosLogin, contentType) {
     try {
         if (contentType == "application/json") {
 
-            if (email && senha) {
+            if (dadosLogin.email && dadosLogin.senha) {
                 
-                let usuario = loginUsuario(dadosLogin, contentType)
-                let crianca = servicesInstituicao.loginInstituicao(dadosLogin, contentType)
-                let instituicao = servicesCrianca.loginCrianca(dadosLogin, contentType)
+                let usuario = await loginUsuario(dadosLogin, contentType)
+                let instituicao = await servicesInstituicao.loginInstituicao(dadosLogin, contentType)
+                let crianca = await servicesCrianca.loginCrianca(dadosLogin, contentType)
                 let result = false
+                let tipo = false
 
-                if (usuario.status_code = 200) {
-                    result = { ...usuario, tipo: 'usuario' }
-                } else if (crianca.status_code = 200) {
-                    result = { ...crianca, tipo: 'crianca'  }
-                } else if (instituicao.status_code = 200) {
-                    result = { ...instituicao, tipo: 'instituicao'}
+                // console.log(usuario, crianca, instituicao);
+                
+                if (usuario.status_code === 200) {
+                    result = usuario 
+                    tipo = 'usuario' 
+                } else if (crianca.status_code === 200) {
+                    result = crianca
+                    tipo = 'crianca'  
+                } else if (instituicao.status_code === 200) {
+                    result = instituicao
+                    tipo = 'instituicao'
                 }
                 
 
@@ -234,8 +240,8 @@ async function loginUniversal(dadosLogin, contentType) {
 
                     return {
                         ...MENSAGE.SUCCESS_LOGIN,
-                        tipo: result.tipo,
-                        usuario: result.dados
+                        tipo: tipo,
+                        result
                     }
                 } else {
                     

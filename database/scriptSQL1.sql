@@ -95,13 +95,13 @@ CREATE TABLE tbl_usuario_endereco (
 ) ENGINE=InnoDB;
 
 CREATE TABLE tbl_instituicao (
-  id          INT AUTO_INCREMENT PRIMARY KEY,
-  nome        VARCHAR(200) NOT NULL,
-  logo        VARCHAR(400),
-  cnpj        VARCHAR(14) NOT NULL,
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(200) NOT NULL,
+  logo VARCHAR(400),
+  cnpj VARCHAR(14) NOT NULL,
   telefone VARCHAR(16) NOT NULL,
-  email       VARCHAR(150) NOT NULL UNIQUE,
-  senha       VARCHAR(256) NOT NULL,
+  email VARCHAR(150) NOT NULL UNIQUE,
+  senha VARCHAR(256) NOT NULL,
   descricao   TEXT,
   criado_em   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   id_endereco INT NOT NULL,
