@@ -207,29 +207,42 @@ JOIN tbl_tipo_nivel tn ON tn.id = u.id_tipo_nivel;
 
 CREATE OR REPLACE VIEW vw_instituicao_completa AS
 SELECT
-    i.id, 
-    i.nome, 
-    i.cnpj, 
-    i.email, 
-    i.descricao, 
-    i.criado_em,
-    e.cep, 
-    e.logradouro, 
-    e.numero, 
-    e.complemento, 
-    e.bairro, 
-    e.cidade, 
-    e.estado,
-    -- Concatena os nomes dos tipos de instituição para o resultado
-    (
-        SELECT GROUP_CONCAT(ti.nome SEPARATOR ', ')
-        FROM tbl_tipo_instituicao ti
-        JOIN tbl_instituicao_tipo_instituicao iti ON iti.id_tipo_instituicao = ti.id
-        WHERE iti.id_instituicao = i.id
-    ) AS tipos_instituicao
+  i.id,
+  i.nome,
+  i.cnpj,
+  i.email,
+  i.descricao,
+  i.criado_em,
+  JSON_OBJECT(
+    'id',         e.id,
+    'cep',        e.cep,
+    'logradouro', e.logradouro,
+    'numero',     e.numero,
+    'complemento',e.complemento,
+    'bairro',     e.bairro,
+    'cidade',     e.cidade,
+    'estado',     e.estado
+  ) AS endereco,
+  (
+    SELECT
+      COALESCE(
+        JSON_ARRAYAGG(JSON_OBJECT('id', t.id, 'nome', t.nome)),
+        JSON_ARRAY()
+      )
+    FROM (
+      SELECT ti.id, ti.nome
+      FROM tbl_tipo_instituicao ti
+      JOIN tbl_instituicao_tipo_instituicao iti
+        ON iti.id_tipo_instituicao = ti.id
+      WHERE iti.id_instituicao = i.id
+      ORDER BY ti.nome
+    ) AS t
+  ) AS tipos_instituicao
 FROM tbl_instituicao i
-JOIN tbl_instituicao_endereco ie ON ie.id_instituicao = i.id
-JOIN tbl_endereco e ON e.id = ie.id_endereco;
+JOIN tbl_endereco e ON e.id = i.id_endereco;
+
+
+
 
 CREATE OR REPLACE VIEW vw_crianca_perfil AS
 SELECT
