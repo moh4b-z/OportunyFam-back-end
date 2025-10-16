@@ -225,13 +225,13 @@ async function loginUniversal(dadosLogin, contentType) {
                 // console.log(usuario, crianca, instituicao);
                 
                 if (usuario.status_code === 200) {
-                    result = usuario 
+                    result = usuario.usuario
                     tipo = 'usuario' 
                 } else if (crianca.status_code === 200) {
-                    result = crianca
+                    result = crianca.crianca
                     tipo = 'crianca'  
                 } else if (instituicao.status_code === 200) {
-                    result = instituicao
+                    result = instituicao.instituicao
                     tipo = 'instituicao'
                 }
                 

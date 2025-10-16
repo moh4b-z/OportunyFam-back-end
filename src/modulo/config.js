@@ -39,6 +39,11 @@ const ERROR_INVALID_CREDENTIALS = {
     status_code: 401,
     messagem: "Cradencias erradas"
 }
+const ERROR_EMAIL_ALREADY_EXISTS = {
+    status: false,
+    status_code: 409,
+    messagem: "Email já existente"
+}
 
 const ERROR_INTERNAL_SERVER_MODEL = {
     status: false,
@@ -102,6 +107,7 @@ module.exports = {
     ERROR_NOT_DELETE,
     ERROR_CEP_NOT_FOUND,
     ERROR_INVALID_CREDENTIALS,
+    ERROR_EMAIL_ALREADY_EXISTS,
 
     SUCCESS_CEATED_ITEM,
     SUCCESS_DELETE_ITEM,
