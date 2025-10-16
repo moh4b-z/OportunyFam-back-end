@@ -221,7 +221,9 @@ SELECT
     'complemento',e.complemento,
     'bairro',     e.bairro,
     'cidade',     e.cidade,
-    'estado',     e.estado
+    'estado',     e.estado,
+    'latitude', e.latitude,
+    'longitude', e.longitude
   ) AS endereco,
   (
     SELECT
