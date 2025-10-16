@@ -192,7 +192,67 @@ CREATE TABLE tbl_aulas_atividade (
 ) ENGINE=InnoDB;
 
 
+CREATE TABLE tbl_status_inscricao (
+  id    TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  nome  VARCHAR(50) UNIQUE NOT NULL
+) ENGINE=InnoDB;
+
+
+CREATE TABLE tbl_inscricao_atividade (
+  id                     INT AUTO_INCREMENT PRIMARY KEY,
+  id_crianca             INT NOT NULL,
+  id_atividade           INT NOT NULL, -- Relacionamento com a ATIVIDADE, não mais com a AULA
+  id_responsavel         INT NULL DEFAULT NULL,
+  id_status              TINYINT UNSIGNED NOT NULL,
+  observacao             VARCHAR(300),
+  criado_em              TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  atualizado_em          TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+  
+  UNIQUE KEY uk_crianca_atividade (id_crianca, id_atividade),
+  
+  CONSTRAINT fk_inscativ_crianca FOREIGN KEY (id_crianca)        REFERENCES tbl_crianca(id)          ON DELETE CASCADE,
+  CONSTRAINT fk_inscativ_ativ    FOREIGN KEY (id_atividade)      REFERENCES tbl_atividades(id)       ON DELETE CASCADE, -- Chave alterada
+  CONSTRAINT fk_inscativ_resp    FOREIGN KEY (id_responsavel)    REFERENCES tbl_responsavel(id)      ON DELETE SET NULL,
+  CONSTRAINT fk_inscativ_status  FOREIGN KEY (id_status)         REFERENCES tbl_status_inscricao(id) ON DELETE RESTRICT
+) ENGINE=InnoDB;
+
+CREATE TABLE tbl_matricula_aula (
+  id                        INT AUTO_INCREMENT PRIMARY KEY,
+  id_inscricao_atividade    INT NOT NULL,
+  id_aula_atividade         INT NOT NULL,
+  presente                  BOOLEAN NOT NULL DEFAULT FALSE,
+  nota_observacao           VARCHAR(500),
+  criado_em                 TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  atualizado_em             TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+
+  -- Garante que o mesmo aluno só seja matriculado uma vez na mesma aula
+  UNIQUE KEY uk_matricula_aula (id_inscricao_atividade, id_aula_atividade),
+
+  CONSTRAINT fk_matr_inscricao FOREIGN KEY (id_inscricao_atividade) REFERENCES tbl_inscricao_atividade(id) ON DELETE CASCADE,
+  CONSTRAINT fk_matr_aula      FOREIGN KEY (id_aula_atividade)      REFERENCES tbl_aulas_atividade(id)     ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+
 SET FOREIGN_KEY_CHECKS = 1;
+
+
+DELIMITER $$
+
+DROP TRIGGER IF EXISTS trg_inscricao_atividade_status_insert $$
+CREATE TRIGGER trg_inscricao_atividade_status_insert
+BEFORE INSERT ON tbl_inscricao_atividade
+FOR EACH ROW
+BEGIN
+    -- Se id_responsavel NÃO for fornecido (NULL), define o status como 'Sugerida Pela Criança' (id=1)
+    IF NEW.id_responsavel IS NULL THEN
+        SET NEW.id_status = 1;
+    -- Se id_responsavel FOR fornecido, define o status como 'Confirmada Pelo Responsável' (id=2)
+    ELSE
+        SET NEW.id_status = 2;
+    END IF;
+END$$
+
+DELIMITER ;
 
 
 -- Views
@@ -338,3 +398,36 @@ BEGIN
 END $$
 
 
+
+
+CREATE OR REPLACE VIEW vw_alunos_aprovados_instituicao AS
+  SELECT
+    i.id AS instituicao_id,
+    i.nome AS instituicao_nome,
+    c.id AS crianca_id,
+    c.nome AS crianca_nome,
+    a.titulo AS atividade_titulo,
+    s.nome AS status_inscricao,
+    t.criado_em AS data_inscricao
+  FROM tbl_instituicao i
+  JOIN tbl_atividades a ON a.id_instituicao = i.id
+  JOIN tbl_inscricao_atividade t ON t.id_atividade = a.id
+  JOIN tbl_crianca c ON c.id = t.id_crianca
+  JOIN tbl_status_inscricao s ON s.id = t.id_status
+WHERE t.id_status = 4;
+
+CREATE OR REPLACE VIEW vw_alunos_pendente_instituicao AS
+  SELECT
+    i.id AS instituicao_id,
+    i.nome AS instituicao_nome,
+    c.id AS crianca_id,
+    c.nome AS crianca_nome,
+    a.titulo AS atividade_titulo,
+    s.nome AS status_inscricao,
+    t.criado_em AS data_inscricao
+  FROM tbl_instituicao i
+  JOIN tbl_atividades a ON a.id_instituicao = i.id
+  JOIN tbl_inscricao_atividade t ON t.id_atividade = a.id
+  JOIN tbl_crianca c ON c.id = t.id_crianca
+  JOIN tbl_status_inscricao s ON s.id = t.id_status
+WHERE t.id_status = 3; 

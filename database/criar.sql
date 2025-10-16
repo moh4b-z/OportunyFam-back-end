@@ -25,3 +25,11 @@ INSERT INTO tbl_categoria (nome) VALUES
   ('Teatro'),
   ('Tecnologia'),
   ('Artes Visuais');
+
+INSERT INTO tbl_status_inscricao (nome) VALUES
+  ('Sugerida Pela Criança'),
+  ('Cancelada');
+  ('Pendente'),
+  ('Aprovada'),
+  ('Negada'),
+  ('Concluida');
