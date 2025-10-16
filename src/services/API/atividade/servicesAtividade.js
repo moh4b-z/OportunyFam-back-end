@@ -2,7 +2,7 @@
 const MENSAGE = require("../../../modulo/config")
 const TableCORRECTION = require("../../../utils/tablesCheck")
 const CORRECTION = require("../../../utils/inputCheck")
-const atividadeDAO = require("../../../model/DAO/atividade/atividade")
+const atividadeDAO = require("../../../model/DAO/atividade/matriculaAula/matriculaAula")
 
 /** Atividades **/
 

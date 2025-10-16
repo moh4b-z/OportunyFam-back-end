@@ -1,4 +1,4 @@
-const { PrismaClient } = require('../../../../prisma/generated/mysql')
+const { PrismaClient } = require('../../../../../prisma/generated/mysql')
 const prismaMySQL = new PrismaClient()
 
 /**

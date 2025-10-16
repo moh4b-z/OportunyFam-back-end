@@ -1,6 +1,6 @@
 const MENSAGE = require("../../../../modulo/config")
 const CORRECTION = require("../../../../utils/inputCheck")
-const matriculaAulaDAO = require("../../../../model/DAO/inscricao/matriculaAula")
+const matriculaAulaDAO = require("../../../../model/DAO/atividade/matriculaAula/matriculaAula")
 const TableCORRECTION = require("../../../../utils/tablesCheck") 
 
 // --- CREATE ---
