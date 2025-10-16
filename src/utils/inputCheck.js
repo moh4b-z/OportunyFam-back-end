@@ -93,6 +93,13 @@ function CHECK_VARCHAR(text, letters){
         return true
     }
 }
+function CHECK_TEXT(text){
+    if(text == undefined){
+        return false
+    }else{
+        return true
+    }
+}
 function CHECK_UNDEFINED(text){
     if(text === undefined){
         return false
@@ -144,5 +151,6 @@ module.exports = {
     CHECK_NOT_NULL,
     CHECK_EMAIL,
     CHECK_CPF,
-    CHECK_CNPJ
+    CHECK_CNPJ,
+    CHECK_TEXT
 }
