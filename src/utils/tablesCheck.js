@@ -139,6 +139,24 @@ function CHECK_tbl_inscricao(inscricao) {
     );
 }
 
+function CHECK_tbl_inscricao_atividade(inscricao) {
+    return (
+        CORRECTION.CHECK_ID(inscricao.id_crianca) &&
+        CORRECTION.CHECK_ID(inscricao.id_atividade) && // ID da ATIVIDADE, não mais AULA
+        (inscricao.id_responsavel === undefined || inscricao.id_responsavel === null || CORRECTION.CHECK_ID(inscricao.id_responsavel)) &&
+        (inscricao.id_status === undefined || CORRECTION.CHECK_ID(inscricao.id_status)) && // Status não é obrigatório no INSERT (trigger cuida)
+        (inscricao.observacao === undefined || inscricao.observacao === null || CORRECTION.CHECK_VARCHAR(inscricao.observacao, 300))
+    );
+}
+
+function CHECK_tbl_matricula_aula(matricula) {
+    return (
+        CORRECTION.CHECK_ID(matricula.id_inscricao_atividade) && // Agora relaciona com a tbl_inscricao_atividade
+        CORRECTION.CHECK_ID(matricula.id_aula_atividade) &&
+        (matricula.presente === undefined || typeof matricula.presente === 'boolean') &&
+        (matricula.nota_observacao === undefined || CORRECTION.CHECK_VARCHAR(matricula.nota_observacao, 500))
+    );
+}
 
 
 
@@ -156,5 +174,7 @@ module.exports = {
     CHECK_tbl_atividades,
     CHECK_tbl_aulas_atividade,
     CHECK_tbl_status_inscricao,
-    CHECK_tbl_inscricao
+    CHECK_tbl_inscricao,
+    CHECK_tbl_inscricao_atividade,
+    CHECK_tbl_matricula_aula
 }

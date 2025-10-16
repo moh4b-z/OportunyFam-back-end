@@ -107,6 +107,21 @@ async function selectSearchInstituicoesByNome(nomeBusca, pagina = 1, tamanho = 2
     }
 }
 
+async function selectAlunosAprovadosByInstituicao(idInstituicao){
+    try {
+        const idInt = parseInt(idInstituicao);
+        const result = await prismaMySQL.$queryRaw`
+            SELECT * FROM vw_alunos_aprovados_instituicao 
+            WHERE instituicao_id = ${idInt}
+            ORDER BY atividade_titulo, crianca_nome
+        `;
+        return result
+    } catch (error) {
+        console.error(`Erro ao buscar alunos aprovados para a instituição ${idInstituicao}:`, error)
+        return false
+    }
+}
+
 
 module.exports = {
     insertInstituicao,
@@ -115,5 +130,6 @@ module.exports = {
     selectAllInstituicoes,
     selectByIdInstituicao,
     selectByEmail,
-    selectSearchInstituicoesByNome
+    selectSearchInstituicoesByNome,
+    selectAlunosAprovadosByInstituicao
 }
