@@ -74,6 +74,22 @@ async function getInstituicoesByAddress(request, response){
     response.status(result.status_code).json(result)
 }
 
+const getAlunosAprovadosByInstituicao = async (request, response) => {
+    let id = request.params.id // ID da Instituição
+    let result = await servicesInstituicao.buscarAlunosAprovadosPorInstituicao(id)
+    
+    response.status(result.status_code)
+    response.json(result)
+}
+
+const getAlunosPendentesByInstituicao = async (request, response) => {
+    let id = request.params.id // ID da Instituição
+    let result = await servicesInstituicao.buscarAlunosPendentesPorInstituicao(id)
+    
+    response.status(result.status_code)
+    response.json(result)
+}
+
 module.exports = {
     postInstituicao,
     putInstituicao,
@@ -82,5 +98,7 @@ module.exports = {
     getSearchInstituicao,
     postLoginInstituicao,
     getSearchInstituicoesByName,
-    getInstituicoesByAddress
+    getInstituicoesByAddress,
+    getAlunosAprovadosByInstituicao,
+    getAlunosPendentesByInstituicao
 }

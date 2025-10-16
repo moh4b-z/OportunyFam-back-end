@@ -1,4 +1,3 @@
-// src/routes/routesInstituicao.js
 const express = require('express')
 const router = express.Router()
 const controllerInstituicao = require('../../controllers/instituicao/controllerInstituicao')
@@ -42,5 +41,16 @@ router.get(
     '/osm/',
     controllerInstituicao.getInstituicoesByAddress
 )
+
+router.get(
+    '/:id/alunos/aprovados',
+    controllerInstituicao.getAlunosAprovadosByInstituicao
+)
+
+router.get(
+    '/:id/alunos/pendentes',
+    controllerInstituicao.getAlunosPendentesByInstituicao
+)
+
 
 module.exports = router
