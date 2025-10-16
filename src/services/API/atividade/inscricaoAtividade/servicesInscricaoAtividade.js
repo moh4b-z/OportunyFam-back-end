@@ -1,100 +1,142 @@
-const { PrismaClient } = require('../../../../prisma/generated/mysql')
-const prismaMySQL = new PrismaClient()
+const MENSAGE = require("../../../../modulo/config")
+const CORRECTION = require("../../../../utils/inputCheck")
+const TableCORRECTION = require("../../../../utils/tablesCheck")
+const inscricaoAtividadeDAO = require("../../../../model/DAO/inscricao/inscricaoAtividade")
 
-/**
- * Módulo CRUD para a tabela tbl_inscricao_atividade
- */
 
-// --- INSERT / CREATE ---
-async function insertInscricaoAtividade(dadosInscricao){
+// --- CREATE ---
+async function inserirInscricaoAtividade(dadosInscricao, contentType){
     try {
-        // O id_status é definido pelo TRIGGER no banco com base no id_responsavel
-        const novaInscricao = {
-            id_crianca: dadosInscricao.id_crianca,
-            id_atividade: dadosInscricao.id_atividade,
-            id_responsavel: dadosInscricao.id_responsavel || null, // TRIGGER usa isso
-            observacao: dadosInscricao.observacao || null
+        if (contentType !== "application/json") {
+            return MENSAGE.ERROR_CONTENT_TYPE
         }
-        return await prismaMySQL.tbl_inscricao_atividade.create({
-            data: novaInscricao
-        })
-    } catch (error) {
-        // Erro 1062 = Unique constraint failed (criança já inscrita nesta atividade)
-        console.error("Erro ao inserir inscrição de atividade:", error)
-        return false
-    }
-}
+        if (
+            TableCORRECTION.CHECK_tbl_inscricao_atividade(dadosInscricao)
+        ) {
+            return MENSAGE.ERROR_REQUIRED_FIELDS
+        }
 
-// --- SELECT ALL / READ ALL (Opcional, busca por atividade é mais comum) ---
-async function selectAllInscricoes(){
-    try {
-        // Trazendo dados relacionados para uma visão completa
-        return await prismaMySQL.tbl_inscricao_atividade.findMany({
-            include: {
-                tbl_crianca: { select: { nome: true } },
-                tbl_atividades: { select: { titulo: true } },
-                tbl_status_inscricao: { select: { nome: true } }
-            },
-            orderBy: { criado_em: 'desc' }
-        })
-    } catch (error) {
-        console.error("Erro ao buscar todas as inscrições:", error)
-        return false
-    }
-}
+        // Validação de IDs opcionais
+        if (dadosInscricao.id_responsavel && !CORRECTION.CHECK_ID(dadosInscricao.id_responsavel)) {
+            return MENSAGE.ERROR_INVALID_PARAM
+        }
+        
+        const resultInscricao = await inscricaoAtividadeDAO.insertInscricaoAtividade(dadosInscricao)
 
-// --- SELECT BY ID / READ BY ID ---
-async function selectByIdInscricao(id){
-    try {
-        return await prismaMySQL.tbl_inscricao_atividade.findUnique({
-            where: { id: parseInt(id) },
-            include: {
-                tbl_crianca: { select: { nome: true, data_nascimento: true } },
-                tbl_atividades: { select: { titulo: true, id_instituicao: true } },
-                tbl_status_inscricao: { select: { nome: true } },
-                tbl_responsavel: { select: { id_usuario: true } }
+        if (resultInscricao) {
+            return {
+                ...MENSAGE.SUCCESS_CEATED_ITEM,
+                inscricao: resultInscricao
             }
-        })
+        } else {
+            return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
+        }
+
     } catch (error) {
-        console.error("Erro ao buscar inscrição por ID:", error)
-        return false
+        console.error(error)
+        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
     }
 }
 
-// --- UPDATE / UPDATE (Pode ser usado para atualizar o status ou observação) ---
-async function updateInscricao(id, novosDados){
+// --- READ ALL / LIST ALL ---
+async function listarTodasInscricoes(){
     try {
-        // Se id_responsavel for atualizado de NULL para um ID, o TRIGGER NÃO será reativado no UPDATE por padrão.
-        // A atualização de status deve ser feita diretamente.
-        return await prismaMySQL.tbl_inscricao_atividade.update({
-            where: { id: parseInt(id) },
-            data: {
-                id_status: novosDados.id_status ? parseInt(novosDados.id_status) : undefined,
-                id_responsavel: novosDados.id_responsavel ? parseInt(novosDados.id_responsavel) : undefined,
-                observacao: novosDados.observacao
-            }
-        })
+        const result = await inscricaoAtividadeDAO.selectAllInscricoes()
+        
+        if (result) {
+            return result.length > 0 ? { ...MENSAGE.SUCCESS_REQUEST, inscricoes: result } : MENSAGE.ERROR_NOT_FOUND
+        } else {
+            return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
+        }
     } catch (error) {
-        console.error("Erro ao atualizar inscrição:", error)
-        return false
+        console.error(error)
+        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
     }
 }
 
-// --- DELETE / DELETE ---
-async function deleteInscricao(id){
+// --- READ BY ID ---
+async function buscarInscricaoPorId(id){
     try {
-        await prismaMySQL.tbl_inscricao_atividade.delete({ where: { id: parseInt(id) } })
-        return true
+        if (!CORRECTION.CHECK_ID(id)) {
+            return MENSAGE.ERROR_REQUIRED_FIELDS
+        }
+        
+        const result = await inscricaoAtividadeDAO.selectByIdInscricao(parseInt(id))
+        
+        return result ? { ...MENSAGE.SUCCESS_REQUEST, inscricao: result } : MENSAGE.ERROR_NOT_FOUND
+
     } catch (error) {
-        console.error("Erro ao deletar inscrição:", error)
-        return false
+        console.error(error)
+        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
     }
 }
+
+// --- UPDATE ---
+async function atualizarInscricaoAtividade(novosDados, id, contentType){
+    try {
+        if (contentType !== "application/json") {
+            return MENSAGE.ERROR_CONTENT_TYPE
+        }
+        
+        if (!CORRECTION.CHECK_ID(id)) {
+            return MENSAGE.ERROR_REQUIRED_FIELDS
+        }
+        
+        const resultSearch = await buscarInscricaoPorId(parseInt(id))
+
+        if (resultSearch.status_code === MENSAGE.SUCCESS_REQUEST.status_code) {
+            
+            // Validações de dados de entrada
+            if (novosDados.id_status && !CORRECTION.CHECK_ID(novosDados.id_status)) return MENSAGE.ERROR_INVALID_PARAM
+            if (novosDados.id_responsavel !== undefined && novosDados.id_responsavel !== null && !CORRECTION.CHECK_ID(novosDados.id_responsavel)) return MENSAGE.ERROR_INVALID_PARAM
+            if (novosDados.observacao !== undefined && novosDados.observacao !== null && !CORRECTION.CHECK_VARCHAR(novosDados.observacao, 300)) return MENSAGE.ERROR_INVALID_PARAM
+            
+            const result = await inscricaoAtividadeDAO.updateInscricao(parseInt(id), novosDados)
+            
+            return result ? MENSAGE.SUCCESS_UPDATED_ITEM : MENSAGE.ERROR_INTERNAL_SERVER_MODEL
+
+        } else if (resultSearch.status_code === MENSAGE.ERROR_NOT_FOUND.status_code) {
+            return MENSAGE.ERROR_NOT_FOUND
+        } else {
+            return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
+        }
+
+    } catch (error) {
+        console.error(error)
+        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
+    }
+}
+
+// --- DELETE ---
+async function excluirInscricao(id){
+    try {
+        if (!CORRECTION.CHECK_ID(id)) {
+            return MENSAGE.ERROR_REQUIRED_FIELDS
+        }
+        
+        const resultSearch = await buscarInscricaoPorId(parseInt(id))
+        
+        if (resultSearch.status_code === MENSAGE.SUCCESS_REQUEST.status_code) {
+            
+            const result = await inscricaoAtividadeDAO.deleteInscricao(parseInt(id))
+            return result ? MENSAGE.SUCCESS_DELETE_ITEM : MENSAGE.ERROR_NOT_DELETE
+        
+        } else if (resultSearch.status_code === MENSAGE.ERROR_NOT_FOUND.status_code) {
+            return MENSAGE.ERROR_NOT_FOUND
+        } else {
+            return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
+        }
+    } catch (error) {
+        console.error(error)
+        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
+    }
+}
+
 
 module.exports = {
-    insertInscricaoAtividade,
-    selectAllInscricoes,
-    selectByIdInscricao,
-    updateInscricao,
-    deleteInscricao
+    inserirInscricaoAtividade,
+    listarTodasInscricoes,
+    buscarInscricaoPorId,
+    atualizarInscricaoAtividade,
+    excluirInscricao
 }

@@ -36,7 +36,7 @@ const ERROR_CONTENT_TYPE = {
 }
 const ERROR_INVALID_CREDENTIALS = {
     status: false,
-    status_code: 415,
+    status_code: 401,
     messagem: "Cradencias erradas"
 }
 

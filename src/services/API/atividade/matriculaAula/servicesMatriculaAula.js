@@ -1,72 +1,116 @@
-const { PrismaClient } = require('../../../../prisma/generated/mysql')
-const prismaMySQL = new PrismaClient()
+const MENSAGE = require("../../../../modulo/config")
+const CORRECTION = require("../../../../utils/inputCheck")
+const matriculaAulaDAO = require("../../../../model/DAO/inscricao/matriculaAula")
+const TableCORRECTION = require("../../../../utils/tablesCheck") 
 
-async function insertMatriculaAula(dadosMatricula){
+// --- CREATE ---
+async function inserirMatriculaAula(dadosMatricula, contentType){
     try {
-        const novaMatricula = {
-            id_inscricao_atividade: dadosMatricula.id_inscricao_atividade,
-            id_aula_atividade: dadosMatricula.id_aula_atividade,
-            presente: dadosMatricula.presente,
-            nota_observacao: dadosMatricula.nota_observacao || null
+        if (contentType !== "application/json") {
+            return MENSAGE.ERROR_CONTENT_TYPE
         }
-        return await prismaMySQL.tbl_matricula_aula.create({
-            data: novaMatricula
-        })
-    } catch (error) {
-        // Erro 1062 = Unique constraint failed (tentativa de registrar a mesma criança/aula 2x)
-        console.error("Erro ao inserir matrícula de aula:", error)
-        return false
-    }
-}
+        
+        // Validação dos campos obrigatórios e tipos
+        if (
+            !(TableCORRECTION.CHECK_tbl_matricula_aula(dadosMatricula)) ||
+            typeof dadosMatricula.presente !== 'boolean'
+        ) {
+            return MENSAGE.ERROR_REQUIRED_FIELDS
+        }
+        
+        // Validação da observação
+        if (dadosMatricula.nota_observacao !== undefined && dadosMatricula.nota_observacao !== null && !CORRECTION.CHECK_VARCHAR(dadosMatricula.nota_observacao, 500)) {
+            return MENSAGE.ERROR_INVALID_PARAM
+        }
+        
+        const resultMatricula = await matriculaAulaDAO.insertMatriculaAula(dadosMatricula)
 
-// --- SELECT BY INSCRICAO / READ BY INSCRICAO ---
-async function selectMatriculasByInscricao(idInscricao){
-    try {
-        return await prismaMySQL.tbl_matricula_aula.findMany({
-            where: { id_inscricao_atividade: parseInt(idInscricao) },
-            include: {
-                tbl_aulas_atividade: {
-                    select: { dia_semana: true, hora_inicio: true, hora_fim: true }
-                }
-            },
-            orderBy: { id_aula_atividade: 'asc' }
-        })
-    } catch (error) {
-        console.error("Erro ao buscar matrículas por inscrição:", error)
-        return false
-    }
-}
-
-// --- UPDATE / UPDATE (Usado principalmente para marcar Presença) ---
-async function updateMatriculaAula(id, dadosAtualizados){
-    try {
-        return await prismaMySQL.tbl_matricula_aula.update({
-            where: { id: parseInt(id) },
-            data: {
-                presente: dadosAtualizados.presente,
-                nota_observacao: dadosAtualizados.nota_observacao
+        if (resultMatricula) {
+            return {
+                ...MENSAGE.SUCCESS_CEATED_ITEM,
+                matricula: resultMatricula
             }
-        })
+        } else {
+            return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
+        }
+
     } catch (error) {
-        console.error("Erro ao atualizar matrícula de aula:", error)
-        return false
+        console.error(error)
+        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
     }
 }
 
-// --- DELETE / DELETE ---
-async function deleteMatriculaAula(id){
+// --- READ BY INSCRICAO ID ---
+async function listarMatriculasPorInscricao(idInscricao){
     try {
-        await prismaMySQL.tbl_matricula_aula.delete({ where: { id: parseInt(id) } })
-        return true
+        if (!CORRECTION.CHECK_ID(idInscricao)) {
+            return MENSAGE.ERROR_REQUIRED_FIELDS
+        }
+        
+        const result = await matriculaAulaDAO.selectMatriculasByInscricao(parseInt(idInscricao))
+        
+        if (result) {
+            return result.length > 0 ? { ...MENSAGE.SUCCESS_REQUEST, matriculas: result } : MENSAGE.ERROR_NOT_FOUND
+        } else {
+            return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
+        }
     } catch (error) {
-        console.error("Erro ao deletar matrícula de aula:", error)
-        return false
+        console.error(error)
+        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
+    }
+}
+
+// --- UPDATE ---
+async function atualizarMatriculaAula(dadosAtualizados, id, contentType){
+    try {
+        if (contentType !== "application/json") {
+            return MENSAGE.ERROR_CONTENT_TYPE
+        }
+        
+        if (!CORRECTION.CHECK_ID(id)) {
+            return MENSAGE.ERROR_REQUIRED_FIELDS
+        }
+
+        // Validação de presença
+        if (dadosAtualizados.presente !== undefined && typeof dadosAtualizados.presente !== 'boolean') {
+            return MENSAGE.ERROR_INVALID_PARAM
+        }
+        
+        // Validação da observação
+        if (dadosAtualizados.nota_observacao !== undefined && dadosAtualizados.nota_observacao !== null && !CORRECTION.CHECK_VARCHAR(dadosAtualizados.nota_observacao, 500)) {
+            return MENSAGE.ERROR_INVALID_PARAM
+        }
+        
+        const result = await matriculaAulaDAO.updateMatriculaAula(parseInt(id), dadosAtualizados)
+        
+        return result ? MENSAGE.SUCCESS_UPDATED_ITEM : MENSAGE.ERROR_INTERNAL_SERVER_MODEL
+
+    } catch (error) {
+        console.error(error)
+        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
+    }
+}
+
+// --- DELETE ---
+async function excluirMatriculaAula(id){
+    try {
+        if (!CORRECTION.CHECK_ID(id)) {
+            return MENSAGE.ERROR_REQUIRED_FIELDS
+        }
+        
+        const result = await matriculaAulaDAO.deleteMatriculaAula(parseInt(id))
+        
+        return result ? MENSAGE.SUCCESS_DELETE_ITEM : MENSAGE.ERROR_NOT_DELETE
+        
+    } catch (error) {
+        console.error(error)
+        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
     }
 }
 
 module.exports = {
-    insertMatriculaAula,
-    selectMatriculasByInscricao,
-    updateMatriculaAula,
-    deleteMatriculaAula
+    inserirMatriculaAula,
+    listarMatriculasPorInscricao,
+    atualizarMatriculaAula,
+    excluirMatriculaAula
 }
