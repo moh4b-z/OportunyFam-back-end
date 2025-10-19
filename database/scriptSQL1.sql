@@ -23,31 +23,33 @@ CREATE TABLE tbl_rede_social (
 
 
 CREATE TABLE tbl_usuario (
-  id               INT AUTO_INCREMENT PRIMARY KEY,
-  nome             VARCHAR(100) NOT NULL,
-  foto_perfil      VARCHAR(400),
-  email            VARCHAR(150) NOT NULL UNIQUE,
-  senha            VARCHAR(256) NOT NULL,
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(100) NOT NULL,
+  foto_perfil VARCHAR(400),
+  email VARCHAR(150) NOT NULL UNIQUE,
+  telefone VARCHAR(16),
+  senha VARCHAR(256) NOT NULL,
   data_nascimento  DATE NOT NULL,
-  cpf              VARCHAR(11) NOT NULL,
-  criado_em        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  atualizado_em    TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
-  id_sexo          INT NOT NULL,
-  id_tipo_nivel    INT NOT NULL,
+  cpf VARCHAR(11) NOT NULL,
+  criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  atualizado_em TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+  id_sexo INT NOT NULL,
+  id_tipo_nivel INT NOT NULL,
   CONSTRAINT fk_usuario_sexo       FOREIGN KEY (id_sexo)       REFERENCES tbl_sexo(id),
   CONSTRAINT fk_usuario_tipo_nivel FOREIGN KEY (id_tipo_nivel) REFERENCES tbl_tipo_nivel(id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE tbl_crianca (
-  id               INT AUTO_INCREMENT PRIMARY KEY,
-  nome             VARCHAR(150) NOT NULL,
-  foto_perfil      VARCHAR(400),
-  email            VARCHAR(150) UNIQUE,
-  cpf              VARCHAR(11) NOT NULL,
-  senha            VARCHAR(256) NOT NULL,
-  data_nascimento  DATE NOT NULL,
-  criado_em        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  id_sexo          INT NOT NULL,
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(150) NOT NULL,
+  foto_perfil VARCHAR(400),
+  email VARCHAR(150) UNIQUE,
+  telefone VARCHAR(16),
+  cpf VARCHAR(11) NOT NULL,
+  senha VARCHAR(256) NOT NULL,
+  data_nascimento DATE NOT NULL,
+  criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  id_sexo INT NOT NULL,
   CONSTRAINT fk_crianca_sexo FOREIGN KEY (id_sexo) REFERENCES tbl_sexo(id)
 ) ENGINE=InnoDB;
 
@@ -259,10 +261,37 @@ DELIMITER ;
 
 CREATE OR REPLACE VIEW vw_detalhes_usuario AS
 SELECT
-  u.id, u.nome, u.email, u.data_nascimento, u.cpf, u.criado_em,
-  s.nome AS sexo, tn.nivel AS tipo_nivel
+    u.id,
+    u.nome,
+    u.foto_perfil,
+    u.email,
+    u.senha,
+    u.data_nascimento,
+    u.cpf,
+    u.criado_em,
+    u.atualizado_em,
+    s.nome AS sexo,
+    tn.nivel AS tipo_nivel,
+    (
+        SELECT
+            COALESCE(
+                JSON_ARRAYAGG(
+                    JSON_OBJECT('id', t.id_crianca, 'nome', t.nome_crianca)
+                ),
+                JSON_ARRAY()
+            )
+        FROM (
+            SELECT
+                r.id_crianca,
+                c.nome AS nome_crianca
+            FROM tbl_responsavel r
+            JOIN tbl_crianca c ON c.id = r.id_crianca
+            WHERE r.id_usuario = u.id
+            ORDER BY c.nome
+        ) AS t
+    ) AS criancas_dependentes
 FROM tbl_usuario u
-JOIN tbl_sexo s       ON s.id  = u.id_sexo
+JOIN tbl_sexo s ON s.id = u.id_sexo
 JOIN tbl_tipo_nivel tn ON tn.id = u.id_tipo_nivel;
 
 CREATE OR REPLACE VIEW vw_instituicao_completa AS
@@ -303,7 +332,53 @@ SELECT
 FROM tbl_instituicao i
 JOIN tbl_endereco e ON e.id = i.id_endereco;
 
-
+CREATE OR REPLACE VIEW vw_crianca_completa AS
+SELECT
+    c.id,
+    c.nome,
+    c.foto_perfil,
+    c.email,
+    c.senha,
+    c.cpf,
+    c.data_nascimento,
+    TIMESTAMPDIFF(YEAR, c.data_nascimento, CURDATE()) AS idade,
+    c.criado_em,
+    s.nome AS sexo, -- Substitui id_sexo pelo nome do sexo
+    (
+        SELECT
+            COALESCE(
+                JSON_ARRAYAGG(
+                    JSON_OBJECT(
+                        'atividade_id', t.atividade_id,
+                        'titulo', t.titulo,
+                        'instituicao', t.instituicao,
+                        'categoria', t.categoria,
+                        'status_inscricao', t.status_inscricao,
+                        'data_inscricao', t.data_inscricao
+                    )
+                ),
+                JSON_ARRAY()
+            )
+        FROM (
+            SELECT
+                ia.id_atividade AS atividade_id, -- CORREÇÃO: Adicionando o alias 'atividade_id'
+                a.titulo,
+                i.nome AS instituicao,
+                cat.nome AS categoria,
+                s_ins.nome AS status_inscricao,
+                ia.criado_em AS data_inscricao
+            FROM tbl_inscricao_atividade ia
+            JOIN tbl_atividades a ON a.id = ia.id_atividade
+            JOIN tbl_instituicao i ON i.id = a.id_instituicao
+            JOIN tbl_categoria cat ON cat.id = a.id_categoria
+            JOIN tbl_status_inscricao s_ins ON s_ins.id = ia.id_status
+            WHERE ia.id_crianca = c.id
+              AND ia.id_status IN (2, 4) -- Filtrando por 'Confirmada Pelo Responsável' (2) e 'Aprovada' (4)
+            ORDER BY ia.criado_em DESC
+        ) AS t
+    ) AS atividades_matriculadas
+FROM tbl_crianca c
+JOIN tbl_sexo s ON s.id = c.id_sexo;
 
 
 CREATE OR REPLACE VIEW vw_crianca_perfil AS

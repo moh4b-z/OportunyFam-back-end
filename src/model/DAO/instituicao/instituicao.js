@@ -72,7 +72,11 @@ async function selectByIdInstituicao(id){
 
 async function selectByEmail(email){
     try {
-        return await prismaMySQL.tbl_instituicao.findUnique({ where: { email: email } })
+        let result = await prismaMySQL.tbl_instituicao.findUnique(
+            { where: { email: email } }
+        )
+        result = await selectByIdInstituicao(result.id)
+        return result
     } catch (error) {
         console.error("Erro ao buscar instituição por e-mail:", error)
         return false

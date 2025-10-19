@@ -50,9 +50,8 @@ async function  deleteCrianca(id){
 
 async function  selectAllCriancas(){
     try {
-        return await prismaMySQL.tbl_crianca.findMany({
-            orderBy: { id: 'desc' }
-        })
+        let result = await prismaMySQL.$queryRaw`SELECT * FROM vw_crianca_completa ORDER BY id DESC`
+        return result
     } catch (error) {
         console.error("Erro ao buscar todas as crianças:", error)
         return false
@@ -61,9 +60,8 @@ async function  selectAllCriancas(){
 
 async function  selectByIdCrianca(id){
     try {
-        return await prismaMySQL.tbl_crianca.findUnique({
-            where: { id: id }
-        })
+        let result = await prismaMySQL.$queryRaw`SELECT * FROM vw_crianca_completa WHERE id = ${id}`
+        return result.length > 0 ? result[0] : null
     } catch (error) {
         console.error("Erro ao buscar criança por ID:", error)
         return false
@@ -72,9 +70,11 @@ async function  selectByIdCrianca(id){
 
 async function  selectByEmail(email){
     try {
-        return await prismaMySQL.tbl_crianca.findUnique({
+        let result = await prismaMySQL.tbl_crianca.findUnique({
             where: { email: email }
         })
+        result = await selectByIdCrianca(result.id)
+        return result
     } catch (error) {
         console.error("Erro ao buscar criança por e-mail:", error)
         return false

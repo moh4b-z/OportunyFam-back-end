@@ -231,7 +231,7 @@ async function buscarInstituicao(id){
 
 async function loginInstituicao(dadosLogin, contentType){
     try {
-        console.log(dadosLogin);
+        // console.log(dadosLogin);
         
         if (contentType == "application/json") {
             const { email, senha } = dadosLogin
@@ -246,7 +246,7 @@ async function loginInstituicao(dadosLogin, contentType){
                     const senhaValida = encryptionFunction.verifyPassword(senha, instituicao.senha)
                     
                     if (senhaValida) {
-                        delete instituicao.senha
+                        instituicao.senha ? delete instituicao.senha : null
                         return {
                             ...MENSAGE.SUCCESS_LOGIN,
                             instituicao: instituicao

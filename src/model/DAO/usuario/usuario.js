@@ -1,4 +1,6 @@
 const { PrismaClient } = require('../../../../prisma/generated/mysql')
+const { selectByIdCrianca } = require('../crianca/crianca')
+const { selectByIdInstituicao } = require('../instituicao/instituicao')
 const prismaMySQL = new PrismaClient()
 
 async function insertUsuario(usuario){
@@ -15,6 +17,8 @@ async function insertUsuario(usuario){
                 id_tipo_nivel: usuario.id_tipo_nivel
             }
         })
+
+        result = await selectByIdUsuario(result.id)
         return result
     } catch (error) {
         console.error("Erro DAO: Erro ao inserir usuário.", error)
@@ -82,6 +86,7 @@ async function selectByEmail(email){
         let result = await prismaMySQL.tbl_usuario.findUnique({
             where: { email: email }
         })
+        result = await selectByIdUsuario(result.id)
         return result
     } catch (error) {
         console.error("Erro DAO: Erro ao buscar usuário por e-mail.", error)
@@ -104,38 +109,6 @@ async function verifyEmailExists(email){
     }
 }
 
-async function loginUniversal(email, senha) {
-    try {
-        const usuario = await prismaMySQL.tbl_usuario.findFirst({
-            where: { email: email, senha: senha }
-        })
-
-        const crianca = await prismaMySQL.tbl_crianca.findFirst({
-            where: { email: email, senha: senha }
-        })
-
-        const instituicao = await prismaMySQL.tbl_instituicao.findFirst({
-            where: { email: email, senha: senha }
-        })
-        // console.log(usuario, crianca, instituicao);
-        
-
-        if (usuario) {
-            return { tipo: 'usuario', dados: usuario }
-        } else if (crianca) {
-            return { tipo: 'crianca', dados: crianca }
-        } else if (instituicao) {
-            return { tipo: 'instituicao', dados: instituicao }
-        } else {
-            return false 
-        }
-    } catch (error) {
-        console.error("Erro DAO: Erro ao realizar login universal.", error)
-        return false
-    }
-}
-
-
 module.exports = {
     insertUsuario,
     updateUsuario,
@@ -143,6 +116,5 @@ module.exports = {
     selectAllUsuario,
     selectByIdUsuario,
     selectByEmail,
-    verifyEmailExists,
-    loginUniversal
+    verifyEmailExists
 }

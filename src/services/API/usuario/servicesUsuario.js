@@ -185,7 +185,7 @@ async function loginUsuario(dadosLogin, contentType){
                     const senhaValida = encryptionFunction.verifyPassword(senha, usuario.senha)
                     
                     if (senhaValida) {
-                        delete usuario.senha
+                        usuario.senha ? delete usuario.senha : null
                         return {
                             ...MENSAGE.SUCCESS_LOGIN,
                             usuario: usuario

@@ -378,7 +378,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\24122313\\Documents\\Mohammad\\TCC\\OportunyFam-back-end\\prisma\\generated\\mysql",
+      "value": "C:\\Users\\moham\\OneDrive\\Codigo\\OportunyFam-back-end\\prisma\\generated\\mysql",
       "fromEnvVar": null
     },
     "config": {
@@ -394,7 +394,7 @@ const config = {
     "previewFeatures": [
       "multiSchema"
     ],
-    "sourceFilePath": "C:\\Users\\24122313\\Documents\\Mohammad\\TCC\\OportunyFam-back-end\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\moham\\OneDrive\\Codigo\\OportunyFam-back-end\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

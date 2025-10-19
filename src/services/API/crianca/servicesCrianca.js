@@ -141,7 +141,7 @@ async function loginCrianca(dadosLogin, contentType) {
                 return MENSAGE.ERROR_INVALID_CREDENTIALS
             }
 
-            delete crianca.senha
+            crianca.senha ? delete crianca.senha : null
             return {
                 ...MENSAGE.SUCCESS_LOGIN,
                 crianca: crianca
