@@ -75,7 +75,7 @@ async function getInstituicoesByAddress(request, response){
 }
 
 const getAlunosAprovadosByInstituicao = async (request, response) => {
-    let id = request.params.id // ID da Instituição
+    let id = request.params.id
     let result = await servicesInstituicao.buscarAlunosAprovadosPorInstituicao(id)
     
     response.status(result.status_code)
@@ -83,7 +83,7 @@ const getAlunosAprovadosByInstituicao = async (request, response) => {
 }
 
 const getAlunosPendentesByInstituicao = async (request, response) => {
-    let id = request.params.id // ID da Instituição
+    let id = request.params.id
     let result = await servicesInstituicao.buscarAlunosPendentesPorInstituicao(id)
     
     response.status(result.status_code)

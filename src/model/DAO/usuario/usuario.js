@@ -5,7 +5,7 @@ const prismaMySQL = new PrismaClient()
 
 async function insertUsuario(usuario){
     try {
-        console.log(usuario);
+        //console.log(usuario);
         
         let result = await prismaMySQL.tbl_usuario.create({
             data: {
