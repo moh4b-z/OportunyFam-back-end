@@ -5,6 +5,8 @@ const prismaMySQL = new PrismaClient()
 
 async function insertUsuario(usuario){
     try {
+        console.log(usuario);
+        
         let result = await prismaMySQL.tbl_usuario.create({
             data: {
                 nome: usuario.nome,
@@ -86,7 +88,11 @@ async function selectByEmail(email){
         let result = await prismaMySQL.tbl_usuario.findUnique({
             where: { email: email }
         })
-        result = await selectByIdUsuario(result.id)
+        if(result){
+            result = await selectByIdUsuario(result.id)
+        }else{
+            result = false
+        }
         return result
     } catch (error) {
         console.error("Erro DAO: Erro ao buscar usuário por e-mail.", error)

@@ -9,7 +9,7 @@ const servicesInstituicao = require("../instituicao/servicesInstituicao")
 const servicesCrianca = require("../crianca/servicesCrianca") 
 
 async function inserirUsuario(dadosUsuario, contentType){
-    try {
+    try {        
         if (contentType == "application/json") {
             if (dadosUsuario.cep && TableCORRECTION.CHECK_tbl_usuario(dadosUsuario)) {
                 

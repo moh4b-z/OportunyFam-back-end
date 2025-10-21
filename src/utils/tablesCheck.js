@@ -23,7 +23,7 @@ function CHECK_tbl_usuario(usuario) {
         CORRECTION.CHECK_VARCHAR_NOT_NULL(usuario.nome, 100) &&
         CORRECTION.CHECK_EMAIL(usuario.email) &&
         CORRECTION.CHECK_VARCHAR_NOT_NULL(usuario.senha, 256) &&
-        CORRECTION.CHECK_NOT_NULL(usuario.data_nascimento) &&
+        CORRECTION.CHECK_VARCHAR_NOT_NULL(usuario.data_nascimento, 11) &&
         CORRECTION.CHECK_CPF(usuario.cpf) &&
         CORRECTION.CHECK_ID(usuario.id_sexo) &&
         CORRECTION.CHECK_ID(usuario.id_tipo_nivel)
