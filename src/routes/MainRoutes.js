@@ -32,7 +32,7 @@ router.use('/tipoInstituicoes', routesTipoInstituicao)
 router.use('/atividades', routesAtividade)
 router.use('/categorias', routesCategoria)
 router.use('/login', routesLogin)
-router.use('/inscricao', routesInscricaoAtividade)
-router.use('/matricula', routesMatriculaAula)
+router.use('/inscricoes', routesInscricaoAtividade)
+router.use('/matriculas', routesMatriculaAula)
 
 module.exports = router

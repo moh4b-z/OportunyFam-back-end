@@ -3,7 +3,7 @@ const prismaMySQL = new PrismaClient()
 
 async function  insertCrianca(crianca){
     try {
-        return await prismaMySQL.tbl_crianca.create({
+        let result = await prismaMySQL.tbl_crianca.create({
             data: {
                 nome: crianca.nome,
                 email: crianca.email,
@@ -13,6 +13,8 @@ async function  insertCrianca(crianca){
                 id_sexo: crianca.id_sexo
             }
         })
+        result = await selectByIdCrianca(result.id)
+        return result
     } catch (error) {
         console.error("Erro ao inserir criança:", error)
         return false

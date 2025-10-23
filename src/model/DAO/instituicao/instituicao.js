@@ -3,20 +3,22 @@ const prismaMySQL = new PrismaClient()
 
 async function insertInstituicao(instituicao, id_endereco){
     try {
-        const novoInstituicao = {
-            nome: instituicao.nome,
-            cnpj: instituicao.cnpj,
-            email: instituicao.email,
-            senha: instituicao.senha,
-            descricao: instituicao.descricao || null,
-            telefone: instituicao.telefone || null,
-            tbl_endereco: {
-                connect: { id: id_endereco } 
+        let result = await prismaMySQL.tbl_instituicao.create({
+            data: {
+                nome: instituicao.nome,
+                cnpj: instituicao.cnpj,
+                email: instituicao.email,
+                senha: instituicao.senha,
+                descricao: instituicao.descricao || null,
+                telefone: instituicao.telefone || null,
+                tbl_endereco: {
+                    connect: { id: id_endereco } 
+                }
             }
-        }
-        return await prismaMySQL.tbl_instituicao.create({
-            data: novoInstituicao
         })
+        result = await selectByIdInstituicao(result.id)
+        return result
+        
     } catch (error) {
         console.error("Erro ao inserir instituição:", error)
         return false
