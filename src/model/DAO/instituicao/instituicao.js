@@ -25,23 +25,43 @@ async function insertInstituicao(instituicao, id_endereco){
     }
 }
 
-async function updateInstituicao(instituicao){
+async function updateInstituicao(instituicao) {
     try {
-        return await prismaMySQL.tbl_instituicao.update({
-            where: { id: instituicao.id },
-            data: {
-                nome: instituicao.nome,
-                cnpj: instituicao.cnpj,
-                email: instituicao.email,
-                senha: instituicao.senha,
-                descricao: instituicao.descricao
+        const { id } = instituicao
+
+        // Campos permitidos para atualização direta
+        const camposPermitidos = ['nome', 'cnpj', 'email', 'descricao']
+
+        const data = {}
+
+        // Copia apenas se a prop existir e não for undefined
+        for (const campo of camposPermitidos) {
+            if (Object.prototype.hasOwnProperty.call(instituicao, campo) &&
+                instituicao[campo] !== undefined) {
+            data[campo] = instituicao[campo]
             }
+        }
+        if (Object.prototype.hasOwnProperty.call(instituicao, 'senha') &&
+                    instituicao.senha !== undefined) {
+            data.senha_hash = instituicao.senha
+        }
+
+        // Se nada para atualizar, apenas retorna o registro atual
+        if (Object.keys(data).length === 0) {
+            return await selectByIdInstituicao(id)
+        }
+
+        let result = await prismaMySQL.tbl_instituicao.update({
+            where: { id },
+            data
         })
+        return result ? await selectByIdInstituicao(id) : false
     } catch (error) {
-        console.error("Erro ao atualizar instituição:", error)
+        console.error('Erro ao atualizar instituição:', error)
         return false
     }
 }
+
 
 async function deleteInstituicao(id){
     try {

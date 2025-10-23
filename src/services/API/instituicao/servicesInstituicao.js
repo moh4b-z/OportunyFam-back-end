@@ -121,14 +121,11 @@ async function atualizarInstituicao(dadosInstituicao, id, contentType){
         if (contentType == "application/json") {
             // Nota: Se 'tipos_instituicao' for enviado aqui, ele deve ser removido antes de chamar o DAO principal
             if (dadosInstituicao.tipos_instituicao) {
-                delete dadosInstituicao.tipos_instituicao 
-                // Assumimos que a atualização dos tipos de instituição é feita em um endpoint separado,
-                // ou que o código de atualização do tipo de instituição será adicionado aqui, 
-                // o que o torna complexo (requer exclusão e reinserção dos relacionamentos)
+                delete dadosInstituicao.tipos_instituicao
             }
 
 
-            if (TableCORRECTION.CHECK_tbl_instituicao(dadosInstituicao) && CORRECTION.CHECK_ID(id)) {
+            if (CORRECTION.CHECK_ID(id)) {
                 
                 let resultSearch = await buscarInstituicao(parseInt(id))
                 
