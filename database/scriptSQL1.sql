@@ -341,7 +341,6 @@ SELECT
     c.senha,
     c.cpf,
     c.data_nascimento,
-    TIMESTAMPDIFF(YEAR, c.data_nascimento, CURDATE()) AS idade,
     c.criado_em,
     s.nome AS sexo, -- Substitui id_sexo pelo nome do sexo
     (

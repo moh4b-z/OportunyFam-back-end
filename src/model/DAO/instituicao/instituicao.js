@@ -30,7 +30,7 @@ async function updateInstituicao(instituicao) {
         const { id } = instituicao
 
         // Campos permitidos para atualização direta
-        const camposPermitidos = ['nome', 'cnpj', 'email', 'descricao']
+        const camposPermitidos = ['nome', 'cnpj', 'email', 'descricao', 'telefone', 'logo']
 
         const data = {}
 
@@ -97,13 +97,14 @@ async function selectByEmail(email){
         let result = await prismaMySQL.tbl_instituicao.findUnique(
             { where: { email: email } }
         )
+        let senha = result.senha
         if(result){
             result = await selectByIdInstituicao(result.id)
         }else{
             result = false
         }
         
-        return result
+        return {...result, senha: senha}
     } catch (error) {
         console.error("Erro ao buscar instituição por e-mail:", error)
         return false

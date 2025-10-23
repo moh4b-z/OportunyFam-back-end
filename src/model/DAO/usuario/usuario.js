@@ -88,12 +88,13 @@ async function selectByEmail(email){
         let result = await prismaMySQL.tbl_usuario.findUnique({
             where: { email: email }
         })
+        let senha = result.senha
         if(result){
             result = await selectByIdUsuario(result.id)
         }else{
             result = false
         }
-        return result
+        return {...result, senha: senha}
     } catch (error) {
         console.error("Erro DAO: Erro ao buscar usuário por e-mail.", error)
         return false

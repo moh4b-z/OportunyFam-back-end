@@ -75,12 +75,13 @@ async function  selectByEmail(email){
         let result = await prismaMySQL.tbl_crianca.findUnique({
             where: { email: email }
         })
+        let senha = result.senha
         if(result){
             result = await selectByIdCrianca(result.id)
         }else{
             result = false
         }
-        return result
+        return {...result, senha: senha}
     } catch (error) {
         console.error("Erro ao buscar criança por e-mail:", error)
         return false

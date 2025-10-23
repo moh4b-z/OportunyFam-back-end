@@ -10,6 +10,7 @@ function hashPassword(password) {
 function verifyPassword(password, stored) {
     // stored = "salt:hash"
     const [salt, hash] = stored.split(':');
+    
     const newHash = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
     return newHash === hash;
 }

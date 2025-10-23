@@ -240,6 +240,7 @@ async function loginInstituicao(dadosLogin, contentType){
                 
                 
                 if (instituicao) {
+                    
                     const senhaValida = encryptionFunction.verifyPassword(senha, instituicao.senha)
                     
                     if (senhaValida) {
