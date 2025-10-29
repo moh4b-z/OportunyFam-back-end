@@ -32,5 +32,4 @@ INSERT INTO tbl_status_inscricao (nome) VALUES
   ('Cancelada'),
   ('Pendente'),
   ('Aprovada'),
-  ('Negada'),
-  ('Concluida');
+  ('Negada');
