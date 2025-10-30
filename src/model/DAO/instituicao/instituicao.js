@@ -1,183 +1,199 @@
+// src/models/instituicao.js
 const { PrismaClient } = require('../../../../prisma/generated/mysql')
 const prismaMySQL = new PrismaClient()
 
-async function insertInstituicao(instituicao, id_endereco){
-    try {
-        let result = await prismaMySQL.tbl_instituicao.create({
-            data: {
-                nome: instituicao.nome,
-                cnpj: instituicao.cnpj,
-                email: instituicao.email,
-                senha: instituicao.senha,
-                descricao: instituicao.descricao || null,
-                telefone: instituicao.telefone || null,
-                tbl_endereco: {
-                    connect: { id: id_endereco } 
-                }
-            }
-        })
-        result = await selectByIdInstituicao(result.id)
-        return result
-        
-    } catch (error) {
-        console.error("Erro ao inserir instituição:", error)
-        return false
-    }
+async function insertInstituicao(instituicao) {
+  try {
+    const {
+      nome,
+      email,
+      senha,
+      telefone,
+      descricao,
+      cnpj,
+      id_endereco,
+      id_sexo,
+      logo
+    } = instituicao
+
+    // A procedure retorna o ID da instituição criada.
+    const result = await prismaMySQL.$queryRawUnsafe(`
+      CALL sp_inserir_instituicao(?, ?, ?, ?, ?, ?, ?, ?, ?);
+    `, nome, email, senha, telefone, descricao, cnpj, id_endereco, id_sexo, logo)
+
+    // Normalmente o primeiro item do result contém o ID retornado.
+    const inserted = result[0] && result[0][0] ? result[0][0] : null
+
+    if (!inserted || !inserted.id_instituicao) return false
+
+    // Retorna a instituição recém-criada pela view completa
+    return await selectByIdInstituicao(inserted.id_instituicao)
+
+  } catch (error) {
+    console.error("Erro ao inserir instituição:", error)
+    return false
+  }
 }
 
+/**
+ * Atualiza uma instituição usando a stored procedure sp_atualizar_instituicao
+ */
 async function updateInstituicao(instituicao) {
-    try {
-        const { id } = instituicao
+  try {
+    const {
+      id_instituicao,
+      nome,
+      email,
+      senha,
+      telefone,
+      descricao,
+      cnpj,
+      id_endereco,
+      logo
+    } = instituicao
 
-        // Campos permitidos para atualização direta
-        const camposPermitidos = ['nome', 'cnpj', 'email', 'descricao', 'telefone', 'logo']
+    await prismaMySQL.$queryRawUnsafe(`
+      CALL sp_atualizar_instituicao(?, ?, ?, ?, ?, ?, ?, ?, ?);
+    `, id_instituicao, nome, email, senha, telefone, descricao, cnpj, id_endereco, logo)
 
-        const data = {}
+    return await selectByIdInstituicao(id_instituicao)
 
-        // Copia apenas se a prop existir e não for undefined
-        for (const campo of camposPermitidos) {
-            if (Object.prototype.hasOwnProperty.call(instituicao, campo) &&
-                instituicao[campo] !== undefined) {
-            data[campo] = instituicao[campo]
-            }
-        }
-        if (Object.prototype.hasOwnProperty.call(instituicao, 'senha') &&
-                    instituicao.senha !== undefined) {
-            data.senha_hash = instituicao.senha
-        }
-
-        // Se nada para atualizar, apenas retorna o registro atual
-        if (Object.keys(data).length === 0) {
-            return await selectByIdInstituicao(id)
-        }
-
-        let result = await prismaMySQL.tbl_instituicao.update({
-            where: { id },
-            data
-        })
-        return result ? await selectByIdInstituicao(id) : false
-    } catch (error) {
-        console.error('Erro ao atualizar instituição:', error)
-        return false
-    }
+  } catch (error) {
+    console.error("Erro ao atualizar instituição:", error)
+    return false
+  }
 }
 
-
-async function deleteInstituicao(id){
-    try {
-        await prismaMySQL.tbl_instituicao.delete({ where: { id: id } })
-        return true
-    } catch (error) {
-        console.error("Erro ao deletar instituição:", error)
-        return false
-    }
+/**
+ * Deleta uma instituição pelo ID da pessoa (pai)
+ * Isso garante que o ON DELETE CASCADE remova todos os registros relacionados.
+ */
+async function deleteInstituicao(id_pessoa) {
+  try {
+    await prismaMySQL.tbl_pessoa.delete({ where: { id: id_pessoa } })
+    return true
+  } catch (error) {
+    console.error("Erro ao deletar instituição (por pessoa):", error)
+    return false
+  }
 }
 
-async function selectAllInstituicoes(){
-    try {
-        return await prismaMySQL.$queryRaw`SELECT * FROM vw_instituicao_completa ORDER BY id DESC`
-    } catch (error) {
-        console.error("Erro ao buscar todas as instituições:", error)
-        return false
-    }
+/**
+ * Retorna todas as instituições com base na view completa
+ */
+async function selectAllInstituicoes() {
+  try {
+    return await prismaMySQL.$queryRaw`
+      SELECT * FROM vw_instituicao_completa
+      ORDER BY instituicao_id DESC;
+    `
+  } catch (error) {
+    console.error("Erro ao buscar todas as instituições:", error)
+    return false
+  }
 }
 
-async function selectByIdInstituicao(id){
-    try {
-        const result = await prismaMySQL.$queryRaw`SELECT * FROM vw_instituicao_completa WHERE id = ${id}`
-        return result.length > 0 ? result[0] : null
-    } catch (error) {
-        console.error("Erro ao buscar instituição por ID:", error)
-        return false
-    }
+/**
+ * Busca instituição pelo ID (usa view completa)
+ */
+async function selectByIdInstituicao(id_instituicao) {
+  try {
+    const result = await prismaMySQL.$queryRaw`
+      SELECT * FROM vw_instituicao_completa WHERE instituicao_id = ${id_instituicao};
+    `
+    return result.length > 0 ? result[0] : null
+  } catch (error) {
+    console.error("Erro ao buscar instituição por ID:", error)
+    return false
+  }
 }
 
-async function selectByEmail(email){
-    try {
-        let result = await prismaMySQL.tbl_instituicao.findUnique(
-            { where: { email: email } }
-        )
-        let senha = result.senha
-        if(result){
-            result = await selectByIdInstituicao(result.id)
-        }else{
-            result = false
-        }
-        
-        return {...result, senha: senha}
-    } catch (error) {
-        console.error("Erro ao buscar instituição por e-mail:", error)
-        return false
-    }
+/**
+ * Busca instituição por e-mail
+ * Aqui a senha é obtida pela tabela principal (pois a view não retorna hash)
+ */
+async function selectByEmail(email) {
+  try {
+    const base = await prismaMySQL.tbl_instituicao.findUnique({ where: { email } })
+    if (!base) return false
+
+    const senha = base.senha
+    const result = await selectByIdInstituicao(base.id)
+    return result ? { ...result, senha } : false
+
+  } catch (error) {
+    console.error("Erro ao buscar instituição por e-mail:", error)
+    return false
+  }
 }
 
+/**
+ * Busca instituições pelo nome (usa procedure de busca paginada)
+ */
 async function selectSearchInstituicoesByNome(nomeBusca, pagina = 1, tamanho = 20) {
-    const busca = nomeBusca || null
-    const lat = null
-    const lng = null
-    const raio_km = null
+  const busca = nomeBusca || null
+  const lat = null
+  const lng = null
+  const raio_km = null
 
-    const paginaInt = parseInt(pagina)
-    const tamanhoInt = parseInt(tamanho)
+  try {
+    const result = await prismaMySQL.$queryRawUnsafe(`
+      CALL sp_buscar_instituicoes(?, ?, ?, ?, ?, ?);
+    `, busca, lat, lng, raio_km, parseInt(pagina), parseInt(tamanho))
 
-    try {
-        
-        // Chamada da Stored Procedure com os 6 parâmetros:
-        // p_busca, p_lat, p_lng, p_raio_km, p_pagina, p_tamanho
-        const result = await prismaMySQL.$queryRawUnsafe(`
-            CALL sp_buscar_instituicoes(?, ?, ?, ?, ?, ?);
-        `, busca, lat, lng, raio_km, paginaInt, tamanhoInt)
+    const instituicoes = result[0] || []
+    const totalRegistro = result[1]?.[0]?.total ? parseInt(result[1][0].total) : 0
 
-        const instituicoes = result[0] || []
-        const totalRegistro = result[1] && result[1][0] && result[1][0].total ? parseInt(result[1][0].total) : 0
+    return { instituicoes, total: totalRegistro }
 
-        return { instituicoes, total: totalRegistro }
-
-    } catch (error) {
-        console.error("Erro ao executar sp_buscar_instituicoes:", error)
-        return false
-    }
+  } catch (error) {
+    console.error("Erro ao buscar instituições por nome:", error)
+    return false
+  }
 }
 
-async function selectAlunosAprovadosByInstituicao(idInstituicao){
-    try {
-        const idInt = parseInt(idInstituicao);
-        const result = await prismaMySQL.$queryRaw`
-            SELECT * FROM vw_alunos_aprovados_instituicao 
-            WHERE instituicao_id = ${idInt}
-            ORDER BY atividade_titulo, crianca_nome
-        `;
-        return result
-    } catch (error) {
-        console.error(`Erro ao buscar alunos aprovados para a instituição ${idInstituicao}:`, error)
-        return false
-    }
+/**
+ * Busca alunos aprovados da instituição (view específica)
+ */
+async function selectAlunosAprovadosByInstituicao(idInstituicao) {
+  try {
+    const idInt = parseInt(idInstituicao)
+    return await prismaMySQL.$queryRaw`
+      SELECT * FROM vw_alunos_aprovados_instituicao
+      WHERE instituicao_id = ${idInt}
+      ORDER BY atividade_titulo, crianca_nome;
+    `
+  } catch (error) {
+    console.error(`Erro ao buscar alunos aprovados (instituição ${idInstituicao}):`, error)
+    return false
+  }
 }
 
-async function selectAlunosPendentesByInstituicao(idInstituicao){
-    try {
-        const idInt = parseInt(idInstituicao);
-        const result = await prismaMySQL.$queryRaw`
-            SELECT * FROM vw_alunos_pendente_instituicao 
-            WHERE instituicao_id = ${idInt}
-            ORDER BY atividade_titulo, crianca_nome
-        `;
-        return result
-    } catch (error) {
-        console.error(`Erro ao buscar alunos aprovados para a instituição ${idInstituicao}:`, error)
-        return false
-    }
+/**
+ * Busca alunos pendentes da instituição (view específica)
+ */
+async function selectAlunosPendentesByInstituicao(idInstituicao) {
+  try {
+    const idInt = parseInt(idInstituicao)
+    return await prismaMySQL.$queryRaw`
+      SELECT * FROM vw_alunos_pendente_instituicao
+      WHERE instituicao_id = ${idInt}
+      ORDER BY atividade_titulo, crianca_nome;
+    `
+  } catch (error) {
+    console.error(`Erro ao buscar alunos pendentes (instituição ${idInstituicao}):`, error)
+    return false
+  }
 }
-
 
 module.exports = {
-    insertInstituicao,
-    updateInstituicao,
-    deleteInstituicao,
-    selectAllInstituicoes,
-    selectByIdInstituicao,
-    selectByEmail,
-    selectSearchInstituicoesByNome,
-    selectAlunosAprovadosByInstituicao,
-    selectAlunosPendentesByInstituicao
+  insertInstituicao,
+  updateInstituicao,
+  deleteInstituicao,
+  selectAllInstituicoes,
+  selectByIdInstituicao,
+  selectByEmail,
+  selectSearchInstituicoesByNome,
+  selectAlunosAprovadosByInstituicao,
+  selectAlunosPendentesByInstituicao
 }
