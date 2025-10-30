@@ -30,6 +30,83 @@ JOIN tbl_pessoa_conversa pc2
   AND pc2.id_pessoa <> pc.id_pessoa
 JOIN tbl_pessoa p2 ON p2.id = pc2.id_pessoa;
 
+CREATE OR REPLACE VIEW vw_alunos_instituicao AS
+SELECT
+  i.id AS instituicao_id,
+  p_i.nome AS instituicao_nome,
+  a.id AS atividade_id,
+  a.titulo AS atividade_titulo,
+  c.id AS crianca_id,
+  p_c.nome AS crianca_nome,
+  p_c.foto_perfil AS crianca_foto,
+  s.id AS status_id,
+  s.nome AS status_inscricao,
+  t.criado_em AS data_inscricao
+FROM tbl_instituicao i
+JOIN tbl_pessoa p_i ON p_i.id = i.id_pessoa
+JOIN tbl_atividade a ON a.id_instituicao = i.id
+JOIN tbl_inscricao_atividade t ON t.id_atividade = a.id
+JOIN tbl_crianca c ON c.id = t.id_crianca
+JOIN tbl_pessoa p_c ON p_c.id = c.id_pessoa
+JOIN tbl_status_inscricao s ON s.id = t.id_status;
+
+
+CREATE OR REPLACE VIEW vw_aulas_detalhe AS
+SELECT
+  aa.id AS aula_id,
+  aa.id_atividade,
+  aa.data_aula,
+  aa.hora_inicio,
+  aa.hora_fim,
+  aa.vagas_total,
+  aa.vagas_disponiveis,
+  CASE
+    WHEN aa.data_aula < CURDATE() THEN 'Encerrada'
+    WHEN aa.data_aula = CURDATE() THEN 'Hoje'
+    ELSE 'Futura'
+  END AS status_aula
+FROM tbl_aulas_atividade aa;
+
+
+CREATE OR REPLACE VIEW vw_atividade_detalhe AS
+SELECT
+  a.id AS atividade_id,
+  a.titulo,
+  a.descricao,
+  a.faixa_etaria_min,
+  a.faixa_etaria_max,
+  a.gratuita,
+  a.preco,
+  a.ativo,
+  cat.nome AS categoria,
+  i.id AS instituicao_id,
+  p_i.nome AS instituicao_nome,
+  p_i.foto_perfil AS instituicao_foto,
+  e.cidade,
+  e.estado,
+  (
+    SELECT COALESCE(
+      JSON_ARRAYAGG(
+        JSON_OBJECT(
+          'aula_id', ad.aula_id,
+          'data', ad.data_aula,
+          'hora_inicio', ad.hora_inicio,
+          'hora_fim', ad.hora_fim,
+          'vagas_total', ad.vagas_total,
+          'vagas_disponiveis', ad.vagas_disponiveis,
+          'status_aula', ad.status_aula
+        )
+      ), JSON_ARRAY()
+    )
+    FROM vw_aulas_detalhe ad
+    WHERE ad.id_atividade = a.id
+  ) AS aulas
+FROM tbl_atividade a
+JOIN tbl_categoria cat ON cat.id = a.id_categoria
+JOIN tbl_instituicao i ON i.id = a.id_instituicao
+JOIN tbl_pessoa p_i ON p_i.id = i.id_pessoa
+JOIN tbl_endereco e ON e.id = i.id_endereco;
+
 
 CREATE OR REPLACE VIEW vw_usuario_completa AS
 SELECT
@@ -123,7 +200,7 @@ SELECT
       ), JSON_ARRAY())
     FROM vw_conversas_detalhe cd
     WHERE cd.id_remetente = p.id
-  ) AS conversas
+  ) AS conversas,
   (
     SELECT COALESCE(
         JSON_ARRAYAGG(
@@ -139,7 +216,7 @@ SELECT
         ), JSON_ARRAY()
       )
       FROM vw_atividade_detalhe atv
-      WHERE atv.instituicao_id = i.id
+      WHERE atv.instituicao_id = ins.id
   ) AS atividades
 FROM tbl_instituicao ins
 JOIN tbl_pessoa p ON p.id = ins.id_pessoa
@@ -179,7 +256,7 @@ SELECT
     JOIN vw_atividade_detalhe ad ON ad.atividade_id = a.id
     WHERE ia.id_crianca = c.id
     AND ia.id_status = 4
-  ) AS atividades_matriculadas
+  ) AS atividades_matriculadas,
   (
     SELECT COALESCE(JSON_ARRAYAGG(
         JSON_OBJECT(
@@ -236,7 +313,6 @@ FROM tbl_instituicao ins
 JOIN tbl_pessoa p ON p.id = ins.id_pessoa
 JOIN tbl_endereco e ON e.id = ins.id_endereco;
 
-
 CREATE OR REPLACE VIEW vw_crianca_perfil AS
 SELECT
   c.id AS crianca_id,
@@ -259,13 +335,14 @@ SELECT
           )
         ), JSON_ARRAY()
       )
-      FROM vw_atividade_detalhe atv
-      WHERE atv.instituicao_id = i.id
+    FROM vw_atividade_detalhe atv
+    JOIN tbl_inscricao_atividade ia ON ia.id_atividade = atv.atividade_id
+    WHERE ia.id_crianca = c.id
+      AND ia.id_status = 4
   ) AS atividades
 FROM tbl_crianca c
 JOIN tbl_pessoa p ON p.id = c.id_pessoa
 JOIN tbl_sexo s ON s.id = c.id_sexo;
-
 
 CREATE OR REPLACE VIEW vw_alunos_instituicao AS
 SELECT
@@ -286,62 +363,3 @@ JOIN tbl_inscricao_atividade t ON t.id_atividade = a.id
 JOIN tbl_crianca c ON c.id = t.id_crianca
 JOIN tbl_pessoa p_c ON p_c.id = c.id_pessoa
 JOIN tbl_status_inscricao s ON s.id = t.id_status;
-
-
-CREATE OR REPLACE VIEW vw_aulas_detalhe AS
-SELECT
-  aa.id AS aula_id,
-  aa.id_atividade,
-  aa.data_aula,
-  aa.hora_inicio,
-  aa.hora_fim,
-  aa.vagas_total,
-  aa.vagas_disponiveis,
-  CASE
-    WHEN aa.data_aula < CURDATE() THEN 'Encerrada'
-    WHEN aa.data_aula = CURDATE() THEN 'Hoje'
-    ELSE 'Futura'
-  END AS status_aula
-FROM tbl_aulas_atividade aa;
-
-
-CREATE OR REPLACE VIEW vw_atividade_detalhe AS
-SELECT
-  a.id AS atividade_id,
-  a.titulo,
-  a.descricao,
-  a.faixa_etaria_min,
-  a.faixa_etaria_max,
-  a.gratuita,
-  a.preco,
-  a.ativo,
-  cat.nome AS categoria,
-  i.id AS instituicao_id,
-  p_i.nome AS instituicao_nome,
-  p_i.foto_perfil AS instituicao_foto,
-  e.cidade,
-  e.estado,
-  (
-    SELECT COALESCE(
-      JSON_ARRAYAGG(
-        JSON_OBJECT(
-          'aula_id', ad.aula_id,
-          'data', ad.data_aula,
-          'hora_inicio', ad.hora_inicio,
-          'hora_fim', ad.hora_fim,
-          'vagas_total', ad.vagas_total,
-          'vagas_disponiveis', ad.vagas_disponiveis,
-          'status_aula', ad.status_aula
-        )
-      ), JSON_ARRAY()
-    )
-    FROM vw_aulas_detalhe ad
-    WHERE ad.id_atividade = a.id
-  ) AS aulas
-FROM tbl_atividade a
-JOIN tbl_categoria cat ON cat.id = a.id_categoria
-JOIN tbl_instituicao i ON i.id = a.id_instituicao
-JOIN tbl_pessoa p_i ON p_i.id = i.id_pessoa
-JOIN tbl_endereco e ON e.id = i.id_endereco;
-
-

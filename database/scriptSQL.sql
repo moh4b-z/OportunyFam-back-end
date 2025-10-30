@@ -159,7 +159,7 @@ CREATE TABLE tbl_aulas_atividade (
   hora_inicio TIME NOT NULL,
   hora_fim TIME NOT NULL,
   vagas_total SMALLINT UNSIGNED NOT NULL,
-  vagas_disponiveis SMALLINT UNSIGNED CHECK (vagas_disponiveis <= vagas_total) NOT NULL,
+  vagas_disponiveis SMALLINT UNSIGNED NOT NULL,
   CONSTRAINT ck_aula_horas CHECK (hora_inicio < hora_fim),
   CONSTRAINT fk_aula_ativ FOREIGN KEY (id_atividade) REFERENCES tbl_atividade(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -236,3 +236,900 @@ CREATE TABLE tbl_publicacao_instituicao (
 ) ENGINE=InnoDB;
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+
+
+-- Views
+
+CREATE OR REPLACE VIEW vw_conversas_detalhe AS
+SELECT
+  pc.id_pessoa AS id_remetente,
+  c.id AS id_conversa,
+  JSON_OBJECT(
+    'id', p2.id,
+    'nome', p2.nome,
+    'foto_perfil', p2.foto_perfil
+  ) AS outro_participante,
+  (
+    SELECT 
+      JSON_OBJECT(
+        'id', m.id,
+        'descricao', m.descricao,
+        'data_envio', m.criado_em,
+        'id_remetente', m.id_pessoa
+      )
+    FROM tbl_mensagem m
+    WHERE m.id_conversa = c.id
+    ORDER BY m.criado_em DESC
+    LIMIT 1
+  ) AS ultima_mensagem
+FROM tbl_conversa c
+JOIN tbl_pessoa_conversa pc ON pc.id_conversa = c.id
+-- outra pessoa na mesma conversa
+JOIN tbl_pessoa_conversa pc2
+  ON pc2.id_conversa = c.id
+  AND pc2.id_pessoa <> pc.id_pessoa
+JOIN tbl_pessoa p2 ON p2.id = pc2.id_pessoa;
+
+CREATE OR REPLACE VIEW vw_alunos_instituicao AS
+SELECT
+  i.id AS instituicao_id,
+  p_i.nome AS instituicao_nome,
+  a.id AS atividade_id,
+  a.titulo AS atividade_titulo,
+  c.id AS crianca_id,
+  p_c.nome AS crianca_nome,
+  p_c.foto_perfil AS crianca_foto,
+  s.id AS status_id,
+  s.nome AS status_inscricao,
+  t.criado_em AS data_inscricao
+FROM tbl_instituicao i
+JOIN tbl_pessoa p_i ON p_i.id = i.id_pessoa
+JOIN tbl_atividade a ON a.id_instituicao = i.id
+JOIN tbl_inscricao_atividade t ON t.id_atividade = a.id
+JOIN tbl_crianca c ON c.id = t.id_crianca
+JOIN tbl_pessoa p_c ON p_c.id = c.id_pessoa
+JOIN tbl_status_inscricao s ON s.id = t.id_status;
+
+
+CREATE OR REPLACE VIEW vw_aulas_detalhe AS
+SELECT
+  aa.id AS aula_id,
+  aa.id_atividade,
+  aa.data_aula,
+  aa.hora_inicio,
+  aa.hora_fim,
+  aa.vagas_total,
+  aa.vagas_disponiveis,
+  CASE
+    WHEN aa.data_aula < CURDATE() THEN 'Encerrada'
+    WHEN aa.data_aula = CURDATE() THEN 'Hoje'
+    ELSE 'Futura'
+  END AS status_aula
+FROM tbl_aulas_atividade aa;
+
+
+CREATE OR REPLACE VIEW vw_atividade_detalhe AS
+SELECT
+  a.id AS atividade_id,
+  a.titulo,
+  a.descricao,
+  a.faixa_etaria_min,
+  a.faixa_etaria_max,
+  a.gratuita,
+  a.preco,
+  a.ativo,
+  cat.nome AS categoria,
+  i.id AS instituicao_id,
+  p_i.nome AS instituicao_nome,
+  p_i.foto_perfil AS instituicao_foto,
+  e.cidade,
+  e.estado,
+  (
+    SELECT COALESCE(
+      JSON_ARRAYAGG(
+        JSON_OBJECT(
+          'aula_id', ad.aula_id,
+          'data', ad.data_aula,
+          'hora_inicio', ad.hora_inicio,
+          'hora_fim', ad.hora_fim,
+          'vagas_total', ad.vagas_total,
+          'vagas_disponiveis', ad.vagas_disponiveis,
+          'status_aula', ad.status_aula
+        )
+      ), JSON_ARRAY()
+    )
+    FROM vw_aulas_detalhe ad
+    WHERE ad.id_atividade = a.id
+  ) AS aulas
+FROM tbl_atividade a
+JOIN tbl_categoria cat ON cat.id = a.id_categoria
+JOIN tbl_instituicao i ON i.id = a.id_instituicao
+JOIN tbl_pessoa p_i ON p_i.id = i.id_pessoa
+JOIN tbl_endereco e ON e.id = i.id_endereco;
+
+
+CREATE OR REPLACE VIEW vw_usuario_completa AS
+SELECT
+  u.id AS usuario_id,
+  p.id AS pessoa_id,
+  p.nome,
+  p.email,
+  p.foto_perfil,
+  p.telefone,
+  p.cpf,
+  p.data_nascimento,
+  p.criado_em,
+  p.atualizado_em,
+  s.nome AS sexo,
+  tn.nivel AS tipo_nivel,
+  (
+    SELECT COALESCE(JSON_ARRAYAGG(
+        JSON_OBJECT('id_crianca', c.id, 'nome', p_c.nome)
+      ), JSON_ARRAY())
+    FROM tbl_responsavel r
+    JOIN tbl_crianca c ON c.id = r.id_crianca
+    JOIN tbl_pessoa p_c ON p_c.id = c.id_pessoa
+    WHERE r.id_usuario = u.id
+  ) AS criancas_dependentes,
+  (
+    SELECT COALESCE(JSON_ARRAYAGG(
+        JSON_OBJECT(
+          'id_conversa', cd.id_conversa,
+          'outro_participante', cd.outro_participante,
+          'ultima_mensagem', cd.ultima_mensagem
+        )
+      ), JSON_ARRAY())
+    FROM vw_conversas_detalhe cd
+    WHERE cd.id_remetente = p.id
+  ) AS conversas
+FROM tbl_usuario u
+JOIN tbl_pessoa p ON p.id = u.id_pessoa
+JOIN tbl_sexo s ON s.id = u.id_sexo
+JOIN tbl_tipo_nivel tn ON tn.id = u.id_tipo_nivel;
+
+
+CREATE OR REPLACE VIEW vw_instituicao_completa AS
+SELECT
+  ins.id AS instituicao_id,
+  p.id AS pessoa_id,
+  p.nome,
+  p.email,
+  p.foto_perfil,
+  ins.cnpj,
+  ins.descricao,
+  p.criado_em,
+  p.atualizado_em,
+  JSON_OBJECT(
+    'cep', e.cep,
+    'logradouro', e.logradouro,
+    'numero', e.numero,
+    'complemento', e.complemento,
+    'bairro', e.bairro,
+    'cidade', e.cidade,
+    'estado', e.estado,
+    'latitude', e.latitude,
+    'longitude', e.longitude
+  ) AS endereco,
+  (
+    SELECT COALESCE(JSON_ARRAYAGG(
+        JSON_OBJECT('id', tp.id, 'nome', tp.nome)
+      ), JSON_ARRAY())
+    FROM tbl_instituicao_tipo_instituicao iti
+    JOIN tbl_tipo_instituicao tp ON tp.id = iti.id_tipo_instituicao
+    WHERE iti.id_instituicao = ins.id
+  ) AS tipos_instituicao,
+  (
+    SELECT COALESCE(JSON_ARRAYAGG(
+        JSON_OBJECT(
+          'id', pub.id,
+          'descricao', pub.descricao,
+          'foto_perfil', pub.foto_perfil,
+          'criado_em', pub.criado_em
+        )
+      ), JSON_ARRAY())
+    FROM tbl_publicacao_instituicao pub
+    WHERE pub.id_instituicao = ins.id
+  ) AS publicacoes,
+  (
+    SELECT COALESCE(JSON_ARRAYAGG(
+        JSON_OBJECT(
+          'id_conversa', cd.id_conversa,
+          'outro_participante', cd.outro_participante,
+          'ultima_mensagem', cd.ultima_mensagem
+        )
+      ), JSON_ARRAY())
+    FROM vw_conversas_detalhe cd
+    WHERE cd.id_remetente = p.id
+  ) AS conversas,
+  (
+    SELECT COALESCE(
+        JSON_ARRAYAGG(
+          JSON_OBJECT(
+            'atividade_id', atv.atividade_id,
+            'titulo', atv.titulo,
+            'descricao', atv.descricao,
+            'faixa_etaria_min', atv.faixa_etaria_min,
+            'faixa_etaria_max', atv.faixa_etaria_max,
+            'categoria', atv.categoria,
+            'aulas', atv.aulas
+          )
+        ), JSON_ARRAY()
+      )
+      FROM vw_atividade_detalhe atv
+      WHERE atv.instituicao_id = ins.id
+  ) AS atividades
+FROM tbl_instituicao ins
+JOIN tbl_pessoa p ON p.id = ins.id_pessoa
+JOIN tbl_endereco e ON e.id = ins.id_endereco;
+
+
+
+CREATE OR REPLACE VIEW vw_crianca_completa AS
+SELECT
+  c.id AS crianca_id,
+  p.id AS pessoa_id,
+  p.nome,
+  p.email,
+  p.foto_perfil,
+  p.data_nascimento,
+  CAST(TIMESTAMPDIFF(YEAR, p.data_nascimento, CURDATE()) AS SIGNED) AS idade,
+  p.criado_em,
+  p.atualizado_em,
+  s.nome AS sexo,
+  (
+    SELECT COALESCE(
+      JSON_ARRAYAGG(
+        JSON_OBJECT(
+          'atividade_id', a.id,
+          'titulo', a.titulo,
+          'categoria', c.nome,
+          'instituicao', p_i.nome,
+          'aulas', ad.aulas
+        )
+      ), JSON_ARRAY()
+    )
+    FROM tbl_inscricao_atividade ia
+    JOIN tbl_atividade a ON a.id = ia.id_atividade
+    JOIN tbl_categoria c ON c.id = a.id_categoria
+    JOIN tbl_instituicao i ON i.id = a.id_instituicao
+    JOIN tbl_pessoa p_i ON p_i.id = i.id_pessoa
+    JOIN vw_atividade_detalhe ad ON ad.atividade_id = a.id
+    WHERE ia.id_crianca = c.id
+    AND ia.id_status = 4
+  ) AS atividades_matriculadas,
+  (
+    SELECT COALESCE(JSON_ARRAYAGG(
+        JSON_OBJECT(
+          'id_conversa', cd.id_conversa,
+          'outro_participante', cd.outro_participante,
+          'ultima_mensagem', cd.ultima_mensagem
+        )
+      ), JSON_ARRAY())
+    FROM vw_conversas_detalhe cd
+    WHERE cd.id_remetente = p.id
+  ) AS conversas
+FROM tbl_crianca c
+JOIN tbl_pessoa p ON p.id = c.id_pessoa
+JOIN tbl_sexo s ON s.id = c.id_sexo;
+
+
+
+CREATE OR REPLACE VIEW vw_usuario_perfil AS
+SELECT
+  u.id AS usuario_id,
+  p.id AS pessoa_id,
+  p.nome,
+  p.foto_perfil,
+  s.nome AS sexo
+FROM tbl_usuario u
+JOIN tbl_pessoa p ON p.id = u.id_pessoa
+JOIN tbl_sexo s ON s.id = u.id_sexo;
+
+
+CREATE OR REPLACE VIEW vw_instituicao_perfil AS
+SELECT
+  ins.id AS instituicao_id,
+  p.id AS pessoa_id,
+  p.nome,
+  p.foto_perfil,
+  ins.descricao,
+  JSON_OBJECT(
+    'cidade', e.cidade,
+    'estado', e.estado
+  ) AS localizacao,
+  (
+    SELECT COALESCE(JSON_ARRAYAGG(
+        JSON_OBJECT(
+          'id', pub.id,
+          'descricao', pub.descricao,
+          'foto_perfil', pub.foto_perfil,
+          'criado_em', pub.criado_em
+        )
+      ), JSON_ARRAY())
+    FROM tbl_publicacao_instituicao pub
+    WHERE pub.id_instituicao = ins.id
+  ) AS publicacoes
+FROM tbl_instituicao ins
+JOIN tbl_pessoa p ON p.id = ins.id_pessoa
+JOIN tbl_endereco e ON e.id = ins.id_endereco;
+
+CREATE OR REPLACE VIEW vw_crianca_perfil AS
+SELECT
+  c.id AS crianca_id,
+  p.id AS pessoa_id,
+  p.nome,
+  p.foto_perfil,
+  s.nome AS sexo,
+  CAST(TIMESTAMPDIFF(YEAR, p.data_nascimento, CURDATE()) AS SIGNED) AS idade,
+  (
+    SELECT COALESCE(
+        JSON_ARRAYAGG(
+          JSON_OBJECT(
+            'atividade_id', atv.atividade_id,
+            'titulo', atv.titulo,
+            'descricao', atv.descricao,
+            'faixa_etaria_min', atv.faixa_etaria_min,
+            'faixa_etaria_max', atv.faixa_etaria_max,
+            'categoria', atv.categoria,
+            'aulas', atv.aulas
+          )
+        ), JSON_ARRAY()
+      )
+    FROM vw_atividade_detalhe atv
+    JOIN tbl_inscricao_atividade ia ON ia.id_atividade = atv.atividade_id
+    WHERE ia.id_crianca = c.id
+      AND ia.id_status = 4
+  ) AS atividades
+FROM tbl_crianca c
+JOIN tbl_pessoa p ON p.id = c.id_pessoa
+JOIN tbl_sexo s ON s.id = c.id_sexo;
+
+CREATE OR REPLACE VIEW vw_alunos_instituicao AS
+SELECT
+  i.id AS instituicao_id,
+  p_i.nome AS instituicao_nome,
+  a.id AS atividade_id,
+  a.titulo AS atividade_titulo,
+  c.id AS crianca_id,
+  p_c.nome AS crianca_nome,
+  p_c.foto_perfil AS crianca_foto,
+  s.id AS status_id,
+  s.nome AS status_inscricao,
+  t.criado_em AS data_inscricao
+FROM tbl_instituicao i
+JOIN tbl_pessoa p_i ON p_i.id = i.id_pessoa
+JOIN tbl_atividade a ON a.id_instituicao = i.id
+JOIN tbl_inscricao_atividade t ON t.id_atividade = a.id
+JOIN tbl_crianca c ON c.id = t.id_crianca
+JOIN tbl_pessoa p_c ON p_c.id = c.id_pessoa
+JOIN tbl_status_inscricao s ON s.id = t.id_status;
+
+
+
+-- ======================================================================
+-- Triggers para manter vagas_disponiveis consistentes no cadastro de aulas
+--  - Antes de inserir matricula: verifica se há vagas
+--  - After insert: decrementa vagas_disponiveis
+--  - After delete: incrementa vagas_disponiveis
+-- ======================================================================
+DELIMITER $$
+
+-- Antes de inserir: checa se há vagas suficientes
+DROP TRIGGER IF EXISTS trg_matricula_aula_before_insert $$
+CREATE TRIGGER trg_matricula_aula_before_insert
+BEFORE INSERT ON tbl_matricula_aula
+FOR EACH ROW
+BEGIN
+  DECLARE v_vagas INT;
+  SELECT vagas_disponiveis INTO v_vagas FROM tbl_aulas_atividade WHERE id = NEW.id_aula_atividade FOR UPDATE;
+  IF v_vagas IS NULL THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Aula nao encontrada';
+  END IF;
+  IF v_vagas <= 0 THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Sem vagas disponiveis para essa aula';
+  END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+DROP TRIGGER IF EXISTS trg_matricula_aula_after_insert $$
+CREATE TRIGGER trg_matricula_aula_after_insert
+AFTER INSERT ON tbl_matricula_aula
+FOR EACH ROW
+BEGIN
+  UPDATE tbl_aulas_atividade
+  SET vagas_disponiveis = GREATEST(vagas_disponiveis - 1, 0)
+  WHERE id = NEW.id_aula_atividade;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+DROP TRIGGER IF EXISTS trg_matricula_aula_after_delete $$
+CREATE TRIGGER trg_matricula_aula_after_delete
+AFTER DELETE ON tbl_matricula_aula
+FOR EACH ROW
+BEGIN
+  UPDATE tbl_aulas_atividade
+  SET vagas_disponiveis = vagas_disponiveis + 1
+  WHERE id = OLD.id_aula_atividade;
+END $$
+DELIMITER ;
+
+-- ======================================================================
+-- Trigger para ajustar vaga se houver atualização que mude id_aula_atividade
+-- (caso o sistema permita alterar aula na matrícula)
+-- ======================================================================
+DELIMITER $$
+DROP TRIGGER IF EXISTS trg_matricula_aula_after_update $$
+CREATE TRIGGER trg_matricula_aula_after_update
+AFTER UPDATE ON tbl_matricula_aula
+FOR EACH ROW
+BEGIN
+  -- Se mudou de aula: devolve uma vaga na antiga e retira uma na nova (validações simples)
+  IF OLD.id_aula_atividade <> NEW.id_aula_atividade THEN
+    UPDATE tbl_aulas_atividade
+      SET vagas_disponiveis = vagas_disponiveis + 1
+    WHERE id = OLD.id_aula_atividade;
+
+    -- decrementa nova (garantir não ficar negativo)
+    UPDATE tbl_aulas_atividade
+      SET vagas_disponiveis = GREATEST(vagas_disponiveis - 1, 0)
+    WHERE id = NEW.id_aula_atividade;
+  END IF;
+END $$
+DELIMITER ;
+
+-- ======================================================================
+-- Trigger para garantir consistência entre vagas_total e vagas_disponiveis
+-- ======================================================================
+
+DELIMITER $$
+
+DROP TRIGGER IF EXISTS trg_aula_atividade_before_insert $$
+CREATE TRIGGER trg_aula_atividade_before_insert
+BEFORE INSERT ON tbl_aulas_atividade
+FOR EACH ROW
+BEGIN
+  -- Se o usuário não informou vagas_disponiveis, define igual ao total
+  IF NEW.vagas_disponiveis IS NULL THEN
+    SET NEW.vagas_disponiveis = NEW.vagas_total;
+  END IF;
+
+  -- Valida: não pode haver mais vagas disponíveis que o total
+  IF NEW.vagas_disponiveis > NEW.vagas_total THEN
+    SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'vagas_disponiveis nao pode ser maior que vagas_total';
+  END IF;
+
+  -- Valida: hora de início deve ser menor que hora de fim
+  IF NEW.hora_inicio >= NEW.hora_fim THEN
+    SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'hora_inicio deve ser menor que hora_fim';
+  END IF;
+END $$
+
+
+DROP TRIGGER IF EXISTS trg_aula_atividade_before_update $$
+CREATE TRIGGER trg_aula_atividade_before_update
+BEFORE UPDATE ON tbl_aulas_atividade
+FOR EACH ROW
+BEGIN
+  IF NEW.vagas_disponiveis > NEW.vagas_total THEN
+    SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'vagas_disponiveis nao pode ser maior que vagas_total';
+  END IF;
+
+  IF NEW.hora_inicio >= NEW.hora_fim THEN
+    SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'hora_inicio deve ser menor que hora_fim';
+  END IF;
+END $$
+
+DELIMITER ;
+
+
+-- ======================================================================
+-- Trigger já existente corrigida: inscrição_atividade_status_insert
+-- (mantive lógica: se id_responsavel NULL -> status 1, senão 2)
+-- ======================================================================
+DELIMITER $$
+DROP TRIGGER IF EXISTS trg_inscricao_atividade_status_insert $$
+CREATE TRIGGER trg_inscricao_atividade_status_insert
+BEFORE INSERT ON tbl_inscricao_atividade
+FOR EACH ROW
+BEGIN
+    IF NEW.id_responsavel IS NULL THEN
+        SET NEW.id_status = 1; -- Sugerida Pela Criança
+    ELSE
+        SET NEW.id_status = 2; -- Confirmada Pelo Responsável (ou o que você definir)
+    END IF;
+END $$
+DELIMITER ;
+
+-- ======================================================================
+-- CORREÇÕES / MELHORIAS: Procedures de inserção (com transaction + handler)
+-- ======================================================================
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS sp_inserir_usuario $$
+CREATE PROCEDURE sp_inserir_usuario (
+  IN p_nome VARCHAR(150),
+  IN p_email VARCHAR(150),
+  IN p_senha VARCHAR(256),
+  IN p_telefone VARCHAR(16),
+  IN p_foto_perfil VARCHAR(400),
+  IN p_cpf VARCHAR(11),
+  IN p_data_nascimento DATE,
+  IN p_id_sexo INT,
+  IN p_id_tipo_nivel INT
+)
+BEGIN
+  DECLARE v_pessoa_id INT;
+  DECLARE v_usuario_id INT;
+
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION
+  BEGIN
+    ROLLBACK;
+    RESIGNAL;
+  END;
+
+  START TRANSACTION;
+
+  INSERT INTO tbl_pessoa (nome, email, senha, telefone, foto_perfil, cpf, data_nascimento)
+  VALUES (p_nome, p_email, p_senha, p_telefone, p_foto_perfil, p_cpf, p_data_nascimento);
+
+  SET v_pessoa_id = LAST_INSERT_ID();
+
+  INSERT INTO tbl_usuario (id_pessoa, id_sexo, id_tipo_nivel)
+  VALUES (v_pessoa_id, p_id_sexo, p_id_tipo_nivel);
+
+  SET v_usuario_id = LAST_INSERT_ID();
+
+  COMMIT;
+
+  -- Retorna o usuário completo pela view (coluna usuario_id)
+  SELECT * FROM vw_usuario_completa WHERE usuario_id = v_usuario_id;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS sp_inserir_crianca $$
+CREATE PROCEDURE sp_inserir_crianca (
+  IN p_nome VARCHAR(150),
+  IN p_email VARCHAR(150),
+  IN p_senha VARCHAR(256),
+  IN p_telefone VARCHAR(16),
+  IN p_foto_perfil VARCHAR(400),
+  IN p_cpf VARCHAR(11),
+  IN p_data_nascimento DATE,
+  IN p_id_sexo INT
+)
+BEGIN
+  DECLARE v_pessoa_id INT;
+  DECLARE v_crianca_id INT;
+
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION
+  BEGIN
+    ROLLBACK;
+    RESIGNAL;
+  END;
+
+  START TRANSACTION;
+
+  INSERT INTO tbl_pessoa (nome, email, senha, telefone, foto_perfil, cpf, data_nascimento)
+  VALUES (p_nome, p_email, p_senha, p_telefone, p_foto_perfil, p_cpf, p_data_nascimento);
+
+  SET v_pessoa_id = LAST_INSERT_ID();
+
+  INSERT INTO tbl_crianca (id_pessoa, id_sexo)
+  VALUES (v_pessoa_id, p_id_sexo);
+
+  SET v_crianca_id = LAST_INSERT_ID();
+
+  COMMIT;
+
+  SELECT * FROM vw_crianca_completa WHERE crianca_id = v_crianca_id;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS sp_inserir_instituicao $$
+CREATE PROCEDURE sp_inserir_instituicao (
+  IN p_nome VARCHAR(150),
+  IN p_email VARCHAR(150),
+  IN p_senha VARCHAR(256),
+  IN p_telefone VARCHAR(16),
+  IN p_foto_perfil VARCHAR(400),
+  IN p_cnpj VARCHAR(14),
+  IN p_descricao TEXT,
+  IN p_id_endereco INT
+)
+BEGIN
+  DECLARE v_pessoa_id INT;
+  DECLARE v_instituicao_id INT;
+
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION
+  BEGIN
+    ROLLBACK;
+    RESIGNAL;
+  END;
+
+  START TRANSACTION;
+
+  INSERT INTO tbl_pessoa (nome, email, senha, telefone, foto_perfil)
+  VALUES (p_nome, p_email, p_senha, p_telefone, p_foto_perfil);
+
+  SET v_pessoa_id = LAST_INSERT_ID();
+
+  INSERT INTO tbl_instituicao (id_pessoa, cnpj, descricao, id_endereco)
+  VALUES (v_pessoa_id, p_cnpj, p_descricao, p_id_endereco);
+
+  SET v_instituicao_id = LAST_INSERT_ID();
+
+  COMMIT;
+
+  SELECT * FROM vw_instituicao_completa WHERE instituicao_id = v_instituicao_id;
+END $$
+DELIMITER ;
+
+-- ======================================================================
+-- Procedures de atualização parcial (aceitam parâmetros NULL -> não alteram)
+-- ======================================================================
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS sp_atualizar_usuario $$
+CREATE PROCEDURE sp_atualizar_usuario (
+  IN p_usuario_id INT,            -- id da tabela tbl_usuario
+  IN p_nome VARCHAR(150),
+  IN p_email VARCHAR(150),
+  IN p_senha VARCHAR(256),
+  IN p_telefone VARCHAR(16),
+  IN p_foto_perfil VARCHAR(400),
+  IN p_cpf VARCHAR(11),
+  IN p_data_nascimento DATE,
+  IN p_id_sexo INT,
+  IN p_id_tipo_nivel INT
+)
+BEGIN
+  -- Atualiza parcialmente pessoa + campos específicos do usuário
+  DECLARE v_pessoa_id INT;
+
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION
+  BEGIN
+    ROLLBACK;
+    RESIGNAL;
+  END;
+
+  START TRANSACTION;
+
+  SELECT id_pessoa INTO v_pessoa_id FROM tbl_usuario WHERE id = p_usuario_id;
+  IF v_pessoa_id IS NULL THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Usuario nao encontrado';
+  END IF;
+
+  UPDATE tbl_pessoa
+  SET
+    nome = COALESCE(p_nome, nome),
+    email = COALESCE(p_email, email),
+    senha = COALESCE(p_senha, senha),
+    telefone = COALESCE(p_telefone, telefone),
+    foto_perfil = COALESCE(p_foto_perfil, foto_perfil),
+    cpf = COALESCE(p_cpf, cpf),
+    data_nascimento = COALESCE(p_data_nascimento, data_nascimento)
+  WHERE id = v_pessoa_id;
+
+  UPDATE tbl_usuario
+  SET
+    id_sexo = COALESCE(p_id_sexo, id_sexo),
+    id_tipo_nivel = COALESCE(p_id_tipo_nivel, id_tipo_nivel)
+  WHERE id = p_usuario_id;
+
+  COMMIT;
+
+  SELECT * FROM vw_usuario_completa WHERE usuario_id = p_usuario_id;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS sp_atualizar_crianca $$
+CREATE PROCEDURE sp_atualizar_crianca (
+  IN p_crianca_id INT,
+  IN p_nome VARCHAR(150),
+  IN p_email VARCHAR(150),
+  IN p_senha VARCHAR(256),
+  IN p_telefone VARCHAR(16),
+  IN p_foto_perfil VARCHAR(400),
+  IN p_cpf VARCHAR(11),
+  IN p_data_nascimento DATE,
+  IN p_id_sexo INT
+)
+BEGIN
+  DECLARE v_pessoa_id INT;
+
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION
+  BEGIN
+    ROLLBACK;
+    RESIGNAL;
+  END;
+
+  START TRANSACTION;
+
+  SELECT id_pessoa INTO v_pessoa_id FROM tbl_crianca WHERE id = p_crianca_id;
+  IF v_pessoa_id IS NULL THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Crianca nao encontrada';
+  END IF;
+
+  UPDATE tbl_pessoa
+  SET
+    nome = COALESCE(p_nome, nome),
+    email = COALESCE(p_email, email),
+    senha = COALESCE(p_senha, senha),
+    telefone = COALESCE(p_telefone, telefone),
+    foto_perfil = COALESCE(p_foto_perfil, foto_perfil),
+    cpf = COALESCE(p_cpf, cpf),
+    data_nascimento = COALESCE(p_data_nascimento, data_nascimento)
+  WHERE id = v_pessoa_id;
+
+  UPDATE tbl_crianca
+  SET id_sexo = COALESCE(p_id_sexo, id_sexo)
+  WHERE id = p_crianca_id;
+
+  COMMIT;
+
+  SELECT * FROM vw_crianca_completa WHERE crianca_id = p_crianca_id;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS sp_atualizar_instituicao $$
+CREATE PROCEDURE sp_atualizar_instituicao (
+  IN p_instituicao_id INT,
+  IN p_nome VARCHAR(150),
+  IN p_email VARCHAR(150),
+  IN p_senha VARCHAR(256),
+  IN p_telefone VARCHAR(16),
+  IN p_foto_perfil VARCHAR(400),
+  IN p_cnpj VARCHAR(14),
+  IN p_descricao TEXT,
+  IN p_id_endereco INT
+)
+BEGIN
+  DECLARE v_pessoa_id INT;
+
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION
+  BEGIN
+    ROLLBACK;
+    RESIGNAL;
+  END;
+
+  START TRANSACTION;
+
+  SELECT id_pessoa INTO v_pessoa_id FROM tbl_instituicao WHERE id = p_instituicao_id;
+  IF v_pessoa_id IS NULL THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Instituicao nao encontrada';
+  END IF;
+
+  UPDATE tbl_pessoa
+  SET
+    nome = COALESCE(p_nome, nome),
+    email = COALESCE(p_email, email),
+    senha = COALESCE(p_senha, senha),
+    telefone = COALESCE(p_telefone, telefone),
+    foto_perfil = COALESCE(p_foto_perfil, foto_perfil)
+  WHERE id = v_pessoa_id;
+
+  UPDATE tbl_instituicao
+  SET
+    cnpj = COALESCE(p_cnpj, cnpj),
+    descricao = COALESCE(p_descricao, descricao),
+    id_endereco = COALESCE(p_id_endereco, id_endereco)
+  WHERE id = p_instituicao_id;
+
+  COMMIT;
+
+  SELECT * FROM vw_instituicao_completa WHERE instituicao_id = p_instituicao_id;
+END $$
+DELIMITER ;
+
+-- ======================================================================
+-- Correção / melhoria: procedure de busca de instituições (joins corretos)
+-- ======================================================================
+DELIMITER $$
+DROP PROCEDURE IF EXISTS sp_buscar_instituicoes $$
+CREATE PROCEDURE sp_buscar_instituicoes (
+  IN p_busca   VARCHAR(200),
+  IN p_lat     DECIMAL(10,7),
+  IN p_lng     DECIMAL(10,7),
+  IN p_raio_km DECIMAL(10,3),
+  IN p_pagina  INT,
+  IN p_tamanho INT
+)
+BEGIN
+  DECLARE v_limite INT DEFAULT IFNULL(p_tamanho,20);
+  DECLARE v_offset INT DEFAULT GREATEST(IFNULL(p_pagina,1)-1,0) * IFNULL(p_tamanho,20);
+  DECLARE v_raio_deg DOUBLE;
+
+  IF p_raio_km IS NOT NULL AND p_lat IS NOT NULL AND p_lng IS NOT NULL THEN
+    SET v_raio_deg = p_raio_km / 111.32;
+  END IF;
+
+  WITH base AS (
+    SELECT
+      i.id,
+      p.nome AS nome,
+      p.email AS email,
+      i.cnpj,
+      e.logradouro, e.numero, e.bairro, e.cidade, e.estado,
+      CASE
+        WHEN p_lat IS NOT NULL AND p_lng IS NOT NULL
+        THEN ST_Distance_Sphere(POINT(p_lng,p_lat), POINT(e.longitude, e.latitude))/1000
+        ELSE NULL
+      END AS distancia_km,
+      -- score simples: prefer match em nome/descricao/endereco
+      (CASE WHEN p.nome LIKE CONCAT('%', p_busca, '%') THEN 3 ELSE 0 END)
+      + (CASE WHEN i.descricao LIKE CONCAT('%', p_busca, '%') THEN 2 ELSE 0 END)
+      + (CASE WHEN e.logradouro LIKE CONCAT('%', p_busca, '%') THEN 1 ELSE 0 END) AS score
+    FROM tbl_instituicao i
+    JOIN tbl_pessoa p ON p.id = i.id_pessoa
+    JOIN tbl_endereco e ON e.id = i.id_endereco
+    WHERE
+      (p_raio_km IS NULL OR p_lat IS NULL OR p_lng IS NULL
+       OR MBRWithin(e.geo, ST_Buffer(ST_SRID(POINT(p_lng,p_lat),4326), v_raio_deg)))
+      AND (
+        p_busca IS NULL OR p_busca = '' OR
+        p.nome LIKE CONCAT('%', p_busca, '%') OR
+        i.descricao LIKE CONCAT('%', p_busca, '%') OR
+        e.logradouro LIKE CONCAT('%', p_busca, '%') OR
+        e.bairro LIKE CONCAT('%', p_busca, '%') OR
+        e.cidade LIKE CONCAT('%', p_busca, '%')
+      )
+  ),
+  filtrada AS (
+    SELECT * FROM base
+    WHERE (p_raio_km IS NULL OR distancia_km IS NULL OR distancia_km <= p_raio_km)
+  )
+  SELECT * FROM filtrada
+  ORDER BY (distancia_km IS NULL), distancia_km ASC, score DESC, nome ASC
+  LIMIT v_limite OFFSET v_offset;
+
+  SELECT COUNT(*) AS total FROM filtrada;
+END $$
+DELIMITER ;
+
+
+INSERT INTO tbl_sexo (nome) VALUES
+('Feminino'),
+('Masculino'),
+('Outro'),
+('Prefiro não informar');
+
+INSERT INTO tbl_tipo_nivel (nivel) VALUES
+('Família (Padrão)'), 
+('Instituição (Pend.)'),  
+('Instituição (Ativa)'), 
+('Admin Master'); 
+
+INSERT INTO tbl_tipo_instituicao (nome) VALUES
+  ('ONG'),
+  ('Escola Pública'),
+  ('Escola Privada'),
+  ('Centro Esportivo'),
+  ('Centro Cultural')
+;
+
+INSERT INTO tbl_categoria (nome) VALUES
+  ('Esporte'),
+  ('Reforço Escolar'),
+  ('Música'),
+  ('Dança'),
+  ('Teatro'),
+  ('Tecnologia'),
+  ('Artes Visuais');
+
+INSERT INTO tbl_status_inscricao (nome) VALUES
+  ('Sugerida Pela Criança'),
+  ('Cancelada'),
+  ('Pendente'),
+  ('Aprovada'),
+  ('Negada');
