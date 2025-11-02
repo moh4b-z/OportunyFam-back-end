@@ -60,8 +60,32 @@ async function verifyEmailExists(email){
         return false
     }
 }
+async function verifyCPFExists(cpf){
+    try {
+        let pessoa = await prismaMySQL.tbl_pessoa.findUnique({ where: { cpf } })
+        
+        let result = pessoa ? true : false
+        return result
+    } catch (error) {
+        console.error("Erro DAO: Erro ao verificar CPF.", error)
+        return false
+    }
+}
+async function verifyCNPJExists(cnpj){
+    try {
+        let pessoa = await prismaMySQL.tbl_instituicao.findUnique({ where: { cnpj } })
+        
+        let result = pessoa ? true : false
+        return result
+    } catch (error) {
+        console.error("Erro DAO: Erro ao verificar CNPJ.", error)
+        return false
+    }
+}
 
 module.exports = {
     verifyEmailExists,
+    verifyCPFExists,
+    verifyCNPJExists,
     login
 }

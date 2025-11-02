@@ -3,6 +3,7 @@ const CORRECTION = require("../../../utils/inputCheck")
 const TableCORRECTION = require("../../../utils/tablesCheck")
 const encryptionFunction = require("../../../utils/encryptionFunction")
 const usuarioDAO = require("../../../model/DAO/usuario/usuario")
+const loginDAO = require("../../../model/DAO/login")
 const usuarioEnderecoDAO = require("../../../model/DAO/usuario/usuarioEndereco/usuarioEndereco") 
 const servicesEndereco = require("../endereco/servicesEndereco")
 
@@ -11,9 +12,13 @@ async function inserirUsuario(dadosUsuario, contentType){
         if (contentType == "application/json") {
             if (dadosUsuario.cep && TableCORRECTION.CHECK_tbl_usuario(dadosUsuario)) {
                 
-                const emailExists = await usuarioDAO.verifyEmailExists(dadosUsuario.email)
+                const emailExists = await loginDAO.verifyEmailExists(dadosUsuario.email)
                 if (emailExists) {
                     return MENSAGE.ERROR_EMAIL_ALREADY_EXISTS
+                }
+                const cpfExists = await loginDAO.verifyCPFExists(dadosUsuario.cpf)
+                if (cpfExists) {
+                    return MENSAGE.ERROR_CPF_ALREADY_EXISTS
                 }
                 
                 const senha_hash = encryptionFunction.hashPassword(dadosUsuario.senha)
@@ -88,9 +93,15 @@ async function atualizarUsuario(dadosUsuario, id, contentType){
 
                     // 1. Se o email for alterado, verifica se já existe
                     if (dadosUsuario.email && dadosUsuario.email !== usuarioExistente.email) {
-                        const emailExists = await usuarioDAO.verifyEmailExists(dadosUsuario.email)
+                        const emailExists = await loginDAO.verifyEmailExists(dadosUsuario.email)
                         if (emailExists) {
                             return MENSAGE.ERROR_EMAIL_ALREADY_EXISTS
+                        }
+                    }
+                    if (dadosUsuario.cpf && dadosUsuario.cpf !== usuarioExistente.cpf) {
+                        const cpfExists = await loginDAO.verifyCPFExists(dadosUsuario.cpf)
+                        if (cpfExists) {
+                            return MENSAGE.ERROR_CPF_ALREADY_EXISTS
                         }
                     }
 

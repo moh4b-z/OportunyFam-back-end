@@ -3,16 +3,20 @@ const CORRECTION = require("../../../utils/inputCheck")
 const TableCORRECTION = require("../../../utils/tablesCheck")
 const encryptionFunction = require("../../../utils/encryptionFunction")
 const criancaDAO = require("../../../model/DAO/crianca/crianca")
-const usuarioDAO = require("../../../model/DAO/usuario/usuario")
+const loginDAO = require("../../../model/DAO/login")
 const responsavelDAO = require("../../../model/DAO/usuario/responsavel/responsavel")
 
 async function inserirCrianca(dadosCrianca, contentType) {
     try {
         if (contentType == "application/json") {
             if (TableCORRECTION.CHECK_tbl_crianca(dadosCrianca) && dadosCrianca.id_usuario) {
-                let emailExists = await usuarioDAO.verifyEmailExists(dadosCrianca.email)
+                const emailExists = await loginDAO.verifyEmailExists(dadosCrianca.email)
                 if (emailExists) {
                     return MENSAGE.ERROR_EMAIL_ALREADY_EXISTS
+                }
+                const cpfExists = await loginDAO.verifyCPFExists(dadosCrianca.cpf)
+                if (cpfExists) {
+                    return MENSAGE.ERROR_CPF_ALREADY_EXISTS
                 }
 
                 let senha_hash  = encryptionFunction.hashPassword(dadosCrianca.senha)
@@ -45,9 +49,15 @@ async function atualizarCrianca(dadosCrianca, id, contentType) {
                 let resultSearch = await buscarCrianca(parseInt(id))
                 if (resultSearch.status_code == MENSAGE.SUCCESS_REQUEST.status_code) {
                     if (dadosCrianca.email && dadosCrianca.email !== resultSearch.crianca.email) {
-                        let emailExists = await usuarioDAO.verifyEmailExists(dadosCrianca.email)
+                        let emailExists = await loginDAO.verifyEmailExists(dadosCrianca.email)
                         if (emailExists) {
                             return MENSAGE.ERROR_EMAIL_ALREADY_EXISTS
+                        }
+                    }
+                    if (dadosCrianca.cpf && dadosCrianca.cpf !== resultSearch.crianca.cpf) {
+                        const cpfExists = await loginDAO.verifyCPFExists(dadosCrianca.cpf)
+                        if (cpfExists) {
+                            return MENSAGE.ERROR_CPF_ALREADY_EXISTS
                         }
                     }
 

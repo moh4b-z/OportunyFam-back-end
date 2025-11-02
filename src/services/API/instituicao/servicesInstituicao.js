@@ -3,7 +3,7 @@ const CORRECTION = require("../../../utils/inputCheck")
 const TableCORRECTION = require("../../../utils/tablesCheck")
 const encryptionFunction = require("../../../utils/encryptionFunction")
 const instituicaoDAO = require("../../../model/DAO/instituicao/instituicao")
-const usuarioDAO = require("../../../model/DAO/usuario/usuario")
+const loginDAO = require("../../../model/DAO/login")
 const instituicaoEnderecoDAO = require("../../../model/DAO/instituicao/instituicaoEndereco/instituicaoEndereco") 
 const instituicaoTipoInstituicaoDAO = require("../../../model/DAO/instituicao/instituicaoTipoInstituicao/instituicaoTipoInstituicao") 
 const servicesEndereco = require("../endereco/servicesEndereco")
@@ -22,9 +22,13 @@ async function inserirInstituicao(dadosInstituicao, contentType){
                 TableCORRECTION.CHECK_tbl_instituicao(dadosInstituicao)
             ) {
                 
-                const emailExists = await usuarioDAO.verifyEmailExists(dadosInstituicao.email)
+                const emailExists = await loginDAO.verifyEmailExists(dadosInstituicao.email)
                 if (emailExists) {
                     return MENSAGE.ERROR_EMAIL_ALREADY_EXISTS
+                }
+                const cnpjExists = await loginDAO.verifyCNPJExists(dadosInstituicao.cnpj)
+                if (cnpjExists) {
+                    return MENSAGE.ERROR_CNPJ_ALREADY_EXISTS
                 }
 
                 const senha_hash = encryptionFunction.hashPassword(dadosInstituicao.senha)
@@ -134,9 +138,15 @@ async function atualizarInstituicao(dadosInstituicao, id, contentType){
                     
                     // 1. Verifica se o email foi alterado e se o novo email já existe
                     if (dadosInstituicao.email && dadosInstituicao.email !== instituicaoExistente.email) {
-                        const emailExists = await usuarioDAO.verifyEmailExists(dadosInstituicao.email)
+                        const emailExists = await loginDAO.verifyEmailExists(dadosInstituicao.email)
                         if (emailExists) {
                             return MENSAGE.ERROR_EMAIL_ALREADY_EXISTS
+                        }
+                    }
+                    if (dadosInstituicao.cnpj && dadosInstituicao.cnpj !== instituicaoExistente.cnpj) {
+                        const cnpjExists = await loginDAO.verifyCNPJExists(dadosInstituicao.cnpj)
+                        if (cnpjExists) {
+                            return MENSAGE.ERROR_CNPJ_ALREADY_EXISTS
                         }
                     }
 

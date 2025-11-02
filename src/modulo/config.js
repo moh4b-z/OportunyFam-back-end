@@ -49,6 +49,16 @@ const ERROR_EMAIL_ALREADY_EXISTS = {
     status_code: 409,
     messagem: "Email já existente"
 }
+const ERROR_CPF_ALREADY_EXISTS = {
+    status: false,
+    status_code: 409,
+    messagem: "CPF já existente"
+}
+const ERROR_CNPJ_ALREADY_EXISTS = {
+    status: false,
+    status_code: 409,
+    messagem: "CNPJ já existente"
+}
 
 const ERROR_INTERNAL_SERVER_MODEL = {
     status: false,
@@ -114,6 +124,8 @@ module.exports = {
     ERROR_INVALID_CREDENTIALS,
     ERROR_EMAIL_ALREADY_EXISTS,
     ERROR_EMAIL_NOT_FOUND,
+    ERROR_CPF_ALREADY_EXISTS,
+    ERROR_CNPJ_ALREADY_EXISTS,
 
     SUCCESS_CEATED_ITEM,
     SUCCESS_DELETE_ITEM,
