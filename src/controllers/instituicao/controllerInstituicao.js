@@ -40,16 +40,6 @@ async function getSearchInstituicao(request, response){
     response.json(result)
 }
 
-async function postLoginInstituicao(request, response){
-    let contentType = request.headers['content-type']
-    let dadosBody = request.body
-     console.log(dadosBody);
-    
-    let result = await servicesInstituicao.loginInstituicao(dadosBody, contentType)
-    response.status(result.status_code)
-    response.json(result)
-}
-
 async function getSearchInstituicoesByName(request, response){
     let params = request.query
     let result = await servicesInstituicao.buscarInstituicoesPorNome(params)
@@ -81,7 +71,6 @@ module.exports = {
     deleteInstituicao,
     getSearchAllInstituicao,
     getSearchInstituicao,
-    postLoginInstituicao,
     getSearchInstituicoesByName,
     getInstituicoesByAddress
 }

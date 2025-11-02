@@ -27,9 +27,4 @@ router.get(
     controllerCrianca.getSearchCrianca
 )
 
-router.post(
-    '/login',
-    controllerCrianca.postLoginCrianca
-)
-
 module.exports = router

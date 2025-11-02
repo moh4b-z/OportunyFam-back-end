@@ -7,11 +7,6 @@ router.post(
     controllerInstituicao.postInstituicao
 )
 
-router.post(
-    '/login',
-    controllerInstituicao.postLoginInstituicao
-)
-
 router.delete(
     '/:id',
     controllerInstituicao.deleteInstituicao

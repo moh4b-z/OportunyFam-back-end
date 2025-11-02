@@ -37,19 +37,10 @@ const getSearchCrianca = async (request, response) => {
     response.json(result)
 }
 
-const postLoginCrianca = async (request, response) => {
-    let contentType = request.headers['content-type']
-    let dadosBody = request.body
-    let result = await servicesCrianca.loginCrianca(dadosBody, contentType)
-    response.status(result.status_code)
-    response.json(result)
-}
-
 module.exports = {
     postCrianca,
     putCrianca,
     deleteCrianca,
     getSearchAllCrianca,
-    getSearchCrianca,
-    postLoginCrianca
+    getSearchCrianca
 }

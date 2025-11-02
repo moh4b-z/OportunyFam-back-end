@@ -4,9 +4,7 @@ const TableCORRECTION = require("../../../utils/tablesCheck")
 const encryptionFunction = require("../../../utils/encryptionFunction")
 const usuarioDAO = require("../../../model/DAO/usuario/usuario")
 const usuarioEnderecoDAO = require("../../../model/DAO/usuario/usuarioEndereco/usuarioEndereco") 
-const servicesEndereco = require("../endereco/servicesEndereco") 
-const servicesInstituicao = require("../instituicao/servicesInstituicao") 
-const servicesCrianca = require("../crianca/servicesCrianca") 
+const servicesEndereco = require("../endereco/servicesEndereco")
 
 async function inserirUsuario(dadosUsuario, contentType){
     try {        
@@ -173,98 +171,11 @@ async function buscarUsuario(id){
     }
 }
 
-async function loginUsuario(dadosLogin, contentType){
-    try {
-        if (contentType == "application/json") {
-            const { email, senha } = dadosLogin
-            
-            if (email && senha) {
-                const usuario = await usuarioDAO.selectByEmail(email)
-                
-                if (usuario) {
-                    const senhaValida = encryptionFunction.verifyPassword(senha, usuario.senha)
-                    
-                    if (senhaValida) {
-                        usuario.senha ? delete usuario.senha : null
-                        return {
-                            ...MENSAGE.SUCCESS_LOGIN,
-                            usuario: usuario
-                        }
-                    } else {
-                        return MENSAGE.ERROR_INVALID_CREDENTIALS
-                    }
-                } else {
-                    return MENSAGE.ERROR_INVALID_CREDENTIALS
-                }
-            } else {
-                return MENSAGE.ERROR_REQUIRED_FIELDS
-            }
-        } else {
-            return MENSAGE.ERROR_CONTENT_TYPE
-        }
-    } catch (error) {
-        console.error(error)
-        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
-    }
-}
-
-
-
-async function loginUniversal(dadosLogin, contentType) {
-    try {
-        if (contentType == "application/json") {
-
-            if (dadosLogin.email && dadosLogin.senha) {
-                
-                let usuario = await loginUsuario(dadosLogin, contentType)
-                let instituicao = await servicesInstituicao.loginInstituicao(dadosLogin, contentType)
-                let crianca = await servicesCrianca.loginCrianca(dadosLogin, contentType)
-                let result = false
-                let tipo = false
-
-                // console.log(usuario, crianca, instituicao);
-                
-                if (usuario.status_code === 200) {
-                    result = usuario.usuario
-                    tipo = 'usuario' 
-                } else if (crianca.status_code === 200) {
-                    result = crianca.crianca
-                    tipo = 'crianca'  
-                } else if (instituicao.status_code === 200) {
-                    result = instituicao.instituicao
-                    tipo = 'instituicao'
-                }
-                
-
-                if (result) {
-
-                    return {
-                        ...MENSAGE.SUCCESS_LOGIN,
-                        tipo: tipo,
-                        result
-                    }
-                } else {
-                    
-                    return MENSAGE.ERROR_INVALID_CREDENTIALS
-                }
-            } else {
-                return MENSAGE.ERROR_REQUIRED_FIELDS
-            }
-        } else {
-            return MENSAGE.ERROR_CONTENT_TYPE
-        }
-    } catch (error) {
-        console.error("Erro SERVICE: Erro ao realizar login universal.", error)
-        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
-    }
-}
 
 module.exports = {
     inserirUsuario,
     atualizarUsuario,
     excluirUsuario,
     listarTodosUsuarios,
-    buscarUsuario,
-    loginUsuario,
-    loginUniversal
+    buscarUsuario
 }

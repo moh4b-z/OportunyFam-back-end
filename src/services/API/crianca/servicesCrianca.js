@@ -123,43 +123,11 @@ async function buscarCrianca(id) {
     }
 }
 
-async function loginCrianca(dadosLogin, contentType) {
-    try {
-        if (contentType == "application/json") {
-            const { email, senha } = dadosLogin
-            if (!email || !senha) {
-                return MENSAGE.ERROR_REQUIRED_FIELDS
-            }
-
-            const crianca = await criancaDAO.selectByEmail(email)
-            if (!crianca) {
-                return MENSAGE.ERROR_INVALID_CREDENTIALS
-            }
-
-            const senhaValida = encryptionFunction.verifyPassword(senha, crianca.senha)
-            if (!senhaValida) {
-                return MENSAGE.ERROR_INVALID_CREDENTIALS
-            }
-
-            crianca.senha ? delete crianca.senha : null
-            return {
-                ...MENSAGE.SUCCESS_LOGIN,
-                crianca: crianca
-            }
-        } else {
-            return MENSAGE.ERROR_CONTENT_TYPE
-        }
-    } catch (error) {
-        console.error(error)
-        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
-    }
-}
 
 module.exports = {
     inserirCrianca,
     atualizarCrianca,
     excluirCrianca,
     listarTodasCriancas,
-    buscarCrianca,
-    loginCrianca
+    buscarCrianca
 }

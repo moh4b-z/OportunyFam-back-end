@@ -6,10 +6,6 @@ router.post(
     '',
     controllerUsuario.postUsuario
 )
-router.post(
-    '/login',
-    controllerUsuario.postLoginUsuario
-)
 
 router.delete(
     '/:id',

@@ -19,6 +19,11 @@ const ERROR_NOT_FOUND = {
     status_code: 404,
     messagem: "Conteudo não encontrado"
 }
+const ERROR_EMAIL_NOT_FOUND = {
+    status: false,
+    status_code: 404,
+    messagem: "Conteudo não encontrado"
+}
 const ERROR_CEP_NOT_FOUND = {
     status: false,
     status_code: 404,
@@ -108,6 +113,7 @@ module.exports = {
     ERROR_CEP_NOT_FOUND,
     ERROR_INVALID_CREDENTIALS,
     ERROR_EMAIL_ALREADY_EXISTS,
+    ERROR_EMAIL_NOT_FOUND,
 
     SUCCESS_CEATED_ITEM,
     SUCCESS_DELETE_ITEM,

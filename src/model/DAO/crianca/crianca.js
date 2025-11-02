@@ -70,29 +70,11 @@ async function  selectByIdCrianca(id){
     }
 }
 
-async function  selectByEmail(email){
-    try {
-        let result = await prismaMySQL.tbl_crianca.findUnique({
-            where: { email: email }
-        })
-        let senha = result.senha
-        if(result){
-            result = await selectByIdCrianca(result.id)
-        }else{
-            result = false
-        }
-        return {...result, senha: senha}
-    } catch (error) {
-        console.error("Erro ao buscar criança por e-mail:", error)
-        return false
-    }
-}
 
 module.exports = {
     insertCrianca,
     updateCrianca,
     deleteCrianca,
     selectAllCriancas,
-    selectByIdCrianca,
-    selectByEmail
+    selectByIdCrianca
 }

@@ -225,47 +225,6 @@ async function buscarInstituicao(id){
     }
 }
 
-async function loginInstituicao(dadosLogin, contentType){
-    try {
-        // console.log(dadosLogin);
-        
-        if (contentType == "application/json") {
-            const { email, senha } = dadosLogin
-            // console.log(email && senha);
-            
-            if (email && senha) {
-                const instituicao = await instituicaoDAO.selectByEmail(email)
-                // console.log(senha, instituicao.senha);
-                
-                
-                if (instituicao) {
-                    
-                    const senhaValida = encryptionFunction.verifyPassword(senha, instituicao.senha)
-                    
-                    if (senhaValida) {
-                        instituicao.senha ? delete instituicao.senha : null
-                        return {
-                            ...MENSAGE.SUCCESS_LOGIN,
-                            instituicao: instituicao
-                        }
-                    } else {
-                        return MENSAGE.ERROR_INVALID_CREDENTIALS
-                    }
-                } else {
-                    return MENSAGE.ERROR_INVALID_CREDENTIALS
-                }
-            } else {
-                return MENSAGE.ERROR_REQUIRED_FIELDS
-            }
-        } else {
-            return MENSAGE.ERROR_CONTENT_TYPE
-        }
-    } catch (error) {
-        console.error(error)
-        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
-    }
-}
-
 async function buscarInstituicoesPorNome(params) {
     try {
         const nomeBusca = params.nome || null
@@ -353,6 +312,5 @@ module.exports = {
     excluirInstituicao,
     listarTodasInstituicoes,
     buscarInstituicao,
-    loginInstituicao,
     buscarInstituicoesPorNome
 }

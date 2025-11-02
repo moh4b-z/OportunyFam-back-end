@@ -2,29 +2,58 @@ const { PrismaClient } = require('../../../prisma/generated/mysql')
 const prismaMySQL = new PrismaClient()
 
 
-async function selectByEmail(email){
+async function login(email, senha) {
     try {
-        let result = await prismaMySQL.tbl_usuario.findUnique({
-            where: { email: email }
-        })
-        let senha = result.senha
-        if(result){
-            result = await selectByIdUsuario(result.id)
-        }else{
-            result = false
+        // Executa a procedure sp_login passando os parâmetros
+        const result = await prismaMySQL.$queryRawUnsafe(
+            `CALL sp_login(?, ?)`,
+            email,
+            senha
+        )
+
+        // O MySQL retorna um array de arrays quando chama uma procedure
+        let dados = result[0] || []
+
+        // Se vier vazio, significa que houve erro (404, 401 ou 500)
+        if (dados.length === 0) {
+            console.log("Nenhum resultado retornado da procedure.")
+            return false
         }
-        return {...result, senha: senha}
+        let usuario = dados[0]
+
+        // Verifica se veio algum status de erro
+        if (usuario.status === 404) {
+            return 404
+        } else if (usuario.status === 401) {
+            return 401
+        } else if (usuario.status === 500) {
+            return 500
+        }
+        let tipoUsuario = null
+        if (usuario.usuario_id) {
+            tipoUsuario = "usuario"
+        } else if (usuario.instituicao_id) {
+            tipoUsuario = "instituicao"
+        } else if (usuario.crianca_id) {
+            tipoUsuario = "crianca"
+        }
+        return {
+            tipo: tipoUsuario,
+            usuario: usuario
+        }
+
     } catch (error) {
-        console.error("Erro DAO: Erro ao buscar usuário por e-mail.", error)
-        return false
+        console.error("Erro DAO: Erro ao executar login.", error)
+        return { status: 500, message: "Erro interno no servidor" }
     }
 }
 
+
 async function verifyEmailExists(email){
     try {
-        let usuario = await prismaMySQL.tbl_usuario.findUnique({ where: { email } })
+        let pessoa = await prismaMySQL.tbl_pessoa.findUnique({ where: { email } })
         
-        let result = usuario || crianca || instituicao
+        let result = pessoa ? true : false
         return result
     } catch (error) {
         console.error("Erro DAO: Erro ao verificar e-mail.", error)
@@ -34,5 +63,5 @@ async function verifyEmailExists(email){
 
 module.exports = {
     verifyEmailExists,
-    selectByEmail
+    login
 }
