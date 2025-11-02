@@ -1,7 +1,7 @@
 const servicesInstituicao = require("../../services/API/instituicao/servicesInstituicao")
 const osmService = require("../../services/openStreetMap/openStreetMapService") 
 
-const postInstituicao = async (request, response) => {
+async function postInstituicao(request, response){
     let contentType = request.headers['content-type']
     let dadosBody = request.body
     let result = await servicesInstituicao.inserirInstituicao(dadosBody, contentType)
@@ -11,7 +11,7 @@ const postInstituicao = async (request, response) => {
     response.json(result)
 }
 
-const putInstituicao = async (request, response) => {
+async function putInstituicao(request, response){
     let id = request.params.id
     let contentType = request.headers['content-type']
     let dadosBody = request.body
@@ -20,27 +20,27 @@ const putInstituicao = async (request, response) => {
     response.json(result)
 }
 
-const deleteInstituicao = async (request, response) => {
+async function deleteInstituicao(request, response){
     let id = request.params.id
     let result = await servicesInstituicao.excluirInstituicao(id)
     response.status(result.status_code)
     response.json(result)
 }
 
-const getSearchAllInstituicao = async (request, response) => {
+async function getSearchAllInstituicao(request, response){
     let result = await servicesInstituicao.listarTodasInstituicoes()
     response.status(result.status_code)
     response.json(result)
 }
 
-const getSearchInstituicao = async (request, response) => {
+async function getSearchInstituicao(request, response){
     let id = request.params.id
     let result = await servicesInstituicao.buscarInstituicao(id)
     response.status(result.status_code)
     response.json(result)
 }
 
-const postLoginInstituicao = async (request, response) => {
+async function postLoginInstituicao(request, response){
     let contentType = request.headers['content-type']
     let dadosBody = request.body
      console.log(dadosBody);
@@ -50,7 +50,7 @@ const postLoginInstituicao = async (request, response) => {
     response.json(result)
 }
 
-const getSearchInstituicoesByName = async (request, response) => {
+async function getSearchInstituicoesByName(request, response){
     let params = request.query
     let result = await servicesInstituicao.buscarInstituicoesPorNome(params)
     response.status(result.status_code)
@@ -74,21 +74,6 @@ async function getInstituicoesByAddress(request, response){
     response.status(result.status_code).json(result)
 }
 
-const getAlunosAprovadosByInstituicao = async (request, response) => {
-    let id = request.params.id
-    let result = await servicesInstituicao.buscarAlunosAprovadosPorInstituicao(id)
-    
-    response.status(result.status_code)
-    response.json(result)
-}
-
-const getAlunosPendentesByInstituicao = async (request, response) => {
-    let id = request.params.id
-    let result = await servicesInstituicao.buscarAlunosPendentesPorInstituicao(id)
-    
-    response.status(result.status_code)
-    response.json(result)
-}
 
 module.exports = {
     postInstituicao,
@@ -98,7 +83,5 @@ module.exports = {
     getSearchInstituicao,
     postLoginInstituicao,
     getSearchInstituicoesByName,
-    getInstituicoesByAddress,
-    getAlunosAprovadosByInstituicao,
-    getAlunosPendentesByInstituicao
+    getInstituicoesByAddress
 }

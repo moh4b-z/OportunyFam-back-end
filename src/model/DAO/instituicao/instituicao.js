@@ -108,24 +108,6 @@ async function selectByIdInstituicao(id_instituicao) {
   }
 }
 
-/**
- * Busca instituição por e-mail
- * Aqui a senha é obtida pela tabela principal (pois a view não retorna hash)
- */
-async function selectByEmail(email) {
-  try {
-    const base = await prismaMySQL.tbl_instituicao.findUnique({ where: { email } })
-    if (!base) return false
-
-    const senha = base.senha
-    const result = await selectByIdInstituicao(base.id)
-    return result ? { ...result, senha } : false
-
-  } catch (error) {
-    console.error("Erro ao buscar instituição por e-mail:", error)
-    return false
-  }
-}
 
 /**
  * Busca instituições pelo nome (usa procedure de busca paginada)
@@ -152,39 +134,6 @@ async function selectSearchInstituicoesByNome(nomeBusca, pagina = 1, tamanho = 2
   }
 }
 
-/**
- * Busca alunos aprovados da instituição (view específica)
- */
-async function selectAlunosAprovadosByInstituicao(idInstituicao) {
-  try {
-    const idInt = parseInt(idInstituicao)
-    return await prismaMySQL.$queryRaw`
-      SELECT * FROM vw_alunos_aprovados_instituicao
-      WHERE instituicao_id = ${idInt}
-      ORDER BY atividade_titulo, crianca_nome;
-    `
-  } catch (error) {
-    console.error(`Erro ao buscar alunos aprovados (instituição ${idInstituicao}):`, error)
-    return false
-  }
-}
-
-/**
- * Busca alunos pendentes da instituição (view específica)
- */
-async function selectAlunosPendentesByInstituicao(idInstituicao) {
-  try {
-    const idInt = parseInt(idInstituicao)
-    return await prismaMySQL.$queryRaw`
-      SELECT * FROM vw_alunos_pendente_instituicao
-      WHERE instituicao_id = ${idInt}
-      ORDER BY atividade_titulo, crianca_nome;
-    `
-  } catch (error) {
-    console.error(`Erro ao buscar alunos pendentes (instituição ${idInstituicao}):`, error)
-    return false
-  }
-}
 
 module.exports = {
   insertInstituicao,
@@ -192,8 +141,5 @@ module.exports = {
   deleteInstituicao,
   selectAllInstituicoes,
   selectByIdInstituicao,
-  selectByEmail,
-  selectSearchInstituicoesByNome,
-  selectAlunosAprovadosByInstituicao,
-  selectAlunosPendentesByInstituicao
+  selectSearchInstituicoesByNome
 }

@@ -115,7 +115,6 @@ async function inserirInstituicao(dadosInstituicao, contentType){
     }
 }
 
-
 async function atualizarInstituicao(dadosInstituicao, id, contentType){
     try {
         if (contentType == "application/json") {
@@ -346,43 +345,6 @@ async function buscarInstituicoesPorNome(params) {
     }
 }
 
-async function buscarAlunosAprovadosPorInstituicao(id){
-    try {
-        if (!CORRECTION.CHECK_ID(id)) {
-            return MENSAGE.ERROR_REQUIRED_FIELDS
-        }
-        
-        const result = await instituicaoDAO.selectAlunosAprovadosByInstituicao(parseInt(id))
-        
-        if (result) {
-            return result.length > 0 ? { ...MENSAGE.SUCCESS_REQUEST, alunos: result } : MENSAGE.ERROR_NOT_FOUND
-        } else {
-            return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
-        }
-    } catch (error) {
-        console.error(error)
-        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
-    }
-}
-
-async function buscarAlunosPendentesPorInstituicao(id){
-    try {
-        if (!CORRECTION.CHECK_ID(id)) {
-            return MENSAGE.ERROR_REQUIRED_FIELDS
-        }
-        
-        const result = await instituicaoDAO.selectAlunosPendentesByInstituicao(parseInt(id))
-        
-        if (result) {
-            return result.length > 0 ? { ...MENSAGE.SUCCESS_REQUEST, alunos: result } : MENSAGE.ERROR_NOT_FOUND
-        } else {
-            return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
-        }
-    } catch (error) {
-        console.error(error)
-        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
-    }
-}
 
 
 module.exports = {
@@ -392,7 +354,5 @@ module.exports = {
     listarTodasInstituicoes,
     buscarInstituicao,
     loginInstituicao,
-    buscarInstituicoesPorNome,
-    buscarAlunosAprovadosPorInstituicao,
-    buscarAlunosPendentesPorInstituicao
+    buscarInstituicoesPorNome
 }

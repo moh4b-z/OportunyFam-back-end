@@ -42,15 +42,5 @@ router.get(
     controllerInstituicao.getInstituicoesByAddress
 )
 
-router.get(
-    '/:id/alunos/aprovados',
-    controllerInstituicao.getAlunosAprovadosByInstituicao
-)
-
-router.get(
-    '/:id/alunos/pendentes',
-    controllerInstituicao.getAlunosPendentesByInstituicao
-)
-
 
 module.exports = router

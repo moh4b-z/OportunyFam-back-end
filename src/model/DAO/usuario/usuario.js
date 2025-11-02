@@ -83,45 +83,10 @@ async function selectByIdUsuario(id){
 }
 
 
-async function selectByEmail(email){
-    try {
-        let result = await prismaMySQL.tbl_usuario.findUnique({
-            where: { email: email }
-        })
-        let senha = result.senha
-        if(result){
-            result = await selectByIdUsuario(result.id)
-        }else{
-            result = false
-        }
-        return {...result, senha: senha}
-    } catch (error) {
-        console.error("Erro DAO: Erro ao buscar usuário por e-mail.", error)
-        return false
-    }
-}
-
-// Verifica se um e-mail já existe nas tabelas (usuario, crianca, instituicao).
-async function verifyEmailExists(email){
-    try {
-        let usuario = await prismaMySQL.tbl_usuario.findUnique({ where: { email } })
-        let crianca = await prismaMySQL.tbl_crianca.findUnique({ where: { email } })
-        let instituicao = await prismaMySQL.tbl_instituicao.findUnique({ where: { email } })
-        
-        let result = usuario || crianca || instituicao
-        return result
-    } catch (error) {
-        console.error("Erro DAO: Erro ao verificar e-mail.", error)
-        return false
-    }
-}
-
 module.exports = {
     insertUsuario,
     updateUsuario,
     deleteUsuario,
     selectAllUsuario,
-    selectByIdUsuario,
-    selectByEmail,
-    verifyEmailExists
+    selectByIdUsuario
 }

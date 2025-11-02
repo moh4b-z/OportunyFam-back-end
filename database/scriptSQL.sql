@@ -1098,6 +1098,80 @@ END $$
 DELIMITER ;
 
 
+DELIMITER $$
+
+CREATE PROCEDURE sp_login (
+    IN p_email VARCHAR(150),
+    IN p_senha VARCHAR(256)
+)
+login_proc:BEGIN
+    DECLARE v_pessoa_id INT;
+    DECLARE v_senha_banco VARCHAR(256);
+    DECLARE v_usuario_id INT;
+    DECLARE v_instituicao_id INT;
+    DECLARE v_crianca_id INT;
+
+    -- 1️⃣ Buscar pessoa pelo e-mail
+    SELECT id, senha
+    INTO v_pessoa_id, v_senha_banco
+    FROM tbl_pessoa
+    WHERE email = p_email
+    LIMIT 1;
+
+    -- Se não encontrar o e-mail → 404
+    IF v_pessoa_id IS NULL THEN
+        SELECT 404 AS status;
+        LEAVE login_proc;
+    END IF;
+
+    -- 2️⃣ Verificar senha (o back já envia criptografada)
+    IF v_senha_banco <> p_senha THEN
+        SELECT 401 AS status;
+        LEAVE login_proc;
+    END IF;
+
+    -- 3️⃣ Verificar se é USUÁRIO
+    SELECT id INTO v_usuario_id
+    FROM tbl_usuario
+    WHERE id_pessoa = v_pessoa_id
+    LIMIT 1;
+
+    IF v_usuario_id IS NOT NULL THEN
+        SELECT * FROM vw_usuario_completa WHERE pessoa_id = v_pessoa_id;
+        LEAVE login_proc;
+    END IF;
+
+    -- 4️⃣ Verificar se é INSTITUIÇÃO
+    SELECT id INTO v_instituicao_id
+    FROM tbl_instituicao
+    WHERE id_pessoa = v_pessoa_id
+    LIMIT 1;
+
+    IF v_instituicao_id IS NOT NULL THEN
+        SELECT * FROM vw_instituicao_completa WHERE pessoa_id = v_pessoa_id;
+        LEAVE login_proc;
+    END IF;
+
+    -- 5️⃣ Verificar se é CRIANÇA
+    SELECT id INTO v_crianca_id
+    FROM tbl_crianca
+    WHERE id_pessoa = v_pessoa_id
+    LIMIT 1;
+
+    IF v_crianca_id IS NOT NULL THEN
+        SELECT * FROM vw_crianca_completa WHERE pessoa_id = v_pessoa_id;
+        LEAVE login_proc;
+    END IF;
+
+    -- 6️⃣ Caso nenhum tipo seja identificado
+    SELECT 500 AS status;
+
+END $$
+
+DELIMITER ;
+
+
+
 INSERT INTO tbl_sexo (nome) VALUES
 ('Feminino'),
 ('Masculino'),
