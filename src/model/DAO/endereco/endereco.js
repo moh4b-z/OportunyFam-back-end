@@ -38,7 +38,7 @@ async function insertEndereco(endereco) {
             // $queryRawUnsafe retorna um array de resultados
             if (enderecoCriado && enderecoCriado.length > 0) {
                 console.log("Endereço inserido com sucesso.")
-                return enderecoCriado
+                return enderecoCriado[0]
             } else {
                 console.warn("Endereço inserido, mas não foi possível recuperar os dados.")
                 return null

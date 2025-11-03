@@ -5,8 +5,13 @@ async function insertUsuarioEndereco(dadosRelacao){
     try {
         return await prismaMySQL.tbl_usuario_endereco.create({
             data: {
-                id_usuario: dadosRelacao.id_usuario,
-                id_endereco: dadosRelacao.id_endereco
+                tbl_usuario: {
+                    connect: { id: dadosRelacao.id_usuario }
+                },
+                tbl_endereco: {
+                    connect: { id: dadosRelacao.id_endereco }
+                },
+                descricao: dadosRelacao.descricao || null
             }
         })
     } catch (error) {
@@ -19,7 +24,9 @@ async function deleteUsuarioEnderecoByUsuario(id_usuario){
     try {
         await prismaMySQL.tbl_usuario_endereco.deleteMany({
             where: {
-                id_usuario: id_usuario
+                tbl_usuario: {
+                    id: id_usuario
+                }
             }
         })
         return true

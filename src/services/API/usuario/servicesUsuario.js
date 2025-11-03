@@ -83,7 +83,7 @@ async function inserirUsuario(dadosUsuario, contentType){
 async function atualizarUsuario(dadosUsuario, id, contentType){
     try {
         if (contentType == "application/json") {
-            if (TableCORRECTION.CHECK_tbl_usuario(dadosUsuario) && CORRECTION.CHECK_ID(id)) {
+            if (CORRECTION.CHECK_ID(id)) {
                 
                 let resultSearch = await buscarUsuario(parseInt(id))
                 
@@ -91,29 +91,40 @@ async function atualizarUsuario(dadosUsuario, id, contentType){
                     
                     const usuarioExistente = resultSearch.usuario
 
-                    // 1. Se o email for alterado, verifica se já existe
+                    // Prepara os dados para atualização mantendo valores existentes se não fornecidos
+                    const dadosAtualizados = {
+                        nome: dadosUsuario.nome || usuarioExistente.nome,
+                        email: dadosUsuario.email || usuarioExistente.email,
+                        senha: dadosUsuario.senha ? encryptionFunction.hashPassword(dadosUsuario.senha) : usuarioExistente.senha,
+                        telefone: 'telefone' in dadosUsuario ? dadosUsuario.telefone : usuarioExistente.telefone,
+                        foto_perfil: 'foto_perfil' in dadosUsuario ? dadosUsuario.foto_perfil : usuarioExistente.foto_perfil,
+                        cpf: dadosUsuario.cpf || usuarioExistente.cpf,
+                        data_nascimento: dadosUsuario.data_nascimento || usuarioExistente.data_nascimento,
+                        id_sexo: dadosUsuario.id_sexo || usuarioExistente.id_sexo,
+                        id_tipo_nivel: dadosUsuario.id_tipo_nivel || usuarioExistente.id_tipo_nivel,
+                        id: parseInt(id)
+                    }
+
+                    // Valida apenas se o email for alterado
                     if (dadosUsuario.email && dadosUsuario.email !== usuarioExistente.email) {
                         const emailExists = await loginDAO.verifyEmailExists(dadosUsuario.email)
                         if (emailExists) {
                             return MENSAGE.ERROR_EMAIL_ALREADY_EXISTS
                         }
                     }
+
+                    // Valida apenas se o CPF for alterado
                     if (dadosUsuario.cpf && dadosUsuario.cpf !== usuarioExistente.cpf) {
-                        const cpfExists = await loginDAO.verifyCPFExists(dadosUsuario.cpf)
+                        const cpfExists = await loginDAO.verifyCPFExists(dadosUsuario.cpf, usuarioExistente.pessoa_id)
                         if (cpfExists) {
                             return MENSAGE.ERROR_CPF_ALREADY_EXISTS
                         }
                     }
 
-                    // 2. Criptografa a senha (sempre criptografa ao atualizar)
-                    const { senha_hash } = encryptionFunction.hashPassword(dadosUsuario.senha)
-                    dadosUsuario.senha = senha_hash
-                    dadosUsuario.id = parseInt(id)
-
                     // 3. Atualiza o Usuário
-                    let result = await usuarioDAO.updateUsuario(dadosUsuario)
+                    let result = await usuarioDAO.updateUsuario(dadosAtualizados)
                     
-                    return result ? MENSAGE.SUCCESS_UPDATED_ITEM : MENSAGE.ERROR_INTERNAL_SERVER_MODEL
+                    return result ? { ...MENSAGE.SUCCESS_UPDATED_ITEM, usuario: result } : MENSAGE.ERROR_INTERNAL_SERVER_MODEL
                 } else if (resultSearch.status_code == MENSAGE.ERROR_NOT_FOUND.status_code) {
                     return MENSAGE.ERROR_NOT_FOUND
                 } else {

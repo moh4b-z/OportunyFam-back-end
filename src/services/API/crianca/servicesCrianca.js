@@ -5,11 +5,17 @@ const encryptionFunction = require("../../../utils/encryptionFunction")
 const criancaDAO = require("../../../model/DAO/crianca/crianca")
 const loginDAO = require("../../../model/DAO/login")
 const responsavelDAO = require("../../../model/DAO/usuario/responsavel/responsavel")
+const usuarioDAO = require("../../../model/DAO/usuario/usuario")
 
 async function inserirCrianca(dadosCrianca, contentType) {
     try {
         if (contentType == "application/json") {
             if (TableCORRECTION.CHECK_tbl_crianca(dadosCrianca) && dadosCrianca.id_usuario) {
+                // Validar se o usuário (responsável) existe
+                const responsavelExiste = await usuarioDAO.selectByIdUsuario(dadosCrianca.id_usuario)
+                if (!responsavelExiste) {
+                    return MENSAGE.ERROR_NOT_FOUND_FOREIGN_KEY
+                }
                 const emailExists = await loginDAO.verifyEmailExists(dadosCrianca.email)
                 if (emailExists) {
                     return MENSAGE.ERROR_EMAIL_ALREADY_EXISTS
@@ -45,28 +51,42 @@ async function inserirCrianca(dadosCrianca, contentType) {
 async function atualizarCrianca(dadosCrianca, id, contentType) {
     try {
         if (contentType == "application/json") {
-            if (TableCORRECTION.CHECK_tbl_crianca(dadosCrianca) && CORRECTION.CHECK_ID(id)) {
+            if (CORRECTION.CHECK_ID(id)) {
                 let resultSearch = await buscarCrianca(parseInt(id))
                 if (resultSearch.status_code == MENSAGE.SUCCESS_REQUEST.status_code) {
-                    if (dadosCrianca.email && dadosCrianca.email !== resultSearch.crianca.email) {
+                    const criancaExistente = resultSearch.crianca
+                    
+                    // Prepara os dados para atualização mantendo valores existentes se não fornecidos
+                    const dadosAtualizados = {
+                        nome: dadosCrianca.nome || criancaExistente.nome,
+                        email: dadosCrianca.email || criancaExistente.email,
+                        senha: dadosCrianca.senha ? encryptionFunction.hashPassword(dadosCrianca.senha) : criancaExistente.senha,
+                        telefone: 'telefone' in dadosCrianca ? dadosCrianca.telefone : criancaExistente.telefone,
+                        foto_perfil: 'foto_perfil' in dadosCrianca ? dadosCrianca.foto_perfil : criancaExistente.foto_perfil,
+                        cpf: dadosCrianca.cpf || criancaExistente.cpf,
+                        data_nascimento: dadosCrianca.data_nascimento || criancaExistente.data_nascimento,
+                        id_sexo: dadosCrianca.id_sexo || criancaExistente.id_sexo,
+                        id: parseInt(id)
+                    }
+
+                    // Valida apenas se o email for alterado
+                    if (dadosCrianca.email && dadosCrianca.email !== criancaExistente.email) {
                         let emailExists = await loginDAO.verifyEmailExists(dadosCrianca.email)
                         if (emailExists) {
                             return MENSAGE.ERROR_EMAIL_ALREADY_EXISTS
                         }
                     }
-                    if (dadosCrianca.cpf && dadosCrianca.cpf !== resultSearch.crianca.cpf) {
-                        const cpfExists = await loginDAO.verifyCPFExists(dadosCrianca.cpf)
+                    
+                    // Valida apenas se o CPF for alterado
+                    if (dadosCrianca.cpf && dadosCrianca.cpf !== criancaExistente.cpf) {
+                        const cpfExists = await loginDAO.verifyCPFExists(dadosCrianca.cpf, criancaExistente.pessoa_id)
                         if (cpfExists) {
                             return MENSAGE.ERROR_CPF_ALREADY_EXISTS
                         }
                     }
 
-                    let senha_hash = encryptionFunction.hashPassword(dadosCrianca.senha)
-                    dadosCrianca.senha = senha_hash
-                    dadosCrianca.id = parseInt(id)
-
-                    let result = await criancaDAO.updateCrianca(dadosCrianca)
-                    return result ? MENSAGE.SUCCESS_UPDATED_ITEM : MENSAGE.ERROR_INTERNAL_SERVER_MODEL
+                    let result = await criancaDAO.updateCrianca(dadosAtualizados)
+                    return result ? { ...MENSAGE.SUCCESS_UPDATED_ITEM, crianca: result } : MENSAGE.ERROR_INTERNAL_SERVER_MODEL
                 } else if (resultSearch.status_code == MENSAGE.ERROR_NOT_FOUND.status_code) {
                     return MENSAGE.ERROR_NOT_FOUND
                 } else {

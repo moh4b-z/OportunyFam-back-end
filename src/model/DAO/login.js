@@ -60,12 +60,16 @@ async function verifyEmailExists(email){
         return false
     }
 }
-async function verifyCPFExists(cpf){
+async function verifyCPFExists(cpf, ignorePessoaId = null){
     try {
-        let pessoa = await prismaMySQL.tbl_pessoa.findUnique({ where: { cpf } })
+        const where = { cpf }
+        // Se forneceu um ID para ignorar, adiciona condição NOT
+        if (ignorePessoaId) {
+            where.NOT = { id: ignorePessoaId }
+        }
         
-        let result = pessoa ? true : false
-        return result
+        let pessoa = await prismaMySQL.tbl_pessoa.findFirst({ where })
+        return pessoa ? true : false
     } catch (error) {
         console.error("Erro DAO: Erro ao verificar CPF.", error)
         return false

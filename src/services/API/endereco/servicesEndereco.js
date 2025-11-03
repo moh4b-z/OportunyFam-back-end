@@ -14,7 +14,7 @@ async function inserirEndereco(dadosEndereco, contentType){
         }
 
         const novoEndereco = {
-            cep: dadosEndereco.cep,
+            cep: dadosEndereco.cep?.replace(/[^0-9]/g, ''),
             logradouro: dadosEndereco.logradouro,
             bairro: dadosEndereco.bairro || null,
             cidade: dadosEndereco.cidade,
@@ -24,8 +24,8 @@ async function inserirEndereco(dadosEndereco, contentType){
         };
 
         const coords = await nominatimService.buscarCoordenadas(novoEndereco);
-        novoEndereco.latitude = coords.latitude ?? 0.0;
-        novoEndereco.longitude = coords.longitude ?? 0.0;
+        novoEndereco.latitude = coords.latitude || 0.0;
+        novoEndereco.longitude = coords.longitude || 0.0;
 
         // console.log(novoEndereco);
         
