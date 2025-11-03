@@ -99,7 +99,7 @@ CREATE TABLE tbl_instituicao (
   cnpj VARCHAR(14) NOT NULL UNIQUE,
   descricao TEXT,
   id_endereco INT NOT NULL,
-  CONSTRAINT fk_inst_endereco FOREIGN KEY (id_endereco) REFERENCES tbl_endereco(id),
+  CONSTRAINT fk_inst_endereco FOREIGN KEY (id_endereco) REFERENCES tbl_endereco(id) ON DELETE CASCADE,
   id_pessoa INT NOT NULL UNIQUE,
   CONSTRAINT fk_inst_pessoa FOREIGN KEY (id_pessoa) REFERENCES tbl_pessoa(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;

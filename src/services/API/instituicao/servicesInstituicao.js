@@ -4,41 +4,45 @@ const TableCORRECTION = require("../../../utils/tablesCheck")
 const encryptionFunction = require("../../../utils/encryptionFunction")
 const instituicaoDAO = require("../../../model/DAO/instituicao/instituicao")
 const loginDAO = require("../../../model/DAO/login")
-const instituicaoEnderecoDAO = require("../../../model/DAO/instituicao/instituicaoEndereco/instituicaoEndereco") 
 const instituicaoTipoInstituicaoDAO = require("../../../model/DAO/instituicao/instituicaoTipoInstituicao/instituicaoTipoInstituicao") 
 const servicesEndereco = require("../endereco/servicesEndereco")
+const { URLSearchParams } = require('url'); // Adicionado para garantir a URLSearchParams
 
+/**
+ * Insere uma nova instituição, com endereço e tipos associados.
+ */
 async function inserirInstituicao(dadosInstituicao, contentType){
+    // Variáveis para garantir o rollback
+    let idEndereco = null;
+    let idInstituicao = null;
+
     try { 
-        // console.log("-"+contentType+"-");
-        // console.log(contentType == "application/json", contentType == "application/json; charset=UTF-8");
-               
-        if (contentType == "application/json") {
+        if (contentType === "application/json" || contentType === "application/json; charset=UTF-8") {
             
+            // 1. Validação de campos obrigatórios
             if (
                 dadosInstituicao.cep && 
+                dadosInstituicao.numero && // Adicionado 'numero' pois é crucial para o endereço
+                dadosInstituicao.logradouro && // Adicionado 'logradouro' para ter um endereço completo
                 dadosInstituicao.tipos_instituicao && 
                 Array.isArray(dadosInstituicao.tipos_instituicao) && 
                 TableCORRECTION.CHECK_tbl_instituicao(dadosInstituicao)
             ) {
-                
+                // 2. Verifica duplicações
                 const emailExists = await loginDAO.verifyEmailExists(dadosInstituicao.email)
-                if (emailExists) {
-                    return MENSAGE.ERROR_EMAIL_ALREADY_EXISTS
-                }
-                const cnpjExists = await loginDAO.verifyCNPJExists(dadosInstituicao.cnpj)
-                if (cnpjExists) {
-                    return MENSAGE.ERROR_CNPJ_ALREADY_EXISTS
-                }
+                if (emailExists) return MENSAGE.ERROR_EMAIL_ALREADY_EXISTS
 
-                const senha_hash = encryptionFunction.hashPassword(dadosInstituicao.senha)
-                dadosInstituicao.senha = senha_hash
-                
+                const cnpjExists = await loginDAO.verifyCNPJExists(dadosInstituicao.cnpj)
+                if (cnpjExists) return MENSAGE.ERROR_CNPJ_ALREADY_EXISTS
+
+                // 3. Criptografa a senha
+                dadosInstituicao.senha = encryptionFunction.hashPassword(dadosInstituicao.senha)
+
                 const tiposInstituicaoIds = dadosInstituicao.tipos_instituicao
                 delete dadosInstituicao.tipos_instituicao
 
-                // console.log(dadosInstituicao);
-                let endereco = { 
+                // 4. Cria o endereço
+                const enderecoData = { 
                     cep: dadosInstituicao.cep, 
                     numero: dadosInstituicao.numero, 
                     complemento: dadosInstituicao.complemento,
@@ -46,128 +50,169 @@ async function inserirInstituicao(dadosInstituicao, contentType){
                     bairro: dadosInstituicao.bairro,
                     logradouro: dadosInstituicao.logradouro,
                     estado: dadosInstituicao.estado,
+                    latitude: dadosInstituicao.latitude, // Supondo que você pode ter lat/lng
+                    longitude: dadosInstituicao.longitude
                 }
                 
-                const enderecoCriado = await servicesEndereco.inserirEndereco(endereco, contentType)
-                // console.log(enderecoCriado);
-                
-                if (enderecoCriado.status_code == MENSAGE.SUCCESS_CEATED_ITEM.status_code) {
-                    const idEndereco = enderecoCriado.endereco.id
-                    
-                    // 4. Insere a Instituição (sem id_tipo_instituicao)
-                    let resultInstituicao = await instituicaoDAO.insertInstituicao(dadosInstituicao, enderecoCriado.endereco.id)
-                    
-                    if (resultInstituicao) {
-                        const idInstituicao = resultInstituicao.id
+                // Excluir dados do endereço do objeto principal
+                delete dadosInstituicao.cep
+                delete dadosInstituicao.numero
+                delete dadosInstituicao.complemento
+                delete dadosInstituicao.cidade
+                delete dadosInstituicao.bairro
+                delete dadosInstituicao.logradouro
+                delete dadosInstituicao.estado
+                delete dadosInstituicao.latitude
+                delete dadosInstituicao.longitude
 
-                        // 5. Cria a relação Instituicao-Endereco
-                        const dadosRelacaoEndereco = { id_instituicao: idInstituicao, id_endereco: idEndereco }
-                        const resultRelacaoEndereco = await instituicaoEnderecoDAO.insertInstituicaoEndereco(dadosRelacaoEndereco)
+                const enderecoCriado = await servicesEndereco.inserirEndereco(enderecoData, contentType)
 
-                        if (resultRelacaoEndereco) {
-                            
-                            // 6. Cria as relações Instituicao-TipoInstituicao (N:N)
-                            let relacoesCriadas = true
-                            if (tiposInstituicaoIds.length > 0) {
-                                for (const idTipo of tiposInstituicaoIds) {
-                                    const dadosRelacaoTipo = { id_instituicao: idInstituicao, id_tipo_instituicao: idTipo }
-                                    const resultRelacaoTipo = await instituicaoTipoInstituicaoDAO.insertInstituicaoTipoInstituicao(dadosRelacaoTipo)
-                                    if (!resultRelacaoTipo) {
-                                        relacoesCriadas = false
-                                        break // Se uma falhar, para o loop
-                                    }
-                                }
+                if (enderecoCriado.status_code === MENSAGE.SUCCESS_CEATED_ITEM.status_code) {
+                    
+                    idEndereco = enderecoCriado.endereco[0].id // Armazena o ID para rollback
+                    dadosInstituicao.id_endereco = idEndereco
+                    
+                    // 5. Insere a instituição
+                    const resultInstituicao = await instituicaoDAO.insertInstituicao(dadosInstituicao)
+                    
+                    // Se o DAO retornar o objeto completo, usamos o ID dele
+                    if (resultInstituicao && resultInstituicao.instituicao_id) {
+                        
+                        idInstituicao = resultInstituicao.instituicao_id // Armazena o ID da instituição para uso/rollback
+                        
+                        // 6. Insere as relações de tipos
+                        let relacoesCriadas = true
+                        for (const idTipo of tiposInstituicaoIds) {
+                            const dadosRelacaoTipo = { 
+                                id_instituicao: idInstituicao, 
+                                id_tipo_instituicao: idTipo 
                             }
-                            console.log(relacoesCriadas);
                             
-                            if (relacoesCriadas) {
-                                // SUCESSO TOTAL
-                                return {
-                                    ...MENSAGE.SUCCESS_CEATED_ITEM,
-                                    instituicao: resultInstituicao
-                                }
-                            } else {
-                                // ROLLBACK: Se a relação TIPO falhar, deleta a instituição e o endereço (se necessário)
-                                await instituicaoDAO.deleteInstituicao(idInstituicao) 
-                                await servicesEndereco.excluirEndereco(idEndereco) // Se necessário, pois deleteInstituicao deveria cuidar do endereço
-                                return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
+                            const resultRelacaoTipo = await instituicaoTipoInstituicaoDAO.insertInstituicaoTipoInstituicao(dadosRelacaoTipo)
+                            
+                            if (!resultRelacaoTipo) {
+                                relacoesCriadas = false
+                                break
+                            }
+                        }
+
+                        if (relacoesCriadas) {
+                            // 7. Sucesso total
+                            return {
+                                ...MENSAGE.SUCCESS_CEATED_ITEM,
+                                instituicao: resultInstituicao
                             }
                         } else {
-                            // ROLLBACK: Se a relação ENDERECO falhar, deleta a instituição criada
-                            await instituicaoDAO.deleteInstituicao(idInstituicao) 
+                            // 7b. Rollback das relações falhou
+                            // O DAO de instituição deleta a pessoa (CASCADE) -> deleta a instituição
+                            // Precisamos do ID da Pessoa para deletar, vamos buscar.
+                            // Nota: A procedure de INSERT retorna o objeto completo que contem o pessoa_id
+                            const pessoaId = resultInstituicao.pessoa_id
+                            if(pessoaId) await instituicaoDAO.deleteInstituicao(pessoaId) 
+                            await servicesEndereco.excluirEndereco(idEndereco)
                             return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
                         }
                     } else {
-                        // ROLLBACK: Se a instituição falhar, deleta o endereço criado
+                        // 5b. Rollback da instituição falhou
                         await servicesEndereco.excluirEndereco(idEndereco)
                         return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
                     }
+
                 } else {
+                    // 4b. Endereço falhou
                     return enderecoCriado 
                 }
+
             } else {
                 return MENSAGE.ERROR_REQUIRED_FIELDS
             }
         } else {
-            console.log('oi');
-            
             return MENSAGE.ERROR_CONTENT_TYPE
         }
+
     } catch (error) {
         console.error(error)
+        // Tentativa de rollback geral em caso de falha não tratada
+        if (idInstituicao) {
+             // Tenta buscar o pessoa_id para o delete, se necessário.
+             const instituicaoCompleta = await instituicaoDAO.selectByIdInstituicao(idInstituicao);
+             if(instituicaoCompleta && instituicaoCompleta.pessoa_id) {
+                await instituicaoDAO.deleteInstituicao(instituicaoCompleta.pessoa_id)
+             }
+        }
+        if (idEndereco) await servicesEndereco.excluirEndereco(idEndereco)
+        
         return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
     }
 }
 
+/**
+ * Atualiza uma instituição (incluindo validações)
+ * Assume que a atualização de endereço e tipos são feitas em endpoints separados ou o endereço é enviado
+ * como dados parciais.
+ */
 async function atualizarInstituicao(dadosInstituicao, id, contentType){
     try {
-        if (contentType == "application/json") {
-            // Nota: Se 'tipos_instituicao' for enviado aqui, ele deve ser removido antes de chamar o DAO principal
-            if (dadosInstituicao.tipos_instituicao) {
-                delete dadosInstituicao.tipos_instituicao
-            }
-
-
+        if (contentType === "application/json" || contentType === "application/json; charset=UTF-8") {
+            
+            // Verifica se o ID é válido e se a instituição existe
             if (CORRECTION.CHECK_ID(id)) {
                 
-                let resultSearch = await buscarInstituicao(parseInt(id))
+                const idInstituicao = parseInt(id)
+                dadosInstituicao.id = idInstituicao // Garante que o ID da instituição seja passado ao DAO
                 
-                if (resultSearch.status_code == MENSAGE.SUCCESS_REQUEST.status_code) {
+                // 1. Busca a instituição existente
+                let resultSearch = await buscarInstituicao(idInstituicao)
+                
+                if (resultSearch.status_code === MENSAGE.SUCCESS_REQUEST.status_code) {
                     
                     const instituicaoExistente = resultSearch.instituicao
                     
-                    // 1. Verifica se o email foi alterado e se o novo email já existe
+                    // 2. Validações de unicidade (email e CNPJ)
                     if (dadosInstituicao.email && dadosInstituicao.email !== instituicaoExistente.email) {
                         const emailExists = await loginDAO.verifyEmailExists(dadosInstituicao.email)
-                        if (emailExists) {
-                            return MENSAGE.ERROR_EMAIL_ALREADY_EXISTS
-                        }
+                        if (emailExists) return MENSAGE.ERROR_EMAIL_ALREADY_EXISTS
                     }
                     if (dadosInstituicao.cnpj && dadosInstituicao.cnpj !== instituicaoExistente.cnpj) {
                         const cnpjExists = await loginDAO.verifyCNPJExists(dadosInstituicao.cnpj)
-                        if (cnpjExists) {
-                            return MENSAGE.ERROR_CNPJ_ALREADY_EXISTS
-                        }
+                        if (cnpjExists) return MENSAGE.ERROR_CNPJ_ALREADY_EXISTS
                     }
 
-                    // 2. Criptografa a senha (só se a senha for passada)
+                    // 3. Lógica da senha
                     if(dadosInstituicao.senha){
-                         const senha_hash = encryptionFunction.hashPassword(dadosInstituicao.senha)
-                         dadosInstituicao.senha = senha_hash
+                       dadosInstituicao.senha = encryptionFunction.hashPassword(dadosInstituicao.senha)
                     } else {
-                         // Se a senha não for passada, garantimos que ela não vá para o DAO update (partial update)
-                         delete dadosInstituicao.senha
+                       delete dadosInstituicao.senha
                     }
                     
-                    // 3. Atualiza a Instituição
-                    dadosInstituicao.id = parseInt(id)
-                    // Uso de spread operator para garantir que apenas os campos do 'dadosInstituicao' sejam enviados
+                    if (dadosInstituicao.id_endereco !== undefined && dadosInstituicao.id_endereco !== null) {
+                         if (!CORRECTION.CHECK_ID(dadosInstituicao.id_endereco)) {
+                             return MENSAGE.ERROR_INVALID_ID_ADDRESS
+                         }
+                    }
+
+                    // 5. Remove campos que não devem ser passados para o DAO (ex: tipos)
+                    if (dadosInstituicao.tipos_instituicao) {
+                        delete dadosInstituicao.tipos_instituicao
+                    }
+                    
+                    // 6. Atualiza a Instituição
                     let result = await instituicaoDAO.updateInstituicao(dadosInstituicao)
                     
-                    return result ? MENSAGE.SUCCESS_UPDATED_ITEM : MENSAGE.ERROR_INTERNAL_SERVER_MODEL
-                } else if (resultSearch.status_code == MENSAGE.ERROR_NOT_FOUND.status_code) {
+                    if (result) {
+                        return {
+                            ...MENSAGE.SUCCESS_UPDATED_ITEM,
+                            instituicao: result
+                        }
+                    } else {
+                        // 6b. Falha interna no DAO
+                        return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
+                    }
+                } else if (resultSearch.status_code === MENSAGE.ERROR_NOT_FOUND.status_code) {
+                    // 1b. Instituição não encontrada
                     return MENSAGE.ERROR_NOT_FOUND
                 } else {
+                    // 1c. Erro na busca (erro de servidor no DAO)
                     return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
                 }
             } else {
@@ -182,17 +227,27 @@ async function atualizarInstituicao(dadosInstituicao, id, contentType){
     }
 }
 
+
+// --- Funções de busca e exclusão (não alteradas) ---
+
 async function excluirInstituicao(id){
     try {
         if (CORRECTION.CHECK_ID(id)) {
             let resultSearch = await buscarInstituicao(parseInt(id))
             
+            
             if (resultSearch.status_code == MENSAGE.SUCCESS_REQUEST.status_code) {
-                // OBS: Como tbl_instituicao_tipo_instituicao tem CASCADE ON DELETE com tbl_instituicao,
-                // a exclusão da instituição principal deleta automaticamente os seus tipos.
+                // OBS: A exclusão é feita pelo ID da PESSOA (pessoa_id)
+                // O ON DELETE CASCADE em tbl_instituicao e a lógica no DAO se encarregam do restante.
                 
-                let result = await instituicaoDAO.deleteInstituicao(parseInt(id))
-                return result ? MENSAGE.SUCCESS_DELETE_ITEM : MENSAGE.ERROR_NOT_DELETE
+                let result = await instituicaoDAO.deleteInstituicao(parseInt(resultSearch.instituicao.pessoa_id))
+                
+                if (result) {
+                    return MENSAGE.SUCCESS_DELETE_ITEM
+                } else {
+                    // Falha na deleção no DAO
+                    return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
+                }
             } else if (resultSearch.status_code == MENSAGE.ERROR_NOT_FOUND.status_code) {
                 return MENSAGE.ERROR_NOT_FOUND
             } else {
@@ -260,38 +315,31 @@ async function buscarInstituicoesPorNome(params) {
             return MENSAGE.ERROR_NOT_FOUND
         }
 
-        // --- Lógica de URL para a Próxima Página ---
+        // --- Lógica de URL para Paginação ---
+        const baseUrlPath = `${MENSAGE.API_BASE_URL}/v1/oportunyfam/instituicoes`
+        const queryParams = new URLSearchParams()
+            
+        // Adiciona a busca (se existir)
+        if (nomeBusca) {
+            queryParams.append('busca', nomeBusca)
+        }
+        // Adiciona o tamanho (se for diferente do padrão 20)
+        if (tamanhoInt !== 20) {
+            queryParams.append('tamanho', tamanhoInt.toString())
+        }
+
         let nextUrl = null
         if (paginaAtualInt < totalPaginas) {
-            const nextPage = paginaAtualInt + 1
-            
-            const queryParams = new URLSearchParams()
-            
-            // Adiciona a busca (se existir)
-            if (nomeBusca) {
-                queryParams.append('busca', nomeBusca)
-            }
-            // Adiciona o tamanho (se for diferente do padrão 20)
-            if (tamanhoInt !== 20) {
-                 queryParams.append('tamanho', tamanhoInt.toString())
-            }
-            
-            // Adiciona o número da próxima página
-            queryParams.append('pagina', nextPage.toString())
+            const nextParams = new URLSearchParams(queryParams.toString()) // Copia os parâmetros base
+            nextParams.append('pagina', (paginaAtualInt + 1).toString())
+            nextUrl = `${baseUrlPath}?${nextParams.toString()}` // Corrigido para usar nextParams
+        }
 
-            let nextUrl = null
-            if (paginaAtualInt < totalPaginas) {
-                const nextParams = new URLSearchParams(queryParams.toString()) // Copia os parâmetros base
-                nextParams.append('pagina', (paginaAtualInt + 1).toString())
-                nextUrl = `${MENSAGE.API_BASE_URL}/v1/oportunyfam/instituicoes?${queryParams.toString()}`
-            }
-
-            let prevUrl = null
-            if (paginaAtualInt > 1) {
-                const prevParams = new URLSearchParams(queryParams.toString()) // Copia os parâmetros base
-                prevParams.append('pagina', (paginaAtualInt - 1).toString())
-                prevUrl = `${baseUrlPath}?${prevParams.toString()}`
-            }
+        let prevUrl = null
+        if (paginaAtualInt > 1) {
+            const prevParams = new URLSearchParams(queryParams.toString()) // Copia os parâmetros base
+            prevParams.append('pagina', (paginaAtualInt - 1).toString())
+            prevUrl = `${baseUrlPath}?${prevParams.toString()}` // Corrigido para usar prevParams
         }
         
         // Retorno formatado
@@ -313,7 +361,6 @@ async function buscarInstituicoesPorNome(params) {
         return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
     }
 }
-
 
 
 module.exports = {

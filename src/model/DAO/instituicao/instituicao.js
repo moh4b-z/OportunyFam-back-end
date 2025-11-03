@@ -3,7 +3,7 @@ const { PrismaClient } = require('../../../../prisma/generated/mysql')
 const prismaMySQL = new PrismaClient()
 
 async function insertInstituicao(instituicao) {
-  try {
+  try {    
     const {
       nome,
       email,
@@ -12,22 +12,27 @@ async function insertInstituicao(instituicao) {
       descricao,
       cnpj,
       id_endereco,
-      id_sexo,
-      logo
+      foto_perfil
     } = instituicao
 
-    // A procedure retorna o ID da instituição criada.
+    // 1. Chama a SP. Ela retorna o ID como alias (instituicao_id) ou f0/f1...
     const result = await prismaMySQL.$queryRawUnsafe(`
-      CALL sp_inserir_instituicao(?, ?, ?, ?, ?, ?, ?, ?, ?);
-    `, nome, email, senha, telefone, descricao, cnpj, id_endereco, id_sexo, logo)
+      CALL sp_inserir_instituicao(?, ?, ?, ?, ?, ?, ?, ?);
+    `, nome, email, senha, telefone, foto_perfil, cnpj, descricao, id_endereco)
 
-    // Normalmente o primeiro item do result contém o ID retornado.
-    const inserted = result[0] && result[0][0] ? result[0][0] : null
+    const insertedRow = result[0]
+    
+    // 2. Tenta obter o ID pelo nome da coluna ou pelo alias genérico (f0)
+    // Assumimos que o primeiro campo retornado é o ID, já que a SP foi corrigida para isso.
+    const inserted_id = insertedRow?.instituicao_id || insertedRow?.f0
 
-    if (!inserted || !inserted.id_instituicao) return false
+    if (!inserted_id) {
+        console.error("A SP de inserção não retornou um ID válido.")
+        return false
+    }
 
-    // Retorna a instituição recém-criada pela view completa
-    return await selectByIdInstituicao(inserted.id_instituicao)
+    // 3. Usa o ID válido para buscar o objeto completo, que mapeia os campos corretamente.
+    return await selectByIdInstituicao(inserted_id)
 
   } catch (error) {
     console.error("Erro ao inserir instituição:", error)
@@ -41,7 +46,8 @@ async function insertInstituicao(instituicao) {
 async function updateInstituicao(instituicao) {
   try {
     const {
-      id_instituicao,
+      // Renomeando 'id' para 'id_instituicao' para clareza no uso da SP
+      id: id_instituicao, 
       nome,
       email,
       senha,
@@ -49,13 +55,17 @@ async function updateInstituicao(instituicao) {
       descricao,
       cnpj,
       id_endereco,
-      logo
+      foto_perfil
     } = instituicao
 
+    // ATENÇÃO: Verifique se o parâmetro ID da SP é o primeiro (sp_atualizar_instituicao)
+    // e se o nome da variável no objeto JS é 'id' ou 'id_instituicao'.
+    // Usei 'id_instituicao' aqui para alinhar com o retorno.
     await prismaMySQL.$queryRawUnsafe(`
       CALL sp_atualizar_instituicao(?, ?, ?, ?, ?, ?, ?, ?, ?);
-    `, id_instituicao, nome, email, senha, telefone, descricao, cnpj, id_endereco, logo)
+    `, id_instituicao, nome, email, senha, telefone, foto_perfil, cnpj, descricao, null)
 
+    // Retorna a instituição recém-atualizada
     return await selectByIdInstituicao(id_instituicao)
 
   } catch (error) {

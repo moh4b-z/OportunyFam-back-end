@@ -160,6 +160,7 @@ SELECT
   p.criado_em,
   p.atualizado_em,
   JSON_OBJECT(
+    'id', e.id,
     'cep', e.cep,
     'logradouro', e.logradouro,
     'numero', e.numero,
