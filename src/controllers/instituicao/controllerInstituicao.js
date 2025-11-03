@@ -65,6 +65,13 @@ async function getInstituicoesByAddress(request, response){
 }
 
 
+async function getAlunosInstituicao(request, response) {
+    const params = request.query
+    const result = await servicesInstituicao.buscarAlunosInstituicao(params)
+    response.status(result.status_code)
+    response.json(result)
+}
+
 module.exports = {
     postInstituicao,
     putInstituicao,
@@ -72,5 +79,6 @@ module.exports = {
     getSearchAllInstituicao,
     getSearchInstituicao,
     getSearchInstituicoesByName,
-    getInstituicoesByAddress
+    getInstituicoesByAddress,
+    getAlunosInstituicao
 }

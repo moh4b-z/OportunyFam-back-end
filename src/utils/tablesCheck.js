@@ -158,6 +158,14 @@ function CHECK_tbl_matricula_aula(matricula) {
     );
 }
 
+function CHECK_tbl_publicacao_instituicao(publicacao) {
+    return (
+        CORRECTION.CHECK_ID(publicacao.id_instituicao) &&
+        (publicacao.descricao === undefined || CORRECTION.CHECK_TEXT(publicacao.descricao)) &&
+        (publicacao.foto_perfil === undefined || CORRECTION.CHECK_VARCHAR(publicacao.foto_perfil, 400))
+    )
+}
+
 
 
 module.exports = {
@@ -177,4 +185,6 @@ module.exports = {
     CHECK_tbl_inscricao,
     CHECK_tbl_inscricao_atividade,
     CHECK_tbl_matricula_aula
+    ,
+    CHECK_tbl_publicacao_instituicao
 }

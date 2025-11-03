@@ -22,6 +22,17 @@ router.get(
     controllerInstituicao.getSearchAllInstituicao
 )
 
+
+router.get(
+    '/osm/',
+    controllerInstituicao.getInstituicoesByAddress
+)
+
+router.get(
+    '/alunos/',
+    controllerInstituicao.getAlunosInstituicao
+)
+
 router.get(
     '/', 
     controllerInstituicao.getSearchInstituicoesByName
@@ -31,11 +42,5 @@ router.get(
     '/:id',
     controllerInstituicao.getSearchInstituicao
 )
-
-router.get(
-    '/osm/',
-    controllerInstituicao.getInstituicoesByAddress
-)
-
 
 module.exports = router

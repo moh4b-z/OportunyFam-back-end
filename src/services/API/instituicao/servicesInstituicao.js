@@ -69,7 +69,7 @@ async function inserirInstituicao(dadosInstituicao, contentType){
 
                 if (enderecoCriado.status_code === MENSAGE.SUCCESS_CEATED_ITEM.status_code) {
                     
-                    idEndereco = enderecoCriado.endereco[0].id // Armazena o ID para rollback
+                    idEndereco = enderecoCriado.endereco.id // Armazena o ID para rollback
                     dadosInstituicao.id_endereco = idEndereco
                     
                     // 5. Insere a instituição
@@ -363,11 +363,61 @@ async function buscarInstituicoesPorNome(params) {
 }
 
 
+async function buscarAlunosInstituicao(params) {
+    try {        
+        let instituicao_id = params.instituicao_id
+        let atividade_id = params.atividade_id
+        let status_id = params.status_id
+
+        // Se foi fornecido atividade_id, o instituicao_id é obrigatório
+        if (atividade_id && !instituicao_id) {
+            return {
+                ...MENSAGE.ERROR_REQUIRED_FIELDS,
+                messagem: "Para filtrar por atividade, é necessário informar o ID da instituição"
+            }
+        }
+
+        // Validar IDs se fornecidos
+        if (instituicao_id && !CORRECTION.CHECK_ID(instituicao_id)) {
+            return MENSAGE.ERROR_REQUIRED_FIELDS
+        } else if (atividade_id && !CORRECTION.CHECK_ID(atividade_id)) {
+            return MENSAGE.ERROR_REQUIRED_FIELDS
+        } else if (status_id && !CORRECTION.CHECK_ID(status_id)) {
+            return MENSAGE.ERROR_REQUIRED_FIELDS
+        }
+
+        const resultDAO = await instituicaoDAO.selectAlunosInstituicao({
+            instituicao_id: instituicao_id ? parseInt(instituicao_id) : null,
+            atividade_id: atividade_id ? parseInt(atividade_id) : null,
+            status_id: status_id ? parseInt(status_id) : null
+        })
+
+        // fluxo padrão: if (success) { retorno de sucesso } else { erro }
+        if (resultDAO) {
+            if (resultDAO.length > 0) {
+                return {
+                    ...MENSAGE.SUCCESS_REQUEST,
+                    alunos: resultDAO
+                }
+            } else {
+                return MENSAGE.ERROR_NOT_FOUND
+            }
+        } else {
+            return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
+        }
+
+    } catch (error) {
+        console.error(error)
+        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
+    }
+}
+
 module.exports = {
     inserirInstituicao,
     atualizarInstituicao,
     excluirInstituicao,
     listarTodasInstituicoes,
     buscarInstituicao,
-    buscarInstituicoesPorNome
+    buscarInstituicoesPorNome,
+    buscarAlunosInstituicao
 }

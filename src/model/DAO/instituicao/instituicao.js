@@ -145,11 +145,44 @@ async function selectSearchInstituicoesByNome(nomeBusca, pagina = 1, tamanho = 2
 }
 
 
+/**
+ * Busca alunos de uma instituição com filtros opcionais
+ */
+async function selectAlunosInstituicao(filtros) {
+  try {
+    let query = `SELECT * FROM vw_alunos_instituicao WHERE 1=1`
+    const params = []
+
+    if (filtros.instituicao_id) {
+      query += ` AND instituicao_id = ?`
+      params.push(filtros.instituicao_id)
+    }
+
+    if (filtros.atividade_id) {
+      query += ` AND atividade_id = ?`
+      params.push(filtros.atividade_id)
+    }
+
+    if (filtros.status_id) {
+      query += ` AND status_id = ?`
+      params.push(filtros.status_id)
+    }
+
+    query += ` ORDER BY data_inscricao DESC`
+
+    return await prismaMySQL.$queryRawUnsafe(query, ...params)
+  } catch (error) {
+    console.error("Erro ao buscar alunos da instituição:", error)
+    return false
+  }
+}
+
 module.exports = {
   insertInstituicao,
   updateInstituicao,
   deleteInstituicao,
   selectAllInstituicoes,
   selectByIdInstituicao,
-  selectSearchInstituicoesByNome
+  selectSearchInstituicoesByNome,
+  selectAlunosInstituicao
 }
