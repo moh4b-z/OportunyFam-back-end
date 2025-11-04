@@ -1,5 +1,4 @@
-// src/models/instituicao.js
-const { PrismaClient } = require('../../../../prisma/generated/mysql')
+const { PrismaClient } = require('@prisma/client')
 const prismaMySQL = new PrismaClient()
 
 async function insertInstituicao(instituicao) {

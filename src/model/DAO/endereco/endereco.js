@@ -1,5 +1,4 @@
-const { PrismaClient} = require('../../../../prisma/generated/mysql')
-const {Decimal} = require('../../../../prisma/generated/mysql')
+const { PrismaClient, Decimal} = require('@prisma/client')
 const prismaMySQL = new PrismaClient()
 
 

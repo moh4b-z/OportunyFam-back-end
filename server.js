@@ -46,7 +46,7 @@ app.use((err, req, res, next) => {
 const MainRoutes = require("./src/routes/MainRoutes")
 app.use("/v1/oportunyfam", MainRoutes)
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 8080
 app.listen(PORT, function(){
   logger.info(`Servidor rodando na porta ${PORT}`)
 })

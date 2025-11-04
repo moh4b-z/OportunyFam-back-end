@@ -28,3 +28,6 @@
 {"level":"info","message":{"duration":1124,"method":"GET","path":"/","statusCode":200},"timestamp":"2025-11-04T13:40:46.346Z"}
 {"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-04T14:02:50.497Z"}
 {"level":"info","message":{"duration":1117,"method":"GET","path":"/","statusCode":200},"timestamp":"2025-11-04T14:03:04.812Z"}
+{"level":"info","message":"Servidor rodando na porta 3000","timestamp":"2025-11-04T14:28:19.455Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-04T14:28:50.902Z"}
+{"level":"info","message":{"duration":1345,"method":"GET","path":"/","statusCode":200},"timestamp":"2025-11-04T14:28:55.885Z"}
