@@ -2,6 +2,8 @@ const MENSAGE = require("../../modulo/config")
 const CORRECTION = require("../../utils/inputCheck")
 const encryptionFunction = require("../../utils/encryptionFunction")
 const loginDAO = require("../../model/DAO/login")
+const jwt = require('jsonwebtoken')
+const { JWT_SECRET = 'your-secret-key', JWT_ACCESS_EXPIRES = '15m', JWT_REFRESH_EXPIRES = '7d' } = process.env
 
 
 
@@ -11,8 +13,8 @@ async function loginUniversal(dadosLogin, contentType) {
 
             if (dadosLogin.email && dadosLogin.senha) {
                 
-                let senha = encryptionFunction.hashPassword(dadosLogin.senha)
-                let result = await loginDAO.login(dadosLogin.email, senha)
+                // Envia a senha em texto para o DAO, que fará a verificação com a senha armazenada
+                let result = await loginDAO.login(dadosLogin.email, dadosLogin.senha)
                 let tipo = false
 
                 if (result === 404){
@@ -22,14 +24,23 @@ async function loginUniversal(dadosLogin, contentType) {
                     return MENSAGE.ERROR_INVALID_CREDENTIALS
                 }
                 if (result.tipo) {
+                    // Gera tokens JWT (access + refresh)
+                    const user = result.usuario
+                    // Identifica o id real (usuario_id | instituicao_id | crianca_id)
+                    let subjectId = user.usuario_id || user.instituicao_id || user.crianca_id || user.pessoa_id || user.id
+
+                    const payload = { id: subjectId, tipo: result.tipo, email: user.email }
+                    const accessToken = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_ACCESS_EXPIRES })
+                    const refreshToken = jwt.sign({ id: subjectId }, JWT_SECRET, { expiresIn: JWT_REFRESH_EXPIRES })
 
                     return {
                         ...MENSAGE.SUCCESS_LOGIN,
                         tipo: result.tipo,
-                        result: result.usuario
+                        result: user,
+                        accessToken,
+                        refreshToken
                     }
                 } else {
-                    
                     return MENSAGE.ERROR_INVALID_CREDENTIALS
                 }
             } else {

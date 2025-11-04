@@ -2,46 +2,73 @@ const { PrismaClient } = require('../../../prisma/generated/mysql')
 const prismaMySQL = new PrismaClient()
 
 
-async function login(email, senha) {
+const encryptionFunction = require('../../utils/encryptionFunction')
+
+async function login(email, senhaPlain) {
     try {
-        // Executa a procedure sp_login passando os parâmetros
-        const result = await prismaMySQL.$queryRawUnsafe(
-            `CALL sp_login(?, ?)`,
-            email,
-            senha
-        )
+        // 1) Busca a pessoa pelo email
+        const pessoa = await prismaMySQL.tbl_pessoa.findUnique({ where: { email } })
 
-        // O MySQL retorna um array de arrays quando chama uma procedure
-        let dados = result[0] || []
-
-        // Se vier vazio, significa que houve erro (404, 401 ou 500)
-        if (dados.length === 0) {
-            console.log("Nenhum resultado retornado da procedure.")
-            return false
-        }
-        let usuario = dados[0]
-
-        // Verifica se veio algum status de erro
-        if (usuario.status === 404) {
+        if (!pessoa) {
+            // não encontrou email
             return 404
-        } else if (usuario.status === 401) {
-            return 401
-        } else if (usuario.status === 500) {
-            return 500
-        }
-        let tipoUsuario = null
-        if (usuario.usuario_id) {
-            tipoUsuario = "usuario"
-        } else if (usuario.instituicao_id) {
-            tipoUsuario = "instituicao"
-        } else if (usuario.crianca_id) {
-            tipoUsuario = "crianca"
-        }
-        return {
-            tipo: tipoUsuario,
-            usuario: usuario
         }
 
+        const storedSenha = pessoa.senha
+
+        // 2) Verifica a senha usando verifyPassword
+        try {
+            const senhaOk = storedSenha && encryptionFunction.verifyPassword(senhaPlain, storedSenha)
+            if (!senhaOk) {
+                return 401
+            }
+        } catch (errVerify) {
+            // Em caso de formato inesperado de senha armazenada, faça comparação direta (fallback)
+            if (storedSenha !== senhaPlain) {
+                return 401
+            }
+        }
+
+        // 3) Determina o tipo de usuário e retorna os dados completos das views
+        // Verifica se é usuario
+        const usuarioRow = await prismaMySQL.$queryRawUnsafe(
+            `SELECT * FROM vw_usuario_completa WHERE pessoa_id = ? LIMIT 1`,
+            pessoa.id
+        )
+        if (usuarioRow && usuarioRow[0]) {
+            // Quando o Prisma retorna um array, o primeiro elemento pode ser o conjunto de linhas
+            const rows = Array.isArray(usuarioRow[0]) ? usuarioRow[0] : usuarioRow
+            if (rows.length > 0) {
+                return { tipo: 'usuario', usuario: rows[0] }
+            }
+        }
+
+        // Verifica instituicao
+        const instituicaoRow = await prismaMySQL.$queryRawUnsafe(
+            `SELECT * FROM vw_instituicao_completa WHERE pessoa_id = ? LIMIT 1`,
+            pessoa.id
+        )
+        if (instituicaoRow && instituicaoRow[0]) {
+            const rows = Array.isArray(instituicaoRow[0]) ? instituicaoRow[0] : instituicaoRow
+            if (rows.length > 0) {
+                return { tipo: 'instituicao', usuario: rows[0] }
+            }
+        }
+
+        // Verifica crianca
+        const criancaRow = await prismaMySQL.$queryRawUnsafe(
+            `SELECT * FROM vw_crianca_completa WHERE pessoa_id = ? LIMIT 1`,
+            pessoa.id
+        )
+        if (criancaRow && criancaRow[0]) {
+            const rows = Array.isArray(criancaRow[0]) ? criancaRow[0] : criancaRow
+            if (rows.length > 0) {
+                return { tipo: 'crianca', usuario: rows[0] }
+            }
+        }
+
+        // Se chegou aqui, algo inesperado: retornar erro genérico
+        return 500
     } catch (error) {
         console.error("Erro DAO: Erro ao executar login.", error)
         return { status: 500, message: "Erro interno no servidor" }

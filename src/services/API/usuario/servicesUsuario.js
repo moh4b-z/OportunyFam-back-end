@@ -6,6 +6,8 @@ const usuarioDAO = require("../../../model/DAO/usuario/usuario")
 const loginDAO = require("../../../model/DAO/login")
 const usuarioEnderecoDAO = require("../../../model/DAO/usuario/usuarioEndereco/usuarioEndereco") 
 const servicesEndereco = require("../endereco/servicesEndereco")
+const jwt = require('jsonwebtoken')
+const { JWT_SECRET = 'your-secret-key', JWT_ACCESS_EXPIRES = '15m', JWT_REFRESH_EXPIRES = '7d' } = process.env
 
 async function inserirUsuario(dadosUsuario, contentType){
     try {        
@@ -49,11 +51,20 @@ async function inserirUsuario(dadosUsuario, contentType){
                         const dadosRelacao = { id_usuario: idUsuario, id_endereco: idEndereco }
                         const resultRelacao = await usuarioEnderecoDAO.insertUsuarioEndereco(dadosRelacao)
 
-                        if (resultRelacao) {
-                            return {
-                                ...MENSAGE.SUCCESS_CEATED_ITEM,
-                                usuario: resultUsuario
-                            }
+                            if (resultRelacao) {
+                                // Gera tokens JWT para o novo usuário
+                                const user = resultUsuario
+                                const subjectId = user.pessoa_id || user.id || user.usuario_id
+                                const payload = { id: subjectId, tipo: 'usuario', email: user.email }
+                                const accessToken = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_ACCESS_EXPIRES })
+                                const refreshToken = jwt.sign({ id: subjectId }, JWT_SECRET, { expiresIn: JWT_REFRESH_EXPIRES })
+
+                                return {
+                                    ...MENSAGE.SUCCESS_CEATED_ITEM,
+                                    usuario: resultUsuario,
+                                    accessToken,
+                                    refreshToken
+                                }
                         } else {
                             // ROLLBACK: Se a relação falhar, deleta o usuário e o endereço
                             await usuarioDAO.deleteUsuario(idUsuario)
