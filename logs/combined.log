@@ -24,3 +24,5 @@
 {"level":"info","message":{"duration":1050,"method":"POST","path":"/","statusCode":200},"timestamp":"2025-11-04T02:22:13.571Z"}
 {"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-04T12:26:37.947Z"}
 {"level":"info","message":{"duration":1652,"method":"GET","path":"/","statusCode":200},"timestamp":"2025-11-04T12:26:41.823Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-04T13:40:25.051Z"}
+{"level":"info","message":{"duration":1124,"method":"GET","path":"/","statusCode":200},"timestamp":"2025-11-04T13:40:46.346Z"}
