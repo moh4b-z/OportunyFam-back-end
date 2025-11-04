@@ -8,3 +8,7 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: DATABASE_URL_MYSQL
+        fromDatabase:
+          name: OportunyFamMySQL
+          property: connectionString
