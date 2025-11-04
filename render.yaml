@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: OportunyFam
+    env: node
+    buildCommand: npm install && npx prisma generate
+    startCommand: npm start
+    healthCheckPath: /v1/oportunyfam
+    envVars:
+      - key: NODE_ENV
+        value: production
