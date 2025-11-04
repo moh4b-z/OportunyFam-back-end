@@ -1,6 +1,7 @@
 const { PrismaClient } = require('../../../../prisma/generated/mysql')
 const prismaMySQL = new PrismaClient()
 
+
 async function insertSexo(sexo) {
     try {
         return await prismaMySQL.tbl_sexo.create({ data: { nome: sexo.nome } })
@@ -9,7 +10,6 @@ async function insertSexo(sexo) {
         return false
     }
 }
-
 async function updateSexo(sexo) {
     try {
         return await prismaMySQL.tbl_sexo.update({
@@ -50,6 +50,7 @@ async function selectByIdSexo(id) {
         return false
     }
 }
+
 
 module.exports = {
     insertSexo,
