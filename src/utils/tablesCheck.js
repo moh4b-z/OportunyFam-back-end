@@ -109,16 +109,49 @@ function CHECK_tbl_atividades(atividade) {
 }
 
 function CHECK_tbl_aulas_atividade(aula) {
+    // Valida se a data é uma string de data válida
+    const isValidDate = (dateStr) => {
+        const date = new Date(dateStr)
+        return date instanceof Date && !isNaN(date)
+    }
+
+    // Valida se a hora está no formato HH:MM
+    const isValidTime = (timeStr) => {
+        if (!timeStr || typeof timeStr !== 'string') return false
+        const [hours, minutes] = timeStr.split(':')
+        if (!hours || !minutes) return false
+        const h = parseInt(hours)
+        const m = parseInt(minutes)
+        return h >= 0 && h < 24 && m >= 0 && m < 60
+    }
+
+    // Compara horários no formato HH:MM
+    const compareTime = (time1, time2) => {
+        const [h1, m1] = time1.split(':').map(n => parseInt(n))
+        const [h2, m2] = time2.split(':').map(n => parseInt(n))
+        if (h1 < h2) return -1
+        if (h1 > h2) return 1
+        if (m1 < m2) return -1
+        if (m1 > m2) return 1
+        return 0
+    }
+
     return (
         CORRECTION.CHECK_ID(aula.id_atividade) &&
-        CORRECTION.verificarNumero(aula.dia_semana) &&
-        aula.dia_semana >= 1 && aula.dia_semana <= 7 &&
-        CORRECTION.CHECK_NOT_NULL(aula.hora_inicio) &&
-        CORRECTION.CHECK_NOT_NULL(aula.hora_fim) &&
-        aula.hora_inicio < aula.hora_fim &&
-        CORRECTION.verificarNumero(aula.vagas_total) &&
-        CORRECTION.verificarNumero(aula.vagas_disponiveis) &&
-        CORRECTION.CHECK_TINYINT(aula.ativo ? 1 : 0)
+        // data_aula é obrigatória e deve ser uma data válida
+        aula.data_aula && isValidDate(aula.data_aula) &&
+        // hora_inicio e hora_fim são obrigatórias e devem estar no formato HH:MM
+        isValidTime(aula.hora_inicio) && 
+        isValidTime(aula.hora_fim) &&
+        // hora_fim deve ser depois de hora_inicio
+        compareTime(aula.hora_inicio, aula.hora_fim) < 0 &&
+        // vagas_total é obrigatório e deve ser número positivo
+        CORRECTION.verificarNumero(aula.vagas_total) && aula.vagas_total > 0 &&
+        // vagas_disponiveis se informado deve ser número positivo
+        (aula.vagas_disponiveis === undefined || 
+         (CORRECTION.verificarNumero(aula.vagas_disponiveis) && 
+          aula.vagas_disponiveis >= 0 && 
+          aula.vagas_disponiveis <= aula.vagas_total))
     );
 }
 

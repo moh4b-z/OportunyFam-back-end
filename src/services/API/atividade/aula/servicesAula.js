@@ -117,8 +117,64 @@ async function listarAulasPorInstituicao(idInstituicao){
     }
 }
 
+async function inserirVariasAulas(dadosAulas, contentType) {
+    try {
+        if (contentType !== "application/json") {
+            return MENSAGE.ERROR_CONTENT_TYPE
+        }
+
+        // Validação dos campos obrigatórios
+        if (!dadosAulas.id_atividade || !dadosAulas.hora_inicio || !dadosAulas.hora_fim || 
+            !dadosAulas.vagas_total || !dadosAulas.datas || !Array.isArray(dadosAulas.datas) || 
+            dadosAulas.datas.length === 0) {
+            return MENSAGE.ERROR_REQUIRED_FIELDS
+        }
+
+        const aulasInseridas = []
+        const aulasComErro = []
+
+        // Para cada data, cria uma aula
+        for (const data_aula of dadosAulas.datas) {
+            const dadosAula = {
+                id_atividade: dadosAulas.id_atividade,
+                data_aula,
+                hora_inicio: dadosAulas.hora_inicio,
+                hora_fim: dadosAulas.hora_fim,
+                vagas_total: dadosAulas.vagas_total,
+                vagas_disponiveis: dadosAulas.vagas_total // Inicialmente igual ao total
+            }
+
+            if (TableCORRECTION.CHECK_tbl_aulas_atividade(dadosAula)) {
+                const result = await aulaDAO.insertAula(dadosAula)
+                if (result) {
+                    aulasInseridas.push(result)
+                } else {
+                    aulasComErro.push(data_aula)
+                }
+            } else {
+                aulasComErro.push(data_aula)
+            }
+        }
+
+        // Retorna resultado com aulas inseridas e erros, se houver
+        return {
+            ...MENSAGE.SUCCESS_CEATED_ITEM,
+            aulas_inseridas: aulasInseridas,
+            total_inseridas: aulasInseridas.length,
+            erros: aulasComErro.length > 0 ? {
+                total: aulasComErro.length,
+                datas: aulasComErro
+            } : null
+        }
+    } catch (error) {
+        console.error(error)
+        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
+    }
+}
+
 module.exports = {
     inserirAula,
+    inserirVariasAulas,
     atualizarAula,
     excluirAula,
     buscarAula,

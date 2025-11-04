@@ -1,4 +1,4 @@
-const { PrismaClient } = require('../../../../../prisma/generated/mysql')
+const { PrismaClient } = require('@prisma/client')
 const prismaMySQL = new PrismaClient()
 
 /**
@@ -28,15 +28,28 @@ async function insertInscricaoAtividade(dadosInscricao){
 // --- SELECT ALL / READ ALL (Opcional, busca por atividade é mais comum) ---
 async function selectAllInscricoes(){
     try {
-        // Trazendo dados relacionados para uma visão completa
-        return await prismaMySQL.tbl_inscricao_atividade.findMany({
-            include: {
-                tbl_crianca: { select: { nome: true } },
-                tbl_atividades: { select: { titulo: true } },
-                tbl_status_inscricao: { select: { nome: true } }
-            },
-            orderBy: { criado_em: 'desc' }
-        })
+        // Usando a view vw_alunos_instituicao que já traz os dados relacionados
+        return await prismaMySQL.$queryRaw`
+            SELECT
+                t.id as inscricao_id,
+                i.instituicao_id,
+                i.instituicao_nome,
+                i.atividade_id,
+                i.atividade_titulo,
+                i.crianca_id,
+                i.crianca_nome,
+                i.crianca_foto,
+                i.status_id,
+                i.status_inscricao,
+                i.data_inscricao,
+                t.observacao,
+                t.id_responsavel
+            FROM tbl_inscricao_atividade t
+            JOIN vw_alunos_instituicao i ON 
+                i.crianca_id = t.id_crianca AND
+                i.atividade_id = t.id_atividade
+            ORDER BY t.criado_em DESC
+        `
     } catch (error) {
         console.error("Erro ao buscar todas as inscrições:", error)
         return false
@@ -46,15 +59,42 @@ async function selectAllInscricoes(){
 // --- SELECT BY ID / READ BY ID ---
 async function selectByIdInscricao(id){
     try {
-        return await prismaMySQL.tbl_inscricao_atividade.findUnique({
-            where: { id: parseInt(id) },
-            include: {
-                tbl_crianca: { select: { nome: true, data_nascimento: true } },
-                tbl_atividades: { select: { titulo: true, id_instituicao: true } },
-                tbl_status_inscricao: { select: { nome: true } },
-                tbl_responsavel: { select: { id_usuario: true } }
-            }
-        })
+        const result = await prismaMySQL.$queryRaw`
+            SELECT
+                t.id as inscricao_id,
+                i.instituicao_id,
+                i.instituicao_nome,
+                i.atividade_id,
+                i.atividade_titulo,
+                i.crianca_id,
+                i.crianca_nome,
+                i.crianca_foto,
+                i.status_id,
+                i.status_inscricao,
+                i.data_inscricao,
+                t.observacao,
+                t.id_responsavel,
+                COALESCE(
+                    JSON_ARRAYAGG(
+                        JSON_OBJECT(
+                            'aula_id', ma.id,
+                            'presente', ma.presente,
+                            'nota_observacao', ma.nota_observacao,
+                            'criado_em', ma.criado_em,
+                            'atualizado_em', ma.atualizado_em
+                        )
+                    ),
+                    '[]'
+                ) as matriculas
+            FROM tbl_inscricao_atividade t
+            JOIN vw_alunos_instituicao i ON 
+                i.crianca_id = t.id_crianca AND
+                i.atividade_id = t.id_atividade
+            LEFT JOIN tbl_matricula_aula ma ON ma.id_inscricao_atividade = t.id
+            WHERE t.id = ${parseInt(id)}
+            GROUP BY t.id
+        `
+        return result.length > 0 ? result[0] : null
     } catch (error) {
         console.error("Erro ao buscar inscrição por ID:", error)
         return false

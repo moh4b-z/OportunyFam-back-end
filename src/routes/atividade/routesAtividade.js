@@ -34,6 +34,11 @@ router.post(
     controllerAtividade.postAula
 ) 
 
+router.post(
+    '/aulas/lote',
+    controllerAtividade.postAulasLote
+)
+
 router.put(
     '/aulas/:id', 
     controllerAtividade.putAula

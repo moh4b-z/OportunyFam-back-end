@@ -1,4 +1,4 @@
-const { PrismaClient } = require('../../../../../prisma/generated/mysql')
+const { PrismaClient } = require('@prisma/client')
 const prismaMySQL = new PrismaClient()
 
 async function insertMatriculaAula(dadosMatricula){
@@ -22,15 +22,23 @@ async function insertMatriculaAula(dadosMatricula){
 // --- SELECT BY INSCRICAO / READ BY INSCRICAO ---
 async function selectMatriculasByInscricao(idInscricao){
     try {
-        return await prismaMySQL.tbl_matricula_aula.findMany({
-            where: { id_inscricao_atividade: parseInt(idInscricao) },
-            include: {
-                tbl_aulas_atividade: {
-                    select: { dia_semana: true, hora_inicio: true, hora_fim: true }
-                }
-            },
-            orderBy: { id_aula_atividade: 'asc' }
-        })
+        return await prismaMySQL.$queryRaw`
+            SELECT 
+                ma.id,
+                ma.presente,
+                ma.nota_observacao,
+                ma.criado_em,
+                ma.atualizado_em,
+                vad.aula_id,
+                vad.data_aula,
+                vad.hora_inicio,
+                vad.hora_fim,
+                vad.status_aula
+            FROM tbl_matricula_aula ma
+            JOIN vw_aulas_detalhe vad ON vad.aula_id = ma.id_aula_atividade
+            WHERE ma.id_inscricao_atividade = ${parseInt(idInscricao)}
+            ORDER BY vad.data_aula ASC, vad.hora_inicio ASC
+        `
     } catch (error) {
         console.error("Erro ao buscar matrículas por inscrição:", error)
         return false
