@@ -26,7 +26,10 @@ router.get(
     '/:id', 
     controllerAtividade.getSearchAtividade
 )
-
+router.get(
+    '/instituicao/:idInstituicao', 
+    controllerAtividade.getSearchAtividadesByInstituicao
+)
 
 
 router.post(
@@ -63,5 +66,6 @@ router.get(
     '/aulas/instituicao/:idInstituicao', 
     controllerAtividade.getSearchAulasByInstituicao
 )
+
 
 module.exports = router

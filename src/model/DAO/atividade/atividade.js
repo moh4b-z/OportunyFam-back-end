@@ -116,10 +116,45 @@ async function selectByIdAtividade(id){
     }
 }
 
+async function selectByIdInstituicaoAtividade(id){
+    try {
+        const result = await prismaMySQL.$queryRaw`
+            SELECT 
+                a.*,
+                COALESCE( -- 1. Garante que se não houver aulas, retorna '[]' (JSON válido)
+                    JSON_ARRAYAGG(
+                        JSON_OBJECT(
+                            'aula_id', aa.id,
+                            'data_aula', aa.data_aula,
+                            'hora_inicio', aa.hora_inicio,
+                            'hora_fim', aa.hora_fim,
+                            'vagas_total', aa.vagas_total,
+                            'vagas_disponiveis', aa.vagas_disponiveis,
+                            'status', vad.status_aula
+                        )
+                    ),
+                    JSON_ARRAY()
+                ) AS aulas -- Nome da coluna para JSON das aulas
+            FROM vw_atividade_detalhe a
+            LEFT JOIN vw_aulas_detalhe vad ON vad.id_atividade = a.atividade_id
+            LEFT JOIN tbl_aulas_atividade aa ON aa.id = vad.aula_id
+            WHERE a.instituicao_id = ${id}
+            GROUP BY a.atividade_id -- 2. Agrupa por ATIVIDADE ID para listar todas da instituição
+            ORDER BY a.atividade_id DESC
+        `
+        // 3. Retorna o array completo, ou null se estiver vazio
+        return result.length > 0 ? result : null
+    } catch (error) {
+        console.error("Erro ao buscar atividades por instituição:", error)
+        return false
+    }
+}
+
 module.exports = {
     insertAtividade,
     updateAtividade,
     deleteAtividade,
     selectAllAtividades,
-    selectByIdAtividade
+    selectByIdAtividade,
+    selectByIdInstituicaoAtividade
 }

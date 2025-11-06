@@ -89,6 +89,12 @@ const getSearchAulasByInstituicao = async (request, response) => {
     response.status(result.status_code)
     response.json(result)
 }
+const getSearchAtividadesByInstituicao = async (request, response) => {
+    let idInstituicao = request.params.idInstituicao
+    let result = await servicesAtividade.buscarAtividadePorInstituicao(idInstituicao)
+    response.status(result.status_code)
+    response.json(result)
+}
 
 
 module.exports = {
@@ -103,5 +109,6 @@ module.exports = {
     deleteAula,
     getSearchAula,
     getSearchAllAulas,
-    getSearchAulasByInstituicao
+    getSearchAulasByInstituicao,
+    getSearchAtividadesByInstituicao
 }

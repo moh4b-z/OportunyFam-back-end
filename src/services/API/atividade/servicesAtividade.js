@@ -104,11 +104,20 @@ async function excluirAtividade(id){
 async function listarTodasAtividades(){
     try {
         let result = await atividadeDAO.selectAllAtividades()
+        //console.log(result);
+        
         if (result) {
             // Deserializa o campo 'horarios' que veio como JSON_ARRAYAGG
             const atividadesFormatadas = result.map(ativ => ({
                 ...ativ,
-                horarios: JSON.parse(ativ.horarios) 
+                faixa_etaria_min: Number(ativ.faixa_etaria_min),
+                faixa_etaria_max: Number(ativ.faixa_etaria_max),
+                preco: Number(ativ.preco),
+                aulas: ativ.aulas ? ativ.aulas.map(aula => ({
+                    ...aula, 
+                    hora_inicio: aula.hora_inicio.split('.')[0], 
+                    hora_fim: aula.hora_fim.split('.')[0]
+                })) : []
             }))
 
             return atividadesFormatadas.length > 0 ? { ...MENSAGE.SUCCESS_REQUEST, atividades: atividadesFormatadas } : MENSAGE.ERROR_NOT_FOUND
@@ -117,6 +126,8 @@ async function listarTodasAtividades(){
         }
     } catch (error) {
         console.error(error)
+        console.log(error)
+        console.log("--")
         return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
     }
 }
@@ -124,10 +135,17 @@ async function listarTodasAtividades(){
 async function buscarAtividade(id){
     try {
         if (CORRECTION.CHECK_ID(id)) {
-            let result = await atividadeDAO.selectByIdAtividade(parseInt(id))
+            const result = await atividadeDAO.selectByIdAtividade(parseInt(id))
             if (result) {
                 // Deserializa o campo 'horarios'
-                result.horarios = JSON.parse(result.horarios)
+                result.faixa_etaria_min = Number(result.faixa_etaria_min)
+                result.faixa_etaria_max = Number(result.faixa_etaria_max)
+                result.preco = Number(result.preco)
+                result.aulas = result.aulas ? result.aulas.map(aula => ({
+                    ...aula, 
+                    hora_inicio: aula.hora_inicio.split('.')[0], 
+                    hora_fim: aula.hora_fim.split('.')[0]
+                })) : []
                 return { ...MENSAGE.SUCCESS_REQUEST, atividade: result }
             } else {
                 return MENSAGE.ERROR_NOT_FOUND
@@ -141,11 +159,58 @@ async function buscarAtividade(id){
     }
 }
 
+async function buscarAtividadePorInstituicao(id){
+    try {
+        if (CORRECTION.CHECK_ID(id)) {
+            // O DAO retorna um ARRAY de atividades
+            const result = await atividadeDAO.selectByIdInstituicaoAtividade(parseInt(id))
+            
+            if (result && result.length > 0) {
+                // Iterar sobre o array de atividades retornado pelo DAO
+                const atividadesFormatadas = result.map(ativ => {
+                    // **1. Formatação de BigInt e Number**
+                    const faixasEtariasCorrigidas = {
+                        faixa_etaria_min: Number(ativ.faixa_etaria_min),
+                        faixa_etaria_max: Number(ativ.faixa_etaria_max),
+                        preco: Number(ativ.preco)
+                    };
+                    
+                    // **2. Formatação das Aulas (JSON e Hora)**
+                    const aulasFormatadas = ativ.aulas && Array.isArray(ativ.aulas) 
+                        ? ativ.aulas.map(aula => ({
+                            ...aula, 
+                            hora_inicio: aula.hora_inicio.split('.')[0], 
+                            hora_fim: aula.hora_fim.split('.')[0]
+                        })) 
+                        : [];
+
+                    return {
+                        ...ativ,
+                        ...faixasEtariasCorrigidas, // Aplica as correções numéricas
+                        aulas: aulasFormatadas      // Aplica as aulas formatadas
+                    };
+                });
+                
+                // Note que o objeto de retorno no MENSAGE deve ser 'atividades' (plural)
+                return { ...MENSAGE.SUCCESS_REQUEST, atividades: atividadesFormatadas };
+            } else {
+                return MENSAGE.ERROR_NOT_FOUND
+            }
+        } else {
+            return MENSAGE.ERROR_REQUIRED_FIELDS
+        }
+    } catch (error) {
+        console.error("Erro em buscarAtividadePorInstituicao:", error)
+        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
+    }
+}
+
 
 module.exports = {
     inserirAtividade,
     atualizarAtividade,
     excluirAtividade,
     listarTodasAtividades,
-    buscarAtividade
+    buscarAtividade,
+    buscarAtividadePorInstituicao
 }
