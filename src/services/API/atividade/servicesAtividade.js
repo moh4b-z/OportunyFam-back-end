@@ -115,8 +115,8 @@ async function listarTodasAtividades(){
                 preco: Number(ativ.preco),
                 aulas: ativ.aulas ? ativ.aulas.map(aula => ({
                     ...aula, 
-                    hora_inicio: aula.hora_inicio.split('.')[0], 
-                    hora_fim: aula.hora_fim.split('.')[0]
+                    hora_inicio: aula.hora_inicio ? aula.hora_inicio.split('.')[0] : null, 
+                    hora_fim: aula.hora_fim ? aula.hora_fim.split('.')[0] : null
                 })) : []
             }))
 
@@ -143,8 +143,8 @@ async function buscarAtividade(id){
                 result.preco = Number(result.preco)
                 result.aulas = result.aulas ? result.aulas.map(aula => ({
                     ...aula, 
-                    hora_inicio: aula.hora_inicio.split('.')[0], 
-                    hora_fim: aula.hora_fim.split('.')[0]
+                    hora_inicio: aula.hora_inicio ? aula.hora_inicio.split('.')[0] : null, 
+                    hora_fim: aula.hora_fim ? aula.hora_fim.split('.')[0] : null
                 })) : []
                 return { ...MENSAGE.SUCCESS_REQUEST, atividade: result }
             } else {
@@ -179,8 +179,8 @@ async function buscarAtividadePorInstituicao(id){
                     const aulasFormatadas = ativ.aulas && Array.isArray(ativ.aulas) 
                         ? ativ.aulas.map(aula => ({
                             ...aula, 
-                            hora_inicio: aula.hora_inicio.split('.')[0], 
-                            hora_fim: aula.hora_fim.split('.')[0]
+                            hora_inicio: aula.hora_inicio ? aula.hora_inicio.split('.')[0] : null, 
+                            hora_fim: aula.hora_fim ? aula.hora_fim.split('.')[0] : null
                         })) 
                         : [];
 
