@@ -49,10 +49,29 @@ async function selectByIdConversa(id) {
     }
 }
 
+async function selectConversasPorPessoa(id_pessoa) {
+  try {
+    let result = await prismaMySQL.$queryRaw`
+      SELECT *
+      FROM vw_conversas_detalhe
+      WHERE id_remetente = ${id_pessoa}
+      ORDER BY (ultima_mensagem->>'$.data_envio') DESC;
+    `
+    //console.log(result);
+    
+    return result
+  } catch (error) {
+    console.error("Erro ao buscar conversas do usuário:", error)
+    return false
+  }
+}
+
+
 module.exports = {
     insertConversa,
     updateConversa,
     deleteConversa,
     selectAllConversas,
-    selectByIdConversa
+    selectByIdConversa,
+    selectConversasPorPessoa
 }
