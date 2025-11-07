@@ -228,7 +228,7 @@ CREATE TABLE tbl_mensagem (
 CREATE TABLE tbl_publicacao_instituicao (
   id INT AUTO_INCREMENT PRIMARY KEY,
   descricao TEXT NULL,
-  foto_perfil VARCHAR(400),
+  imagem VARCHAR(400),
   criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   atualizado_em TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
   id_instituicao INT NOT NULL,

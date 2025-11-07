@@ -290,7 +290,7 @@ model tbl_pessoa_conversa {
 model tbl_publicacao_instituicao {
   id              Int             @id @default(autoincrement())
   descricao       String?         @mysql.Text
-  foto_perfil     String?         @mysql.VarChar(400)
+  imagem     String?         @mysql.VarChar(400)
   criado_em       DateTime        @default(now()) @mysql.Timestamp(0)
   atualizado_em   DateTime?       @mysql.Timestamp(0)
   id_instituicao  Int

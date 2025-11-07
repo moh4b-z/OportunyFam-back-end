@@ -91,3 +91,10 @@
 {"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-07T00:27:43.056Z"}
 {"level":"info","message":{"duration":316,"method":"DELETE","path":"/2","statusCode":200},"timestamp":"2025-11-07T00:27:50.106Z"}
 {"level":"info","message":{"duration":47,"method":"GET","path":"/","statusCode":200},"timestamp":"2025-11-07T00:27:59.094Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-07T00:34:32.972Z"}
+{"level":"info","message":{"duration":350,"method":"POST","path":"/","statusCode":500},"timestamp":"2025-11-07T00:34:40.304Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-07T00:40:40.220Z"}
+{"level":"info","message":{"duration":3361,"method":"POST","path":"/","statusCode":500},"timestamp":"2025-11-07T00:41:05.819Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-07T00:49:08.511Z"}
+{"level":"info","message":{"duration":295,"method":"POST","path":"/","statusCode":201},"timestamp":"2025-11-07T00:49:19.266Z"}
+{"level":"info","message":{"duration":41,"method":"GET","path":"/instituicao/1","statusCode":200},"timestamp":"2025-11-07T00:51:37.858Z"}

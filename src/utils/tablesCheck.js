@@ -195,7 +195,7 @@ function CHECK_tbl_publicacao_instituicao(publicacao) {
     return (
         CORRECTION.CHECK_ID(publicacao.id_instituicao) &&
         (publicacao.descricao === undefined || CORRECTION.CHECK_TEXT(publicacao.descricao)) &&
-        (publicacao.foto_perfil === undefined || CORRECTION.CHECK_VARCHAR(publicacao.foto_perfil, 400))
+        (publicacao.imagem === undefined || CORRECTION.CHECK_VARCHAR(publicacao.imagem, 400))
     )
 }
 

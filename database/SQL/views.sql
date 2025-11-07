@@ -184,7 +184,7 @@ SELECT
         JSON_OBJECT(
           'id', pub.id,
           'descricao', pub.descricao,
-          'foto_perfil', pub.foto_perfil,
+          'imagem', pub.imagem,
           'criado_em', pub.criado_em
         )
       ), JSON_ARRAY())
