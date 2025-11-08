@@ -233,7 +233,7 @@ SELECT
   p.email,
   p.foto_perfil,
   p.data_nascimento,
-  CAST(TIMESTAMPDIFF(YEAR, p.data_nascimento, CURDATE()) AS UNSIGNED) AS idade,
+  CAST(TIMESTAMPDIFF(YEAR, p.data_nascimento, CURDATE()) AS SIGNED INTEGER) AS idade,
   p.criado_em,
   p.atualizado_em,
   s.nome AS sexo,
@@ -321,7 +321,7 @@ SELECT
   p.nome,
   p.foto_perfil,
   s.nome AS sexo,
-  CAST(TIMESTAMPDIFF(YEAR, p.data_nascimento, CURDATE()) AS UNSIGNED) AS idade,
+  CAST(TIMESTAMPDIFF(YEAR, p.data_nascimento, CURDATE()) AS SIGNED INTEGER) AS idade,
   (
     SELECT COALESCE(
         JSON_ARRAYAGG(

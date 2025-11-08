@@ -128,7 +128,14 @@ async function excluirCrianca(id) {
 async function listarTodasCriancas() {
     try {
         let result = await criancaDAO.selectAllCriancas()
+        
         if (result) {
+            result = result.map(crianca => {
+                return {
+                    ...crianca,
+                    idade: crianca.idade !== null ? Number(crianca.idade) : null
+                }
+            })
             return result.length > 0 ? { ...MENSAGE.SUCCESS_REQUEST, criancas: result } : MENSAGE.ERROR_NOT_FOUND
         } else {
             return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
@@ -143,6 +150,10 @@ async function buscarCrianca(id) {
     try {
         if (CORRECTION.CHECK_ID(id)) {
             let result = await criancaDAO.selectByIdCrianca(parseInt(id))
+            result = result ? {
+                ...result,
+                idade: result.idade !== null ? Number(result.idade) : null
+            } : null
             return result ? { ...MENSAGE.SUCCESS_REQUEST, crianca: result } : MENSAGE.ERROR_NOT_FOUND
         } else {
             return MENSAGE.ERROR_REQUIRED_FIELDS

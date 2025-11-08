@@ -117,3 +117,19 @@
 {"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-07T02:29:36.940Z"}
 {"level":"info","message":{"duration":619,"method":"GET","path":"/pessoa/1","statusCode":200},"timestamp":"2025-11-07T02:29:41.287Z"}
 {"level":"info","message":{"duration":273,"method":"GET","path":"/pessoa/1","statusCode":200},"timestamp":"2025-11-07T02:33:24.245Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-08T17:54:34.323Z"}
+{"level":"info","message":{"duration":516,"method":"GET","path":"/alunos/","statusCode":404},"timestamp":"2025-11-08T17:54:38.620Z"}
+{"level":"info","message":{"duration":248,"method":"GET","path":"/","statusCode":200},"timestamp":"2025-11-08T17:54:53.195Z"}
+{"level":"info","message":{"duration":210,"method":"GET","path":"/v1/oportunyfam/criancas","statusCode":500},"timestamp":"2025-11-08T17:56:02.101Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-08T17:57:45.801Z"}
+{"level":"info","message":{"duration":1970,"method":"GET","path":"/v1/oportunyfam/criancas","statusCode":500},"timestamp":"2025-11-08T17:57:52.203Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-08T18:13:44.464Z"}
+{"level":"info","message":{"duration":209,"method":"GET","path":"/v1/oportunyfam/criancas","statusCode":500},"timestamp":"2025-11-08T18:13:49.846Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-08T18:14:23.511Z"}
+{"level":"info","message":{"duration":331,"method":"GET","path":"/v1/oportunyfam/criancas","statusCode":500},"timestamp":"2025-11-08T18:14:32.306Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-08T18:29:36.935Z"}
+{"level":"info","message":{"duration":1044,"method":"GET","path":"/","statusCode":200},"timestamp":"2025-11-08T18:29:42.140Z"}
+{"level":"info","message":{"duration":49,"method":"GET","path":"/1","statusCode":200},"timestamp":"2025-11-08T18:30:33.163Z"}
+{"level":"info","message":{"duration":292,"method":"GET","path":"/instituicao/1","statusCode":200},"timestamp":"2025-11-08T18:31:34.921Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-08T18:33:39.196Z"}
+{"level":"info","message":{"duration":615,"method":"GET","path":"/instituicao/1","statusCode":200},"timestamp":"2025-11-08T18:33:56.667Z"}
