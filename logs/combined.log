@@ -133,3 +133,36 @@
 {"level":"info","message":{"duration":292,"method":"GET","path":"/instituicao/1","statusCode":200},"timestamp":"2025-11-08T18:31:34.921Z"}
 {"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-08T18:33:39.196Z"}
 {"level":"info","message":{"duration":615,"method":"GET","path":"/instituicao/1","statusCode":200},"timestamp":"2025-11-08T18:33:56.667Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-08T18:36:11.730Z"}
+{"level":"info","message":{"duration":1281,"method":"POST","path":"/","statusCode":500},"timestamp":"2025-11-08T18:36:59.672Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-08T18:38:46.204Z"}
+{"level":"info","message":{"duration":22,"method":"POST","path":"/","statusCode":400},"timestamp":"2025-11-08T18:39:13.304Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-08T18:41:24.285Z"}
+{"level":"info","message":{"duration":56,"method":"POST","path":"/","statusCode":400},"timestamp":"2025-11-08T18:41:27.199Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-08T18:42:44.476Z"}
+{"level":"info","message":{"duration":319,"method":"POST","path":"/","statusCode":500},"timestamp":"2025-11-08T18:42:49.209Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-08T18:49:48.659Z"}
+{"level":"info","message":{"duration":515,"method":"POST","path":"/","statusCode":500},"timestamp":"2025-11-08T18:49:55.926Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-08T18:57:44.399Z"}
+{"level":"info","message":{"duration":211,"method":"POST","path":"/","statusCode":201},"timestamp":"2025-11-08T18:57:54.186Z"}
+{"level":"info","message":{"duration":86,"method":"POST","path":"/","statusCode":500},"timestamp":"2025-11-08T18:59:17.887Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-08T19:04:24.884Z"}
+{"level":"info","message":{"duration":310,"method":"POST","path":"/","statusCode":201},"timestamp":"2025-11-08T19:04:30.380Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-08T19:10:02.485Z"}
+{"level":"info","message":{"duration":160,"method":"POST","path":"/","statusCode":201},"timestamp":"2025-11-08T19:10:10.515Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-08T19:10:53.531Z"}
+{"level":"info","message":{"duration":168,"method":"POST","path":"/","statusCode":409},"timestamp":"2025-11-08T19:10:58.167Z"}
+{"level":"info","message":{"duration":85,"method":"POST","path":"/","statusCode":201},"timestamp":"2025-11-08T19:11:56.539Z"}
+{"level":"info","message":{"duration":45,"method":"POST","path":"/","statusCode":201},"timestamp":"2025-11-08T19:12:10.309Z"}
+{"level":"info","message":{"duration":123,"method":"GET","path":"/","statusCode":200},"timestamp":"2025-11-08T19:13:03.752Z"}
+{"level":"info","message":{"duration":184,"method":"DELETE","path":"/1","statusCode":200},"timestamp":"2025-11-08T19:16:30.543Z"}
+{"level":"info","message":{"duration":35,"method":"POST","path":"/","statusCode":201},"timestamp":"2025-11-08T19:16:59.671Z"}
+{"level":"info","message":{"duration":25,"method":"GET","path":"/","statusCode":200},"timestamp":"2025-11-08T19:17:56.254Z"}
+{"level":"info","message":{"duration":14,"method":"GET","path":"/1","statusCode":404},"timestamp":"2025-11-08T19:18:45.573Z"}
+{"level":"info","message":{"duration":15,"method":"GET","path":"/2","statusCode":404},"timestamp":"2025-11-08T19:18:54.198Z"}
+{"level":"info","message":{"duration":12,"method":"GET","path":"/6","statusCode":200},"timestamp":"2025-11-08T19:19:01.329Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-08T19:27:59.035Z"}
+{"level":"info","message":{"duration":250,"method":"PUT","path":"/6","statusCode":200},"timestamp":"2025-11-08T19:29:05.673Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-08T19:30:11.931Z"}
+{"level":"info","message":{"duration":162,"method":"PUT","path":"/6","statusCode":200},"timestamp":"2025-11-08T19:30:17.368Z"}
+{"level":"info","message":{"duration":59,"method":"PUT","path":"/6","statusCode":200},"timestamp":"2025-11-08T19:30:48.300Z"}

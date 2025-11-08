@@ -173,6 +173,12 @@ function CHECK_tbl_inscricao(inscricao) {
 }
 
 function CHECK_tbl_inscricao_atividade(inscricao) {
+    // console.log(CORRECTION.CHECK_ID(inscricao.id_crianca),
+    //     CORRECTION.CHECK_ID(inscricao.id_atividade) ,
+    //     (inscricao.id_responsavel === undefined || inscricao.id_responsavel === null || CORRECTION.CHECK_ID(inscricao.id_responsavel)),
+    //     (inscricao.id_status === undefined || CORRECTION.CHECK_ID(inscricao.id_status)) ,
+    //     (inscricao.observacao === undefined || inscricao.observacao === null || CORRECTION.CHECK_VARCHAR(inscricao.observacao, 300)));
+    
     return (
         CORRECTION.CHECK_ID(inscricao.id_crianca) &&
         CORRECTION.CHECK_ID(inscricao.id_atividade) && // ID da ATIVIDADE, não mais AULA

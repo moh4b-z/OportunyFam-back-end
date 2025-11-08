@@ -1,27 +1,62 @@
 const { PrismaClient } = require('@prisma/client')
 const prismaMySQL = new PrismaClient()
 
-/**
- * Módulo CRUD para a tabela tbl_inscricao_atividade
- */
-
 // --- INSERT / CREATE ---
 async function insertInscricaoAtividade(dadosInscricao){
     try {
-        // O id_status é definido pelo TRIGGER no banco com base no id_responsavel
-        const novaInscricao = {
-            id_crianca: dadosInscricao.id_crianca,
-            id_atividade: dadosInscricao.id_atividade,
-            id_responsavel: dadosInscricao.id_responsavel || null, // TRIGGER usa isso
-            observacao: dadosInscricao.observacao || null
+        // Objeto de dados base para o Prisma
+        const dataToCreate = {
+            observacao: dadosInscricao.observacao || null,
+
+            // --- RELAÇÕES OBRIGATÓRIAS ---
+            // Você deve usar o nome da RELAÇÃO (do schema.prisma), e não o nome da coluna FK
+            
+            tbl_atividade: { // Assumindo que o nome da relação é 'tbl_atividade'
+                connect: { 
+                    id: dadosInscricao.id_atividade 
+                }
+            },
+            tbl_crianca: { // Assumindo que o nome da relação é 'tbl_crianca'
+                connect: { 
+                    id: dadosInscricao.id_crianca 
+                }
+            }
+        };
+
+        // --- RELAÇÃO OPCIONAL ---
+        // Só adiciona a conexão do responsável SE ele foi fornecido
+        if (dadosInscricao.id_responsavel) {
+            dataToCreate.tbl_responsavel = { // Assumindo que o nome da relação é 'tbl_responsavel'
+                connect: { 
+                    id: dadosInscricao.id_responsavel 
+                }
+            };
         }
+
+        // O seu objeto 'novaInscricao' antigo não é mais necessário
         return await prismaMySQL.tbl_inscricao_atividade.create({
-            data: novaInscricao
-        })
+            data: dataToCreate // Usando o novo objeto 'dataToCreate'
+        });
+
     } catch (error) {
-        // Erro 1062 = Unique constraint failed (criança já inscrita nesta atividade)
-        console.error("Erro ao inserir inscrição de atividade:", error)
-        return false
+        // Verifica se o erro é um erro conhecido do Prisma (P2002 = Unique Constraint Failed)
+        if (error.code === 'P2002') {
+            // Opcional: verifica se foi exatamente a constraint que esperamos
+            if (error.meta?.target.includes('uk_crianca_atividade')) {
+                
+                console.warn("AVISO: Tentativa de inscrição duplicada (criança/atividade).");
+                
+                // Em vez de retornar 'false', retorna um objeto de erro
+                // que o seu Service/Controller pode identificar.
+                return { 
+                    error: 'DUPLICATE_ENTRY'
+                };
+            }
+        }
+        
+        // Se for qualquer outro erro, loga e retorna 'false'
+        console.error("Erro ao inserir inscrição de atividade (não P2002):", error);
+        return false;
     }
 }
 
@@ -101,22 +136,57 @@ async function selectByIdInscricao(id){
     }
 }
 
-// --- UPDATE / UPDATE (Pode ser usado para atualizar o status ou observação) ---
 async function updateInscricao(id, novosDados){
     try {
-        // Se id_responsavel for atualizado de NULL para um ID, o TRIGGER NÃO será reativado no UPDATE por padrão.
-        // A atualização de status deve ser feita diretamente.
+        // 1. Crie um objeto 'data' vazio
+        const dataToUpdate = {};
+
+        // 2. Adicione os campos escalares (campos normais)
+        // O 'undefined' é importante: se 'observacao' não existir em 'novosDados',
+        // 'dataToUpdate.observacao' será 'undefined' e o Prisma o ignorará.
+        dataToUpdate.observacao = novosDados.observacao;
+
+        
+        // 3. Adicione as Relações (Chaves Estrangeiras)
+        
+        // --- Para tbl_status_inscricao ---
+        if (novosDados.id_status !== undefined) {
+            // (Assumindo que o status NUNCA pode ser nulo)
+            dataToUpdate.tbl_status_inscricao = {
+                connect: { 
+                    id: parseInt(novosDados.id_status) 
+                }
+            };
+        }
+
+        // --- Para tbl_responsavel (Opcional) ---
+        if (novosDados.id_responsavel !== undefined) {
+            
+            if (novosDados.id_responsavel === null) {
+                // Se o usuário enviou 'null', ele quer REMOVER o responsável
+                dataToUpdate.tbl_responsavel = {
+                    disconnect: true
+                };
+
+            } else {
+                // Se o usuário enviou um ID, ele quer ADICIONAR ou TROCAR o responsável
+                dataToUpdate.tbl_responsavel = {
+                    connect: { 
+                        id: parseInt(novosDados.id_responsavel) 
+                    }
+                };
+            }
+        }
+
+        // 4. Execute a atualização com o objeto 'data' construído
         return await prismaMySQL.tbl_inscricao_atividade.update({
             where: { id: parseInt(id) },
-            data: {
-                id_status: novosDados.id_status ? parseInt(novosDados.id_status) : undefined,
-                id_responsavel: novosDados.id_responsavel ? parseInt(novosDados.id_responsavel) : undefined,
-                observacao: novosDados.observacao
-            }
-        })
+            data: dataToUpdate // Use o objeto dinâmico
+        });
+
     } catch (error) {
-        console.error("Erro ao atualizar inscrição:", error)
-        return false
+        console.error("Erro ao atualizar inscrição:", error);
+        return false;
     }
 }
 
