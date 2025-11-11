@@ -226,3 +226,5 @@
 {"level":"info","message":{"duration":44,"method":"GET","path":"/aulas/instituicao/1","statusCode":200},"timestamp":"2025-11-11T02:31:07.252Z"}
 {"level":"info","message":{"duration":10,"method":"GET","path":"/aulas","statusCode":200},"timestamp":"2025-11-11T02:32:01.618Z"}
 >>>>>>> f7f28b6d25c110bab12447b2679cb4b9a52af038
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-11T17:58:48.980Z"}
+{"level":"info","message":{"duration":1188,"method":"GET","path":"/11","statusCode":200},"timestamp":"2025-11-11T18:28:48.044Z"}

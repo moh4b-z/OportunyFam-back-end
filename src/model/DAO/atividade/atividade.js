@@ -8,6 +8,7 @@ async function insertAtividade(atividade){
                 id_instituicao: atividade.id_instituicao,
                 id_categoria: atividade.id_categoria,
                 titulo: atividade.titulo,
+                foto: atividade.foto,
                 descricao: atividade.descricao,
                 faixa_etaria_min: atividade.faixa_etaria_min,
                 faixa_etaria_max: atividade.faixa_etaria_max,
@@ -27,6 +28,7 @@ async function updateAtividade(atividade){
         // Objeto de dados, apenas com os campos que podem ser atualizados
         const data = {
             titulo: atividade.titulo,
+            foto: atividade.foto,
             descricao: atividade.descricao,
             faixa_etaria_min: atividade.faixa_etaria_min,
             faixa_etaria_max: atividade.faixa_etaria_max,

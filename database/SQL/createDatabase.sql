@@ -140,6 +140,7 @@ CREATE TABLE tbl_atividade (
   id_instituicao INT NOT NULL,
   id_categoria SMALLINT UNSIGNED NOT NULL,
   titulo VARCHAR(140) NOT NULL,
+  foto VARCHAR(400),
   descricao TEXT,
   faixa_etaria_min INT NOT NULL CHECK (faixa_etaria_min > 0),
   faixa_etaria_max INT NOT NULL CHECK (faixa_etaria_max > 0),

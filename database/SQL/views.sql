@@ -136,6 +136,7 @@ CREATE OR REPLACE VIEW vw_atividade_detalhe AS
 SELECT
   a.id AS atividade_id,
   a.titulo,
+  a.foto,
   a.descricao,
   a.faixa_etaria_min,
   a.faixa_etaria_max,

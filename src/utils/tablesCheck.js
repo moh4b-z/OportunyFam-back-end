@@ -98,6 +98,7 @@ function CHECK_tbl_atividades(atividade) {
         CORRECTION.CHECK_ID(atividade.id_instituicao) &&
         CORRECTION.CHECK_ID(atividade.id_categoria) &&
         CORRECTION.CHECK_VARCHAR_NOT_NULL(atividade.titulo, 140) &&
+        CORRECTION.CHECK_VARCHAR(atividade.foto, 400) &&
         (atividade.descricao === undefined || CORRECTION.CHECK_TEXT(atividade.descricao)) &&
         CORRECTION.verificarNumero(atividade.faixa_etaria_min) &&
         CORRECTION.verificarNumero(atividade.faixa_etaria_max) &&
