@@ -150,20 +150,12 @@ async function buscarCrianca(id) {
     try {
         if (CORRECTION.CHECK_ID(id)) {
             let result = await criancaDAO.selectByIdCrianca(parseInt(id))
-<<<<<<< HEAD
             if(result){
                 result.idade = Number(result.idade)
                 return { ...MENSAGE.SUCCESS_REQUEST, crianca: result }
             }else{
                 return MENSAGE.ERROR_NOT_FOUND
             }
-=======
-            result = result ? {
-                ...result,
-                idade: result.idade !== null ? Number(result.idade) : null
-            } : null
-            return result ? { ...MENSAGE.SUCCESS_REQUEST, crianca: result } : MENSAGE.ERROR_NOT_FOUND
->>>>>>> f7f28b6d25c110bab12447b2679cb4b9a52af038
         } else {
             return MENSAGE.ERROR_REQUIRED_FIELDS
         }
