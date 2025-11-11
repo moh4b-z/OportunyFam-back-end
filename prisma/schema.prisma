@@ -183,6 +183,7 @@ model tbl_atividade {
   id_instituicao          Int
   id_categoria            Int                       @mysql.UnsignedSmallInt
   titulo                  String                    @mysql.VarChar(140)
+  foto                 String?                @mysql.VarChar(400)
   descricao               String?                   @mysql.Text
   faixa_etaria_min        Int                       @mysql.UnsignedInt
   faixa_etaria_max        Int                       @mysql.UnsignedInt

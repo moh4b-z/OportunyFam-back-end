@@ -57,7 +57,7 @@ async function atualizarAtividade(dadosAtividade, id, contentType){
 
                     if (TableCORRECTION.CHECK_tbl_atividades(dadosAtividade)) { 
                         let result = await atividadeDAO.updateAtividade(dadosAtividade)
-                        return result ? MENSAGE.SUCCESS_UPDATED_ITEM : MENSAGE.ERROR_INTERNAL_SERVER_MODEL
+                        return result ? {...MENSAGE.SUCCESS_UPDATED_ITEM, atividade: result} : MENSAGE.ERROR_INTERNAL_SERVER_MODEL
                     } else {
                         return MENSAGE.ERROR_REQUIRED_FIELDS
                     }
