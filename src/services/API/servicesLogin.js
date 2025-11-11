@@ -27,7 +27,12 @@ async function loginUniversal(dadosLogin, contentType) {
                     // Gera tokens JWT (access + refresh)
                     const user = result.usuario
                     // Identifica o id real (usuario_id | instituicao_id | crianca_id)
-                    let subjectId = user.usuario_id || user.instituicao_id || user.crianca_id || user.pessoa_id || user.id
+                    let subjectId = user.usuario_id || user.instituicao_id || user.crianca_id
+                    
+                    if(user.crianca_id){
+                        user.idade = Number(user.idade)
+                        
+                    }
 
                     const payload = { id: subjectId, tipo: result.tipo, email: user.email }
                     const accessToken = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_ACCESS_EXPIRES })

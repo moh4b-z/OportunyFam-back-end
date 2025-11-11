@@ -31,3 +31,18 @@
 {"level":"info","message":"Servidor rodando na porta 3000","timestamp":"2025-11-04T14:28:19.455Z"}
 {"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-04T14:28:50.902Z"}
 {"level":"info","message":{"duration":1345,"method":"GET","path":"/","statusCode":200},"timestamp":"2025-11-04T14:28:55.885Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-04T16:54:22.997Z"}
+{"level":"info","message":{"duration":7871,"method":"POST","path":"/","statusCode":201},"timestamp":"2025-11-04T16:54:55.579Z"}
+{"level":"info","message":{"duration":681,"method":"PUT","path":"/2","statusCode":200},"timestamp":"2025-11-04T16:55:23.687Z"}
+{"level":"info","message":{"duration":418,"method":"PUT","path":"/2","statusCode":200},"timestamp":"2025-11-04T16:55:30.859Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-11T16:37:48.218Z"}
+{"level":"info","message":{"duration":2161,"method":"GET","path":"/","statusCode":200},"timestamp":"2025-11-11T16:39:41.703Z"}
+{"level":"info","message":{"duration":2049,"method":"POST","path":"/v1/oportunyfam/login","statusCode":500},"timestamp":"2025-11-11T16:44:23.924Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-11T16:49:54.292Z"}
+{"level":"info","message":{"duration":2385,"method":"POST","path":"/v1/oportunyfam/login","statusCode":500},"timestamp":"2025-11-11T16:50:00.918Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-11T16:52:04.215Z"}
+{"level":"info","message":{"duration":3350,"method":"POST","path":"/","statusCode":200},"timestamp":"2025-11-11T16:52:10.605Z"}
+{"level":"info","message":{"duration":1645,"method":"GET","path":"/v1/oportunyfam/criancas","statusCode":500},"timestamp":"2025-11-11T16:52:47.282Z"}
+{"level":"info","message":{"duration":258,"method":"GET","path":"/v1/oportunyfam/criancas/1","statusCode":500},"timestamp":"2025-11-11T16:52:55.328Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-11T16:56:12.546Z"}
+{"level":"info","message":{"duration":1536,"method":"GET","path":"/1","statusCode":200},"timestamp":"2025-11-11T16:56:32.715Z"}
