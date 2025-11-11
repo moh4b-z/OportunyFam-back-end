@@ -60,6 +60,12 @@ const ERROR_CNPJ_ALREADY_EXISTS = {
     messagem: "CNPJ já existente"
 }
 
+const ERROR_ENROLLMENT_EXISTS = {
+    status: false,
+    status_code: 409,
+    messagem: "Esta criança já está inscrita nesta atividade."
+}
+
 const ERROR_INTERNAL_SERVER_MODEL = {
     status: false,
     status_code: 500,
@@ -126,6 +132,7 @@ module.exports = {
     ERROR_EMAIL_NOT_FOUND,
     ERROR_CPF_ALREADY_EXISTS,
     ERROR_CNPJ_ALREADY_EXISTS,
+    ERROR_ENROLLMENT_EXISTS,
 
     SUCCESS_CEATED_ITEM,
     SUCCESS_DELETE_ITEM,

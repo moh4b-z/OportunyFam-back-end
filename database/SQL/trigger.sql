@@ -134,7 +134,7 @@ BEGIN
     IF NEW.id_responsavel IS NULL THEN
         SET NEW.id_status = 1; -- Sugerida Pela Criança
     ELSE
-        SET NEW.id_status = 2; -- Confirmada Pelo Responsável (ou o que você definir)
+        SET NEW.id_status = 3; -- Confirmada Pelo Responsável (ou o que você definir)
     END IF;
 END $$
 DELIMITER ;

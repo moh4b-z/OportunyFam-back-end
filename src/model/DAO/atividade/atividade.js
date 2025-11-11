@@ -58,61 +58,52 @@ async function deleteAtividade(id){
     }
 }
 
-async function selectAllAtividades(){
+async function selectAllAtividades() {
     try {
-        // Busca usando a VIEW para enriquecer os dados
+        // A view 'vw_atividade_detalhe' já tem a coluna 'aulas' pronta.
+        // Não precisamos de JOINs ou GROUP BY aqui.
         const result = await prismaMySQL.$queryRaw`
-            SELECT 
-                a.*,
-                JSON_ARRAYAGG(
-                    JSON_OBJECT(
-                        'aula_id', aa.id,
-                        'data_aula', aa.data_aula,
-                        'hora_inicio', aa.hora_inicio,
-                        'hora_fim', aa.hora_fim,
-                        'vagas_total', aa.vagas_total,
-                        'vagas_disponiveis', aa.vagas_disponiveis,
-                        'status', vad.status_aula
-                    )
-                ) as aulas
-            FROM vw_atividade_detalhe a
-            LEFT JOIN vw_aulas_detalhe vad ON vad.id_atividade = a.atividade_id
-            LEFT JOIN tbl_aulas_atividade aa ON aa.id = vad.aula_id
-            GROUP BY a.atividade_id
-            ORDER BY a.atividade_id DESC
-        `
-        return result
+            SELECT * FROM vw_atividade_detalhe
+            ORDER BY atividade_id DESC
+        `;
+        return result;
     } catch (error) {
-        console.error("Erro ao buscar atividades:", error)
-        return false
+        console.error("Erro ao buscar atividades:", error);
+        return false;
     }
 }
 
-async function selectByIdAtividade(id){
+async function selectByIdAtividade(id) {
     try {
+        // A view já fez todo o trabalho. Só precisamos filtrar pelo ID.
         const result = await prismaMySQL.$queryRaw`
-            SELECT 
-                a.*,
-                JSON_ARRAYAGG(
-                    JSON_OBJECT(
-                        'aula_id', aa.id,
-                        'data_aula', aa.data_aula,
-                        'hora_inicio', aa.hora_inicio,
-                        'hora_fim', aa.hora_fim,
-                        'vagas_total', aa.vagas_total,
-                        'vagas_disponiveis', aa.vagas_disponiveis,
-                        'status', vad.status_aula
-                    )
-                ) as aulas
-            FROM vw_atividade_detalhe a
-            LEFT JOIN vw_aulas_detalhe vad ON vad.id_atividade = a.atividade_id
-            LEFT JOIN tbl_aulas_atividade aa ON aa.id = vad.aula_id
-            WHERE a.atividade_id = ${id}
-            GROUP BY a.atividade_id`
-        return result.length > 0 ? result[0] : null
+            SELECT * FROM vw_atividade_detalhe
+            WHERE atividade_id = ${id}
+        `;
+        
+        // Retorna o primeiro (e único) resultado, ou null se não encontrar
+        return result.length > 0 ? result[0] : null;
     } catch (error) {
-        console.error("Erro ao buscar atividade por ID:", error)
-        return false
+        console.error("Erro ao buscar atividade por ID:", error);
+        return false;
+    }
+}
+
+async function selectByIdInstituicaoAtividade(id) {
+    try {
+        // Mesmo caso: a view já montou tudo. Só filtramos pela instituição.
+        const result = await prismaMySQL.$queryRaw`
+            SELECT *
+            FROM vw_atividade_detalhe
+            WHERE instituicao_id = ${id}
+            ORDER BY atividade_id DESC
+        `;
+        
+        // Retorna a lista de atividades (ou null se a lista for vazia)
+        return result.length > 0 ? result : null;
+    } catch (error) {
+        console.error("Erro ao buscar atividades por instituição:", error);
+        return false;
     }
 }
 
@@ -121,5 +112,6 @@ module.exports = {
     updateAtividade,
     deleteAtividade,
     selectAllAtividades,
-    selectByIdAtividade
+    selectByIdAtividade,
+    selectByIdInstituicaoAtividade
 }

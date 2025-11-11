@@ -83,7 +83,7 @@ async function atualizarMatriculaAula(dadosAtualizados, id, contentType){
         
         const result = await matriculaAulaDAO.updateMatriculaAula(parseInt(id), dadosAtualizados)
         
-        return result ? MENSAGE.SUCCESS_UPDATED_ITEM : MENSAGE.ERROR_INTERNAL_SERVER_MODEL
+        return result ? { ...MENSAGE.SUCCESS_UPDATED_ITEM, matricula: result} : MENSAGE.ERROR_INTERNAL_SERVER_MODEL
 
     } catch (error) {
         console.error(error)

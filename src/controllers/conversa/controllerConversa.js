@@ -36,10 +36,17 @@ async function getSearchConversa(request, response) {
     response.status(result.status_code)
     response.json(result)
 }
+async function getSearchConversaByPessoa(request, response) {
+    const id = request.params.id
+    const result = await servicesConversa.buscarConversaPorPessoa(id)    
+    response.status(result.status_code)
+    response.json(result)
+}
 module.exports = {
     postConversa,
     putConversa,
     deleteConversa,
     getSearchAllConversas,
-    getSearchConversa
+    getSearchConversa,
+    getSearchConversaByPessoa
 }

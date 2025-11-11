@@ -6,7 +6,7 @@ async function insertPublicacaoInstituicao(dados) {
         return await prismaMySQL.tbl_publicacao_instituicao.create({
             data: {
                 descricao: dados.descricao || null,
-                foto_perfil: dados.foto_perfil || null,
+                imagem: dados.imagem || null,
                 id_instituicao: dados.id_instituicao
             }
         })
@@ -22,7 +22,7 @@ async function updatePublicacaoInstituicao(dados) {
             where: { id: dados.id },
             data: {
                 descricao: dados.descricao || null,
-                foto_perfil: dados.foto_perfil || null,
+                imagem: dados.imagem || null,
                 id_instituicao: dados.id_instituicao
             }
         })

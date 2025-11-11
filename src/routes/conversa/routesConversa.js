@@ -8,6 +8,7 @@ router.post('', controllerConversa.postConversa)
 router.put('/:id', controllerConversa.putConversa)
 router.delete('/:id', controllerConversa.deleteConversa)
 router.get('', controllerConversa.getSearchAllConversas)
+router.get('/pessoa/:id', controllerConversa.getSearchConversaByPessoa)
 router.get('/:id', controllerConversa.getSearchConversa)
 
 // Mensagens relacionadas a conversas (controller separado)

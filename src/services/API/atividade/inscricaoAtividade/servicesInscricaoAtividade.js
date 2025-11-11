@@ -11,7 +11,7 @@ async function inserirInscricaoAtividade(dadosInscricao, contentType){
             return MENSAGE.ERROR_CONTENT_TYPE
         }
         if (
-            TableCORRECTION.CHECK_tbl_inscricao_atividade(dadosInscricao)
+            !(TableCORRECTION.CHECK_tbl_inscricao_atividade(dadosInscricao))
         ) {
             return MENSAGE.ERROR_REQUIRED_FIELDS
         }
@@ -23,11 +23,13 @@ async function inserirInscricaoAtividade(dadosInscricao, contentType){
         
         const resultInscricao = await inscricaoAtividadeDAO.insertInscricaoAtividade(dadosInscricao)
 
-        if (resultInscricao) {
+        if (resultInscricao && !resultInscricao.error) {
             return {
                 ...MENSAGE.SUCCESS_CEATED_ITEM,
                 inscricao: resultInscricao
             }
+        } else if (resultInscricao.error === 'DUPLICATE_ENTRY') {
+            return MENSAGE.ERROR_ENROLLMENT_EXISTS
         } else {
             return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
         }
@@ -86,14 +88,13 @@ async function atualizarInscricaoAtividade(novosDados, id, contentType){
 
         if (resultSearch.status_code === MENSAGE.SUCCESS_REQUEST.status_code) {
             
-            // Validações de dados de entrada
-            if (novosDados.id_status && !CORRECTION.CHECK_ID(novosDados.id_status)) return MENSAGE.ERROR_INVALID_PARAM
-            if (novosDados.id_responsavel !== undefined && novosDados.id_responsavel !== null && !CORRECTION.CHECK_ID(novosDados.id_responsavel)) return MENSAGE.ERROR_INVALID_PARAM
-            if (novosDados.observacao !== undefined && novosDados.observacao !== null && !CORRECTION.CHECK_VARCHAR(novosDados.observacao, 300)) return MENSAGE.ERROR_INVALID_PARAM
+            if(novosDados.observacao){
+                if (!CORRECTION.CHECK_VARCHAR(novosDados.observacao, 300)) return MENSAGE.ERROR_REQUIRED_FIELDS
+            }
             
             const result = await inscricaoAtividadeDAO.updateInscricao(parseInt(id), novosDados)
             
-            return result ? MENSAGE.SUCCESS_UPDATED_ITEM : MENSAGE.ERROR_INTERNAL_SERVER_MODEL
+            return result ? {...MENSAGE.SUCCESS_UPDATED_ITEM, inscricao: result} : MENSAGE.ERROR_INTERNAL_SERVER_MODEL
 
         } else if (resultSearch.status_code === MENSAGE.ERROR_NOT_FOUND.status_code) {
             return MENSAGE.ERROR_NOT_FOUND

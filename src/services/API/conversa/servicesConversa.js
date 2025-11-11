@@ -112,10 +112,25 @@ async function buscarConversa(id) {
     }
 }
 
+async function buscarConversaPorPessoa(id) {
+    try {
+        if (!CORRECTION.CHECK_ID(id)) return MENSAGE.ERROR_REQUIRED_FIELDS
+        const result = await conversaDAO.selectConversasPorPessoa(parseInt(id))
+        //console.log(result);
+        
+        if (!result) return MENSAGE.ERROR_NOT_FOUND
+        return { ...MENSAGE.SUCCESS_REQUEST, conversa: result }
+    } catch (error) {
+        console.error(error)
+        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
+    }
+}
+
 module.exports = {
     inserirConversa,
     atualizarConversa,
     excluirConversa,
     listarTodasConversas,
-    buscarConversa
+    buscarConversa,
+    buscarConversaPorPessoa
 }
