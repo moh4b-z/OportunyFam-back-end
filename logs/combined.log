@@ -166,3 +166,45 @@
 {"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-08T19:30:11.931Z"}
 {"level":"info","message":{"duration":162,"method":"PUT","path":"/6","statusCode":200},"timestamp":"2025-11-08T19:30:17.368Z"}
 {"level":"info","message":{"duration":59,"method":"PUT","path":"/6","statusCode":200},"timestamp":"2025-11-08T19:30:48.300Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-08T19:33:41.440Z"}
+{"level":"info","message":{"duration":94,"method":"GET","path":"/alunos/","statusCode":200},"timestamp":"2025-11-08T19:33:45.640Z"}
+{"level":"info","message":{"duration":15,"method":"GET","path":"/alunos/","statusCode":404},"timestamp":"2025-11-08T19:35:19.274Z"}
+{"level":"info","message":{"duration":11,"method":"GET","path":"/alunos/","statusCode":200},"timestamp":"2025-11-08T19:35:33.170Z"}
+{"level":"info","message":{"duration":10,"method":"GET","path":"/alunos/","statusCode":200},"timestamp":"2025-11-08T19:35:53.182Z"}
+{"level":"info","message":{"duration":15,"method":"GET","path":"/alunos/","statusCode":200},"timestamp":"2025-11-08T19:36:29.568Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-09T00:44:50.743Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-11T00:30:50.709Z"}
+{"level":"info","message":{"duration":19,"method":"GET","path":"/aulas","statusCode":400},"timestamp":"2025-11-11T01:31:43.909Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-11T01:34:25.439Z"}
+{"level":"info","message":{"duration":46,"method":"GET","path":"/aulas","statusCode":400},"timestamp":"2025-11-11T01:34:31.816Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-11T01:38:09.342Z"}
+{"level":"info","message":{"duration":177,"method":"GET","path":"/aulas","statusCode":400},"timestamp":"2025-11-11T01:38:13.566Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-11T01:39:33.286Z"}
+{"level":"info","message":{"duration":36,"method":"GET","path":"/aulas","statusCode":400},"timestamp":"2025-11-11T01:39:38.449Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-11T01:41:32.300Z"}
+{"level":"info","message":{"duration":57,"method":"GET","path":"/aulas","statusCode":400},"timestamp":"2025-11-11T01:41:37.053Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-11T01:42:35.911Z"}
+{"level":"info","message":{"duration":269,"method":"GET","path":"/aulas","statusCode":200},"timestamp":"2025-11-11T01:42:39.593Z"}
+{"level":"info","message":{"duration":21,"method":"GET","path":"/aulas/10","statusCode":200},"timestamp":"2025-11-11T01:43:28.475Z"}
+{"level":"info","message":{"duration":48,"method":"GET","path":"/aulas/instituicao/1","statusCode":200},"timestamp":"2025-11-11T01:43:50.791Z"}
+{"level":"info","message":{"duration":160,"method":"GET","path":"/","statusCode":200},"timestamp":"2025-11-11T01:45:26.287Z"}
+{"level":"info","message":{"duration":66,"method":"GET","path":"/","statusCode":200},"timestamp":"2025-11-11T01:49:22.786Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-11T01:54:03.464Z"}
+{"level":"info","message":{"duration":2566,"method":"GET","path":"/","statusCode":500},"timestamp":"2025-11-11T01:54:43.458Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-11T01:59:23.210Z"}
+{"level":"info","message":{"duration":3055,"method":"GET","path":"/","statusCode":200},"timestamp":"2025-11-11T01:59:32.229Z"}
+{"level":"info","message":{"duration":54,"method":"GET","path":"/1","statusCode":200},"timestamp":"2025-11-11T02:04:31.159Z"}
+{"level":"info","message":{"duration":46,"method":"GET","path":"/instituicao/1","statusCode":200},"timestamp":"2025-11-11T02:04:51.701Z"}
+{"level":"info","message":{"duration":78,"method":"GET","path":"/aulas","statusCode":200},"timestamp":"2025-11-11T02:13:05.850Z"}
+{"level":"info","message":{"duration":19,"method":"GET","path":"/aulas/instituicao/1","statusCode":200},"timestamp":"2025-11-11T02:13:30.677Z"}
+{"level":"info","message":{"duration":7,"method":"GET","path":"/aulas/10","statusCode":200},"timestamp":"2025-11-11T02:13:50.596Z"}
+{"level":"info","message":{"duration":95,"method":"POST","path":"/","statusCode":201},"timestamp":"2025-11-11T02:19:57.589Z"}
+{"level":"info","message":{"duration":24,"method":"PUT","path":"/1","statusCode":200},"timestamp":"2025-11-11T02:21:26.706Z"}
+{"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-11T02:22:37.237Z"}
+{"level":"info","message":{"duration":52,"method":"PUT","path":"/1","statusCode":200},"timestamp":"2025-11-11T02:22:43.658Z"}
+{"level":"info","message":{"duration":10,"method":"GET","path":"/v1/oportunyfam/matriculas","statusCode":404},"timestamp":"2025-11-11T02:23:31.622Z"}
+{"level":"info","message":{"duration":86,"method":"GET","path":"/7","statusCode":200},"timestamp":"2025-11-11T02:28:06.482Z"}
+{"level":"info","message":{"duration":76,"method":"GET","path":"/aulas/1","statusCode":200},"timestamp":"2025-11-11T02:30:33.574Z"}
+{"level":"info","message":{"duration":10,"method":"GET","path":"/aulas/5","statusCode":200},"timestamp":"2025-11-11T02:30:40.545Z"}
+{"level":"info","message":{"duration":44,"method":"GET","path":"/aulas/instituicao/1","statusCode":200},"timestamp":"2025-11-11T02:31:07.252Z"}
+{"level":"info","message":{"duration":10,"method":"GET","path":"/aulas","statusCode":200},"timestamp":"2025-11-11T02:32:01.618Z"}

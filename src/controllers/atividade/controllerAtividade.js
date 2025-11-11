@@ -71,6 +71,7 @@ const putAula = async (request, response) => {
 }
 
 const getSearchAula = async (request, response) => {
+    
     let id = request.params.id
     let result = await servicesAula.buscarAula(id)
     response.status(result.status_code)

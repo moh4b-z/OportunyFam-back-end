@@ -53,19 +53,83 @@ JOIN tbl_status_inscricao s ON s.id = t.id_status;
 
 CREATE OR REPLACE VIEW vw_aulas_detalhe AS
 SELECT
-  aa.id AS aula_id,
-  aa.id_atividade,
-  aa.data_aula,
-  aa.hora_inicio,
-  aa.hora_fim,
-  aa.vagas_total,
-  aa.vagas_disponiveis,
-  CASE
-    WHEN aa.data_aula < CURDATE() THEN 'Encerrada'
-    WHEN aa.data_aula = CURDATE() THEN 'Hoje'
-    ELSE 'Futura'
-  END AS status_aula
-FROM tbl_aulas_atividade aa;
+  -- Colunas da tabela derivada (status calculado)
+  a_com_status.*,
+  
+  -- Lista de crianças que irão participar (aulas futuras ou de hoje)
+  (
+    SELECT COALESCE(JSON_ARRAYAGG(
+      JSON_OBJECT(
+        'crianca_id', c.id,
+        'pessoa_id', p.id,
+        'nome', p.nome,
+        'foto_perfil', p.foto_perfil
+      )
+    ), JSON_ARRAY())
+    FROM tbl_matricula_aula ma
+    JOIN tbl_inscricao_atividade ia ON ia.id = ma.id_inscricao_atividade
+    JOIN tbl_crianca c ON c.id = ia.id_crianca
+    JOIN tbl_pessoa p ON p.id = c.id_pessoa
+    WHERE ma.id_aula_atividade = a_com_status.aula_id
+      -- Só lista se a aula ainda não foi encerrada
+      AND a_com_status.status_aula IN ('Futura', 'Hoje')
+  ) AS iram_participar,
+  
+  -- Lista de crianças que foram (presentes)
+  (
+    SELECT COALESCE(JSON_ARRAYAGG(
+      JSON_OBJECT(
+        'crianca_id', c.id,
+        'pessoa_id', p.id,
+        'nome', p.nome,
+        'foto_perfil', p.foto_perfil
+      )
+    ), JSON_ARRAY())
+    FROM tbl_matricula_aula ma
+    JOIN tbl_inscricao_atividade ia ON ia.id = ma.id_inscricao_atividade
+    JOIN tbl_crianca c ON c.id = ia.id_crianca
+    JOIN tbl_pessoa p ON p.id = c.id_pessoa
+    WHERE ma.id_aula_atividade = a_com_status.aula_id
+      -- Só lista quem está marcado como presente
+      AND ma.presente = TRUE
+  ) AS foram,
+  
+  -- Lista de crianças ausentes (aula encerrada E presente = false)
+  (
+    SELECT COALESCE(JSON_ARRAYAGG(
+      JSON_OBJECT(
+        'crianca_id', c.id,
+        'pessoa_id', p.id,
+        'nome', p.nome,
+        'foto_perfil', p.foto_perfil
+      )
+    ), JSON_ARRAY())
+    FROM tbl_matricula_aula ma
+    JOIN tbl_inscricao_atividade ia ON ia.id = ma.id_inscricao_atividade
+    JOIN tbl_crianca c ON c.id = ia.id_crianca
+    JOIN tbl_pessoa p ON p.id = c.id_pessoa
+    WHERE ma.id_aula_atividade = a_com_status.aula_id
+      -- Só lista ausentes se a aula já foi 'Encerrada'
+      AND ma.presente = FALSE
+      AND a_com_status.status_aula = 'Encerrada'
+  ) AS ausentes
+FROM (
+  -- Tabela derivada para calcular o status_aula primeiro
+  SELECT
+    aa.id AS aula_id,
+    aa.id_atividade,
+    aa.data_aula,
+    aa.hora_inicio,
+    aa.hora_fim,
+    aa.vagas_total,
+    aa.vagas_disponiveis,
+    CASE
+      WHEN aa.data_aula < CURDATE() THEN 'Encerrada'
+      WHEN aa.data_aula = CURDATE() THEN 'Hoje'
+      ELSE 'Futura'
+    END AS status_aula
+  FROM tbl_aulas_atividade aa
+) AS a_com_status;
 
 
 CREATE OR REPLACE VIEW vw_atividade_detalhe AS
@@ -94,7 +158,10 @@ SELECT
           'hora_fim', ad.hora_fim,
           'vagas_total', ad.vagas_total,
           'vagas_disponiveis', ad.vagas_disponiveis,
-          'status_aula', ad.status_aula
+          'status_aula', ad.status_aula,
+          'iram_participar', ad.iram_participar,
+          'foram', ad.foram,
+          'ausentes', ad.ausentes
         )
       ), JSON_ARRAY()
     )

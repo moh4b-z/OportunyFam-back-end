@@ -2,6 +2,43 @@ const express = require('express')
 const router = express.Router()
 const controllerAtividade = require('../../controllers/atividade/controllerAtividade')
 
+
+
+router.post(
+    '/aulas', 
+    controllerAtividade.postAula
+) 
+
+router.post(
+    '/aulas/lote',
+    controllerAtividade.postAulasLote
+)
+
+router.put(
+    '/aulas/:id', 
+    controllerAtividade.putAula
+)
+
+router.delete(
+    '/aulas/:id', 
+    controllerAtividade.deleteAula
+)
+
+router.get(
+    '/aulas', 
+    controllerAtividade.getSearchAllAulas
+)
+
+router.get(
+    '/aulas/:id', 
+    controllerAtividade.getSearchAula
+)
+
+router.get(
+    '/aulas/instituicao/:idInstituicao', 
+    controllerAtividade.getSearchAulasByInstituicao
+)
+
 router.post(
     '', 
     controllerAtividade.postAtividade
@@ -32,40 +69,6 @@ router.get(
 )
 
 
-router.post(
-    '/aulas', 
-    controllerAtividade.postAula
-) 
-
-router.post(
-    '/aulas/lote',
-    controllerAtividade.postAulasLote
-)
-
-router.put(
-    '/aulas/:id', 
-    controllerAtividade.putAula
-)
-
-router.delete(
-    '/aulas/:id', 
-    controllerAtividade.deleteAula
-)
-
-router.get(
-    '/aulas/:id', 
-    controllerAtividade.getSearchAula
-)
-
-router.get(
-    '/aulas', 
-    controllerAtividade.getSearchAllAulas
-)
-
-router.get(
-    '/aulas/instituicao/:idInstituicao', 
-    controllerAtividade.getSearchAulasByInstituicao
-)
 
 
 module.exports = router
