@@ -1,4 +1,4 @@
-const { PrismaClient } = require('@prisma/client')
+const { PrismaClient } = require('../../../../../prisma/generated/client')
 const prismaMySQL = new PrismaClient()
 
 async function insertCategoria(categoria){
