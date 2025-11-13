@@ -6,7 +6,7 @@ generator client {
 
 datasource mysql {
   provider = "mysql"
-  url      = env("DATABASE_URL_MYSQL")
+  url      = env("mysql://mohammad:M558899m@oportunyfam.mysql.database.azure.com:3306/oportunyfam?sslaccept=strict")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
