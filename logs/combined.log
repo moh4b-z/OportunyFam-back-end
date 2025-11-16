@@ -238,3 +238,13 @@
 {"level":"info","message":"Servidor rodando na porta 8080","timestamp":"2025-11-11T18:42:30.187Z"}
 {"level":"info","message":{"duration":2449,"method":"PUT","path":"/1","statusCode":200},"timestamp":"2025-11-11T18:42:37.759Z"}
 {"level":"info","message":{"duration":780,"method":"POST","path":"/","statusCode":201},"timestamp":"2025-11-11T18:43:10.816Z"}
+{"level":"info","message":"Master PID 3800 iniciando. Forking 4 workers","timestamp":"2025-11-16T13:57:42.074Z"}
+{"level":"info","message":"Worker PID 8008 servindo na porta 8080","timestamp":"2025-11-16T13:57:44.550Z"}
+{"level":"info","message":"Worker PID 5496 servindo na porta 8080","timestamp":"2025-11-16T13:57:44.581Z"}
+{"level":"info","message":"Worker PID 6088 servindo na porta 8080","timestamp":"2025-11-16T13:57:44.621Z"}
+{"level":"info","message":"Worker PID 3776 servindo na porta 8080","timestamp":"2025-11-16T13:57:44.683Z"}
+{"level":"info","message":"Master PID 4900 iniciando. Forking 4 workers","timestamp":"2025-11-16T14:10:48.942Z"}
+{"level":"info","message":"Worker PID 1244 servindo na porta 8080","timestamp":"2025-11-16T14:10:54.821Z"}
+{"level":"info","message":"Worker PID 1044 servindo na porta 8080","timestamp":"2025-11-16T14:10:54.937Z"}
+{"level":"info","message":"Worker PID 10236 servindo na porta 8080","timestamp":"2025-11-16T14:10:54.923Z"}
+{"level":"info","message":"Worker PID 2376 servindo na porta 8080","timestamp":"2025-11-16T14:10:54.835Z"}

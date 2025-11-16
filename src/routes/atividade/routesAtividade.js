@@ -1,6 +1,9 @@
 const express = require('express')
 const router = express.Router()
 const controllerAtividade = require('../../controllers/atividade/controllerAtividade')
+const { cacheMiddleware } = require('../../middleware/cache')
+
+const CACHE_TTL_ATIVIDADES = parseInt(process.env.CACHE_TTL_ATIVIDADES, 10) || 15
 
 
 
@@ -26,16 +29,19 @@ router.delete(
 
 router.get(
     '/aulas', 
+    cacheMiddleware(CACHE_TTL_ATIVIDADES),
     controllerAtividade.getSearchAllAulas
 )
 
 router.get(
     '/aulas/:id', 
+    cacheMiddleware(CACHE_TTL_ATIVIDADES),
     controllerAtividade.getSearchAula
 )
 
 router.get(
     '/aulas/instituicao/:idInstituicao', 
+    cacheMiddleware(CACHE_TTL_ATIVIDADES),
     controllerAtividade.getSearchAulasByInstituicao
 )
 
@@ -56,15 +62,18 @@ router.delete(
 
 router.get(
     '', 
+    cacheMiddleware(CACHE_TTL_ATIVIDADES),
     controllerAtividade.getSearchAllAtividades
 )
 
 router.get(
     '/:id', 
+    cacheMiddleware(CACHE_TTL_ATIVIDADES),
     controllerAtividade.getSearchAtividade
 )
 router.get(
     '/instituicao/:idInstituicao', 
+    cacheMiddleware(CACHE_TTL_ATIVIDADES),
     controllerAtividade.getSearchAtividadesByInstituicao
 )
 

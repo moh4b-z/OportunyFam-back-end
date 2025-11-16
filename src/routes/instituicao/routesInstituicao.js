@@ -1,6 +1,9 @@
 const express = require('express')
 const router = express.Router()
 const controllerInstituicao = require('../../controllers/instituicao/controllerInstituicao')
+const { cacheMiddleware } = require('../../middleware/cache')
+
+const CACHE_TTL_INSTITUICOES = parseInt(process.env.CACHE_TTL_INSTITUICOES, 10) || 30
 
 router.post(
     '/',
@@ -19,27 +22,32 @@ router.put(
 
 router.get(
     '',
+    cacheMiddleware(CACHE_TTL_INSTITUICOES),
     controllerInstituicao.getSearchAllInstituicao
 )
 
 
 router.get(
     '/osm/',
+    cacheMiddleware(CACHE_TTL_INSTITUICOES),
     controllerInstituicao.getInstituicoesByAddress
 )
 
 router.get(
     '/alunos/',
+    cacheMiddleware(CACHE_TTL_INSTITUICOES),
     controllerInstituicao.getAlunosInstituicao
 )
 
 router.get(
     '/', 
+    cacheMiddleware(CACHE_TTL_INSTITUICOES),
     controllerInstituicao.getSearchInstituicoesByName
 )
 
 router.get(
     '/:id',
+    cacheMiddleware(CACHE_TTL_INSTITUICOES),
     controllerInstituicao.getSearchInstituicao
 )
 
