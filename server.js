@@ -10,6 +10,8 @@ const compression = require('compression')
 
 // cluster-based server: aumenta throughput usando todos os núcleos
 const numCPUs = process.env.WEB_CONCURRENCY ? parseInt(process.env.WEB_CONCURRENCY, 10) : os.cpus().length
+const LOG_LEVEL = process.env.LOG_LEVEL || 'info' // 'error', 'warn', 'info'
+const DISABLE_REQUEST_LOGGING = process.env.DISABLE_REQUEST_LOGGING === '1' // desabilitar logs de request em prod
 
 if (cluster.isMaster) {
   logger.info(`Master PID ${process.pid} iniciando. Forking ${numCPUs} workers`)
@@ -33,23 +35,25 @@ if (cluster.isMaster) {
   app.use(limiter) // Rate limiting (pode ser no-op em dev via env)
   app.use(bodyParser.json({ limit: '1mb' })) // Limita tamanho do payload
 
-  // Health check rápido e simples para benchmarks
+  // Health check rápido e simples para benchmarks (SEM logs)
   app.get('/health', (req, res) => res.status(200).json({ status: 'ok', pid: process.pid }))
 
-  // Logging de requisições
-  app.use((req, res, next) => {
-    const start = Date.now()
-    res.on('finish', () => {
-      logger.info({
-        method: req.method,
-        path: req.path,
-        statusCode: res.statusCode,
-        duration: Date.now() - start,
-        pid: process.pid
+  // Logging de requisições com opção de desabilitar em produção
+  if (!DISABLE_REQUEST_LOGGING) {
+    app.use((req, res, next) => {
+      const start = Date.now()
+      res.on('finish', () => {
+        logger.info({
+          method: req.method,
+          path: req.path,
+          statusCode: res.statusCode,
+          duration: Date.now() - start,
+          pid: process.pid
+        })
       })
+      next()
     })
-    next()
-  })
+  }
 
   // Rotas
   const MainRoutes = require('./src/routes/MainRoutes')
@@ -69,11 +73,26 @@ if (cluster.isMaster) {
 
   const PORT = process.env.PORT || 8080
   const server = app.listen(PORT, function () {
-    logger.info(`Worker PID ${process.pid} servindo na porta ${PORT}`)
+    if (!DISABLE_REQUEST_LOGGING) {
+      logger.info(`Worker PID ${process.pid} servindo na porta ${PORT}`)
+    }
   })
 
   // Ajustes de keep-alive/headers para melhorar throughput em benchmarks
   // valores seguros e ajustáveis via env
   server.keepAliveTimeout = parseInt(process.env.KEEP_ALIVE_TIMEOUT, 10) || 65000
   server.headersTimeout = parseInt(process.env.HEADERS_TIMEOUT, 10) || (server.keepAliveTimeout + 1000)
+  
+  // Monitoramento opcional de memória (desabilitar em prod via DISABLE_MEMORY_LOG=1)
+  if (process.env.ENABLE_MEMORY_MONITOR === '1') {
+    setInterval(() => {
+      const mem = process.memoryUsage()
+      logger.info({
+        event: 'memory',
+        rss: Math.round(mem.rss / 1024 / 1024) + 'MB',
+        heapUsed: Math.round(mem.heapUsed / 1024 / 1024) + 'MB',
+        pid: process.pid
+      })
+    }, 10000)
+  }
 }

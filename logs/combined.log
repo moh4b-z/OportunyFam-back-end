@@ -248,3 +248,4 @@
 {"level":"info","message":"Worker PID 1044 servindo na porta 8080","timestamp":"2025-11-16T14:10:54.937Z"}
 {"level":"info","message":"Worker PID 10236 servindo na porta 8080","timestamp":"2025-11-16T14:10:54.923Z"}
 {"level":"info","message":"Worker PID 2376 servindo na porta 8080","timestamp":"2025-11-16T14:10:54.835Z"}
+{"level":"info","message":"Master PID 42776 iniciando. Forking 4 workers","timestamp":"2025-11-17T01:38:06.435Z"}
