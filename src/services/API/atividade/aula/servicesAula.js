@@ -88,16 +88,29 @@ async function buscarAula(id){
 async function listarTodasAulas(){
     try {
         let result = await aulaDAO.selectAllAulas()
-        const aulasFormatadas = result.map(aula => ({
-            ...aula,
-            hora_inicio: aula.hora_inicio ? aula.hora_inicio.split('.')[0] : null, 
-            hora_fim: aula.hora_fim ? aula.hora_fim.split('.')[0] : null
-        }))
-        if (aulasFormatadas) {
-            return result.length > 0 ? { ...MENSAGE.SUCCESS_REQUEST, aulas: aulasFormatadas } : MENSAGE.ERROR_NOT_FOUND
-        } else {
-            return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
-        }
+
+        const aulasFormatadas = result.map(aula => {
+            // 1. Garante que temos um objeto Date válido
+            const dataInicioISO = new Date(aula.hora_inicio).toISOString();
+            const dataFimISO = new Date(aula.hora_fim).toISOString();
+
+            return {
+                ...aula,
+                // 2. Pega a parte DA DATA (antes do T) -> YYYY-MM-DD
+                data_aula: dataInicioISO.split('T')[0], 
+
+                // 3. Pega a parte DA HORA (depois do T e antes do ponto) -> HH:MM:SS
+                hora_inicio: dataInicioISO.split('T')[1].split('.')[0],
+                hora_fim: dataFimISO.split('T')[1].split('.')[0]
+            }
+        })
+
+        // OBS: .map sempre retorna um array, então "if (aulasFormatadas)" é sempre true.
+        // O correto é checar se o result original tem dados.
+        return result.length > 0 
+            ? { ...MENSAGE.SUCCESS_REQUEST, aulas: aulasFormatadas } 
+            : MENSAGE.ERROR_NOT_FOUND
+
     } catch (error) {
         console.error(error)
         return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
@@ -108,16 +121,24 @@ async function listarAulasPorInstituicao(idInstituicao){
     try {
         if (CORRECTION.CHECK_ID(idInstituicao)) {
             let result = await aulaDAO.selectAulasByInstituicaoId(parseInt(idInstituicao))
-            const aulasFormatadas = result.map(aula => ({
-                ...aula,
-                hora_inicio: aula.hora_inicio ? aula.hora_inicio.split('.')[0] : null, 
-                hora_fim: aula.hora_fim ? aula.hora_fim.split('.')[0] : null
-            }))
-            if (aulasFormatadas) {
-                return result.length > 0 ? { ...MENSAGE.SUCCESS_REQUEST, aulas: aulasFormatadas } : MENSAGE.ERROR_NOT_FOUND
-            } else {
-                return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
-            }
+
+            const aulasFormatadas = result.map(aula => {
+                // Mesma lógica de formatação segura
+                const dataInicioISO = new Date(aula.hora_inicio).toISOString();
+                const dataFimISO = new Date(aula.hora_fim).toISOString();
+
+                return {
+                    ...aula,
+                    data_aula: dataInicioISO.split('T')[0],
+                    hora_inicio: dataInicioISO.split('T')[1].split('.')[0], 
+                    hora_fim: dataFimISO.split('T')[1].split('.')[0]
+                }
+            })
+
+            return result.length > 0 
+                ? { ...MENSAGE.SUCCESS_REQUEST, aulas: aulasFormatadas } 
+                : MENSAGE.ERROR_NOT_FOUND
+
         } else {
             return MENSAGE.ERROR_REQUIRED_FIELDS
         }
