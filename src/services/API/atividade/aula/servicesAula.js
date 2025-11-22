@@ -85,66 +85,74 @@ async function buscarAula(id){
     }
 }
 
-async function listarTodasAulas(){
+
+async function listarTodasAulas() {
     try {
-        let result = await aulaDAO.selectAllAulas()
+        let result = await aulaDAO.selectAllAulas();
+
+        // Verificação antecipada: se não tem resultado, retorna erro ou vazio logo
+        if (!result || result.length === 0) {
+            return MENSAGE.ERROR_NOT_FOUND;
+        }
 
         const aulasFormatadas = result.map(aula => {
-            // 1. Garante que temos um objeto Date válido
-            const dataInicioISO = new Date(aula.hora_inicio).toISOString();
-            const dataFimISO = new Date(aula.hora_fim).toISOString();
+            // Convertendo para objeto Date
+            const dataInicio = new Date(aula.hora_inicio);
+            const dataFim = new Date(aula.hora_fim);
+
+            // Configurações para garantir o fuso de SP/Brasil e formato correto
+            const timeZone = 'America/Sao_Paulo';
 
             return {
                 ...aula,
-                // 2. Pega a parte DA DATA (antes do T) -> YYYY-MM-DD
-                data_aula: dataInicioISO.split('T')[0], 
+                // Formata data para DD/MM/YYYY
+                data_aula: dataInicio.toLocaleDateString('pt-BR', { timeZone }),
+                
+                // Formata hora para HH:MM:SS (sem AM/PM)
+                hora_inicio: dataInicio.toLocaleTimeString('pt-BR', { hour12: false, timeZone }),
+                hora_fim: dataFim.toLocaleTimeString('pt-BR', { hour12: false, timeZone })
+            };
+        });
 
-                // 3. Pega a parte DA HORA (depois do T e antes do ponto) -> HH:MM:SS
-                hora_inicio: dataInicioISO.split('T')[1].split('.')[0],
-                hora_fim: dataFimISO.split('T')[1].split('.')[0]
-            }
-        })
-
-        // OBS: .map sempre retorna um array, então "if (aulasFormatadas)" é sempre true.
-        // O correto é checar se o result original tem dados.
-        return result.length > 0 
-            ? { ...MENSAGE.SUCCESS_REQUEST, aulas: aulasFormatadas } 
-            : MENSAGE.ERROR_NOT_FOUND
+        return { ...MENSAGE.SUCCESS_REQUEST, aulas: aulasFormatadas };
 
     } catch (error) {
-        console.error(error)
-        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
+        console.error(error);
+        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES;
     }
 }
 
-async function listarAulasPorInstituicao(idInstituicao){
+async function listarAulasPorInstituicao(idInstituicao) {
     try {
-        if (CORRECTION.CHECK_ID(idInstituicao)) {
-            let result = await aulaDAO.selectAulasByInstituicaoId(parseInt(idInstituicao))
-
-            const aulasFormatadas = result.map(aula => {
-                // Mesma lógica de formatação segura
-                const dataInicioISO = new Date(aula.hora_inicio).toISOString();
-                const dataFimISO = new Date(aula.hora_fim).toISOString();
-
-                return {
-                    ...aula,
-                    data_aula: dataInicioISO.split('T')[0],
-                    hora_inicio: dataInicioISO.split('T')[1].split('.')[0], 
-                    hora_fim: dataFimISO.split('T')[1].split('.')[0]
-                }
-            })
-
-            return result.length > 0 
-                ? { ...MENSAGE.SUCCESS_REQUEST, aulas: aulasFormatadas } 
-                : MENSAGE.ERROR_NOT_FOUND
-
-        } else {
-            return MENSAGE.ERROR_REQUIRED_FIELDS
+        // Verifica se o ID é válido antes de tudo
+        if (!CORRECTION.CHECK_ID(idInstituicao)) {
+            return MENSAGE.ERROR_REQUIRED_FIELDS;
         }
+
+        let result = await aulaDAO.selectAulasByInstituicaoId(parseInt(idInstituicao));
+
+        if (!result || result.length === 0) {
+            return MENSAGE.ERROR_NOT_FOUND;
+        }
+
+        const aulasFormatadas = result.map(aula => {
+            const dataInicio = new Date(aula.hora_inicio);
+            const dataFim = new Date(aula.hora_fim);
+            const timeZone = 'America/Sao_Paulo';
+
+            return {
+                ...aula,
+                data_aula: dataInicio.toLocaleDateString('pt-BR', { timeZone }),
+                hora_inicio: dataInicio.toLocaleTimeString('pt-BR', { hour12: false, timeZone }),
+                hora_fim: dataFim.toLocaleTimeString('pt-BR', { hour12: false, timeZone })
+            };
+        });
+
+        return { ...MENSAGE.SUCCESS_REQUEST, aulas: aulasFormatadas };
+
     } catch (error) {
-        console.error(error)
-        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
+        console.error(error);
+        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES;
     }
 }
 
