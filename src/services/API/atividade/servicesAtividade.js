@@ -117,7 +117,6 @@ async function listarTodasAtividades(){
                     hora_fim: aula.hora_fim ? aula.hora_fim.split('.')[0] : null
                 })) : []
             }))
-
             return atividadesFormatadas.length > 0 ? { ...MENSAGE.SUCCESS_REQUEST, atividades: atividadesFormatadas } : MENSAGE.ERROR_NOT_FOUND
         } else {
             return MENSAGE.ERROR_INTERNAL_SERVER_MODEL

@@ -191,22 +191,46 @@ SELECT
   s.nome AS sexo,
   tn.nivel AS tipo_nivel,
   (
+    -- 1. Lista de Crianças Dependentes
     SELECT COALESCE(JSON_ARRAYAGG(
-        JSON_OBJECT('id_crianca', c.id, 'nome', p_c.nome)
-      ), JSON_ARRAY())
+      JSON_OBJECT('id_crianca', c.id, 'nome', p_c.nome)
+    ), JSON_ARRAY())
     FROM tbl_responsavel r
     JOIN tbl_crianca c ON c.id = r.id_crianca
     JOIN tbl_pessoa p_c ON p_c.id = c.id_pessoa
     WHERE r.id_usuario = u.id
   ) AS criancas_dependentes,
   (
+    -- 2. Lista de Locais Salvos (Adição Solicitada)
     SELECT COALESCE(JSON_ARRAYAGG(
-        JSON_OBJECT(
-          'id_conversa', cd.id_conversa,
-          'outro_participante', cd.outro_participante,
-          'ultima_mensagem', cd.ultima_mensagem
-        )
-      ), JSON_ARRAY())
+      JSON_OBJECT(
+        'id_usuario_endereco', ue.id,
+        'descricao_relacao', ue.descricao,
+        'id_endereco', e.id,
+        'nome_endereco', e.nome,
+        'cep', e.cep,
+        'logradouro', e.logradouro,
+        'numero', e.numero,
+        'bairro', e.bairro,
+        'cidade', e.cidade,
+        'estado', e.estado,
+        'latitude', e.latitude,
+        'longitude', e.longitude
+      )
+    ), JSON_ARRAY())
+    FROM tbl_usuario_endereco ue
+    JOIN tbl_endereco e ON e.id = ue.id_endereco
+    WHERE ue.id_usuario = u.id
+  ) AS locais_salvos, -- NOVO CAMPO
+  (
+    -- 3. Lista de Conversas (Mantida)
+    SELECT COALESCE(JSON_ARRAYAGG(
+      JSON_OBJECT(
+        'id_conversa', cd.id_conversa,
+        'outro_participante', cd.outro_participante,
+        'ultima_mensagem', cd.ultima_mensagem
+      )
+    ), JSON_ARRAY())
     FROM vw_conversas_detalhe cd
     WHERE cd.id_remetente = p.id
   ) AS conversas

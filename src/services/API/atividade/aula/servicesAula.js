@@ -88,8 +88,13 @@ async function buscarAula(id){
 async function listarTodasAulas(){
     try {
         let result = await aulaDAO.selectAllAulas()
-        if (result) {
-            return result.length > 0 ? { ...MENSAGE.SUCCESS_REQUEST, aulas: result } : MENSAGE.ERROR_NOT_FOUND
+        const aulasFormatadas = result.map(aula => ({
+            ...aula,
+            hora_inicio: aula.hora_inicio ? aula.hora_inicio.split('.')[0] : null, 
+            hora_fim: aula.hora_fim ? aula.hora_fim.split('.')[0] : null
+        }))
+        if (aulasFormatadas) {
+            return result.length > 0 ? { ...MENSAGE.SUCCESS_REQUEST, aulas: aulasFormatadas } : MENSAGE.ERROR_NOT_FOUND
         } else {
             return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
         }
@@ -103,8 +108,13 @@ async function listarAulasPorInstituicao(idInstituicao){
     try {
         if (CORRECTION.CHECK_ID(idInstituicao)) {
             let result = await aulaDAO.selectAulasByInstituicaoId(parseInt(idInstituicao))
-            if (result) {
-                return result.length > 0 ? { ...MENSAGE.SUCCESS_REQUEST, aulas: result } : MENSAGE.ERROR_NOT_FOUND
+            const aulasFormatadas = result.map(aula => ({
+                ...aula,
+                hora_inicio: aula.hora_inicio ? aula.hora_inicio.split('.')[0] : null, 
+                hora_fim: aula.hora_fim ? aula.hora_fim.split('.')[0] : null
+            }))
+            if (aulasFormatadas) {
+                return result.length > 0 ? { ...MENSAGE.SUCCESS_REQUEST, aulas: aulasFormatadas } : MENSAGE.ERROR_NOT_FOUND
             } else {
                 return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
             }
