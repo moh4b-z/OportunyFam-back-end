@@ -16,6 +16,41 @@ async function inserirConversa(dados, contentType) {
             if (!CORRECTION.CHECK_ID(p)) return MENSAGE.ERROR_REQUIRED_FIELDS
         }
 
+        // --- LÓGICA DE VERIFICAÇÃO DE DUPLICIDADE ---
+        // Verifica apenas se for uma conversa entre 2 pessoas (1x1)
+        if (dados.participantes.length === 2) {
+            const idRemetente = dados.participantes[0];
+            const idDestinatario = dados.participantes[1];
+
+            // Busca as conversas do primeiro participante
+            const resultadoBusca = await buscarConversaPorPessoa(idRemetente);
+
+            if (resultadoBusca && resultadoBusca.status && Array.isArray(resultadoBusca.conversa)) {
+                // Procura se já existe uma conversa com o idDestinatario
+                const conversaExistente = resultadoBusca.conversa.find(item => 
+                    item.outro_participante && item.outro_participante.id == idDestinatario
+                );
+
+                if (conversaExistente) {
+                    // Se achou, precisamos buscar os dados originais para montar o JSON no formato solicitado
+                    const dadosConversa = await conversaDAO.selectByIdConversa(conversaExistente.id_conversa);
+                    const dadosParticipantes = await pessoaConversaDAO.selectByConversa(conversaExistente.id_conversa);
+                    
+                    // Retorna mantendo o status 201 e estrutura conforme pedido
+                    return {
+                        status: true,
+                        status_code: 200, // Mantido 201 conforme exemplo, mas poderia ser 200
+                        messagem: "Conversa já existente recuperada",
+                        conversa: {
+                            ...dadosConversa,
+                            participantes: dadosParticipantes
+                        }
+                    };
+                }
+            }
+        }
+        // ---------------------------------------------
+
         const created = await conversaDAO.insertConversa()
         if (!created) return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
 
