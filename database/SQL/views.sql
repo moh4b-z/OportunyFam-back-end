@@ -330,12 +330,33 @@ SELECT
   p.atualizado_em,
   s.nome AS sexo,
   (
+    -- NOVO CAMPO: Lista de Responsáveis
+    SELECT COALESCE(
+      JSON_ARRAYAGG(
+        JSON_OBJECT(
+          'id_responsavel', r.id,
+          'id_usuario', u.id,
+          'id_pessoa', p_u.id,
+          'nome', p_u.nome,
+          'email', p_u.email,
+          'telefone', p_u.telefone,
+          'foto_perfil', p_u.foto_perfil
+        )
+      ), JSON_ARRAY()
+    )
+    FROM tbl_responsavel r
+    JOIN tbl_usuario u ON u.id = r.id_usuario
+    JOIN tbl_pessoa p_u ON p_u.id = u.id_pessoa
+    WHERE r.id_crianca = c.id
+  ) AS responsaveis,
+  (
+    -- Atividades Matriculadas (Status 4 = Aprovada)
     SELECT COALESCE(
       JSON_ARRAYAGG(
         JSON_OBJECT(
           'atividade_id', a.id,
           'titulo', a.titulo,
-          'categoria', c.nome,
+          'categoria', cat.nome,
           'instituicao', p_i.nome,
           'aulas', ad.aulas
         )
@@ -343,7 +364,7 @@ SELECT
     )
     FROM tbl_inscricao_atividade ia
     JOIN tbl_atividade a ON a.id = ia.id_atividade
-    JOIN tbl_categoria c ON c.id = a.id_categoria
+    JOIN tbl_categoria cat ON cat.id = a.id_categoria
     JOIN tbl_instituicao i ON i.id = a.id_instituicao
     JOIN tbl_pessoa p_i ON p_i.id = i.id_pessoa
     JOIN vw_atividade_detalhe ad ON ad.atividade_id = a.id
@@ -351,6 +372,7 @@ SELECT
     AND ia.id_status = 4
   ) AS atividades_matriculadas,
   (
+    -- Conversas da Criança
     SELECT COALESCE(JSON_ARRAYAGG(
         JSON_OBJECT(
           'id_conversa', cd.id_conversa,
