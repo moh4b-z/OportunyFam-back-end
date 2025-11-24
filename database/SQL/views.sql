@@ -193,7 +193,7 @@ SELECT
   (
     -- 1. Lista de Crianças Dependentes
     SELECT COALESCE(JSON_ARRAYAGG(
-      JSON_OBJECT('id_crianca', c.id, 'nome', p_c.nome)
+      JSON_OBJECT('id_responsavel', r.id,'id_crianca', c.id, 'id_pessoa', p_c.id, 'nome', p_c.nome)
     ), JSON_ARRAY())
     FROM tbl_responsavel r
     JOIN tbl_crianca c ON c.id = r.id_crianca
