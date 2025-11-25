@@ -14,7 +14,7 @@ async function inserirAtividade(dadosAtividade, contentType){
 
             if (TableCORRECTION.CHECK_tbl_atividades(dadosAtividade)) {
 
-                dadosAtividade.gratuita = dadosAtividade.gratuita ? 1 : 0
+                dadosAtividade.gratuita = dadosAtividade.gratuita === undefined ? true : dadosAtividade.gratuita
                 
                 let resultAtividade = await atividadeDAO.insertAtividade(dadosAtividade)
                 
