@@ -13,6 +13,8 @@ async function inserirAtividade(dadosAtividade, contentType){
             delete dadosAtividade.aulas 
 
             if (TableCORRECTION.CHECK_tbl_atividades(dadosAtividade)) {
+
+                dadosAtividade.gratuita = dadosAtividade.gratuita ? 1 : 0
                 
                 let resultAtividade = await atividadeDAO.insertAtividade(dadosAtividade)
                 

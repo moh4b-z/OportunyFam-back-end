@@ -103,7 +103,6 @@ function CHECK_tbl_atividades(atividade) {
         CORRECTION.verificarNumero(atividade.faixa_etaria_min) &&
         CORRECTION.verificarNumero(atividade.faixa_etaria_max) &&
         atividade.faixa_etaria_min <= atividade.faixa_etaria_max &&
-        CORRECTION.CHECK_TINYINT(atividade.gratuita ? 1 : 0) &&
         (atividade.preco === undefined || CORRECTION.CHECK_DECIMAL(atividade.preco, 10, 2)) &&
         CORRECTION.CHECK_TINYINT(atividade.ativo ? 1 : 0)
     );
