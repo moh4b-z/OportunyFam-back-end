@@ -105,12 +105,8 @@ async function listarTodasAulas() {
 
             return {
                 ...aula,
-                // Formata data para DD/MM/YYYY
-                data_aula: dataInicio.toLocaleDateString('pt-BR', { timeZone }),
-                
-                // Formata hora para HH:MM:SS (sem AM/PM)
-                hora_inicio: dataInicio.toLocaleTimeString('pt-BR', { hour12: false, timeZone }),
-                hora_fim: dataFim.toLocaleTimeString('pt-BR', { hour12: false, timeZone })
+                hora_inicio: aula.hora_inicio ? aula.hora_inicio.split('.')[0] : null, 
+                hora_fim: aula.hora_fim ? aula.hora_fim.split('.')[0] : null
             };
         });
 
@@ -136,15 +132,11 @@ async function listarAulasPorInstituicao(idInstituicao) {
         }
 
         const aulasFormatadas = result.map(aula => {
-            const dataInicio = new Date(aula.hora_inicio);
-            const dataFim = new Date(aula.hora_fim);
-            const timeZone = 'America/Sao_Paulo';
 
             return {
                 ...aula,
-                data_aula: dataInicio.toLocaleDateString('pt-BR', { timeZone }),
-                hora_inicio: dataInicio.toLocaleTimeString('pt-BR', { hour12: false, timeZone }),
-                hora_fim: dataFim.toLocaleTimeString('pt-BR', { hour12: false, timeZone })
+                hora_inicio: aula.hora_inicio ? aula.hora_inicio.split('.')[0] : null, 
+                hora_fim: aula.hora_fim ? aula.hora_fim.split('.')[0] : null
             };
         });
 
