@@ -155,7 +155,7 @@ async function buscarAtividade(id){
                 result.preco = Number(result.preco)
                 result.aulas = result.aulas ? result.aulas.map(aula => ({
                     ...aula, 
-                    data_aula: formatarData(aula.data_aula),
+                    data: formatarData(aula.data),
                     hora_inicio: aula.hora_inicio ? aula.hora_inicio.split('.')[0] : null, 
                     hora_fim: aula.hora_fim ? aula.hora_fim.split('.')[0] : null
                 })) : []
