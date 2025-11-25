@@ -95,18 +95,63 @@ async function listarTodasAulas() {
             return MENSAGE.ERROR_NOT_FOUND;
         }
 
+        // --- Funções Auxiliares de Formatação ---
+
+        // 1. Formata a data para DD/MM/AAAA (sem considerar o fuso local)
+        const formatarData = (dataAula) => {
+            if (!dataAula) return null;
+
+            // Cria um objeto Date de forma segura
+            const data = dataAula instanceof Date 
+                ? dataAula 
+                : new Date(dataAula);
+            
+            // Usa métodos UTC para garantir que o dia e mês sejam os do fuso 00:00 (Z)
+            const dia = String(data.getUTCDate()).padStart(2, '0');
+            const mes = String(data.getUTCMonth() + 1).padStart(2, '0'); // Mês é zero-based (+1)
+            const ano = data.getUTCFullYear();
+            
+            return `${dia}/${mes}/${ano}`;
+        };
+
+        // 2. Formata a hora para HH:MM (extraindo da string ISO sem aplicar fuso)
+        const formatarHora = (hora) => {
+            if (!hora) return null; 
+
+            let horaString;
+
+            // Se for um objeto Date, usa toISOString para obter a string ISO original (necessário para extrair a hora exata)
+            if (hora instanceof Date) {
+                horaString = hora.toISOString();
+            } else if (typeof hora !== 'string') {
+                // Se não for string nem Date, tenta converter para string
+                horaString = String(hora);
+            } else {
+                horaString = hora;
+            }
+
+            // Ex: de "1970-01-01T09:00:00.000Z"
+            // Pega a parte após o 'T' (a hora)
+            const horaSemT = horaString.includes('T') ? horaString.split('T')[1] : horaString;
+            
+            // Remove os milissegundos e o 'Z'
+            const horaCompleta = horaSemT.split('.')[0];
+            
+            // Pega apenas HH:MM
+            return horaCompleta.substring(0, 5); 
+        };
+        // ---------------------------------------------------
+
         const aulasFormatadas = result.map(aula => {
-            // Convertendo para objeto Date
-            const dataInicio = new Date(aula.hora_inicio);
-            const dataFim = new Date(aula.hora_fim);
-
-            // Configurações para garantir o fuso de SP/Brasil e formato correto
-            const timeZone = 'America/Sao_Paulo';
-
+            
             return {
                 ...aula,
-                hora_inicio: aula.hora_inicio ? aula.hora_inicio.split('.')[0] : null, 
-                hora_fim: aula.hora_fim ? aula.hora_fim.split('.')[0] : null
+                // Aplicando a formatação de data
+                data_aula: aula.data_aula ? formatarData(aula.data_aula) : null,
+                
+                // Aplicando a formatação de hora
+                hora_inicio: formatarHora(aula.hora_inicio), 
+                hora_fim: formatarHora(aula.hora_fim)
             };
         });
 
