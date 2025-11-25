@@ -131,12 +131,60 @@ async function listarAulasPorInstituicao(idInstituicao) {
             return MENSAGE.ERROR_NOT_FOUND;
         }
 
+        // --- Função auxiliar MELHORADA para formatar hora para HH:MM ---
+        const formatarHora = (hora) => {
+            if (!hora) return null; // Retorna null se não houver valor
+
+            let horaString;
+
+            // 1. Se for um objeto Date, converte para string ISO.
+            if (hora instanceof Date) {
+                horaString = hora.toISOString();
+            } 
+            // 2. Se não for uma string, converte para string (caso seja de outro tipo).
+            else if (typeof hora !== 'string') {
+                horaString = String(hora);
+            } 
+            // 3. Se já for string, usa diretamente.
+            else {
+                horaString = hora;
+            }
+
+            // Ex: de "1970-01-01T09:00:00.000Z"
+            // Pega a parte após o 'T' (a hora)
+            const horaSemT = horaString.includes('T') ? horaString.split('T')[1] : horaString;
+            
+            // Remove os milissegundos e o 'Z'
+            const horaCompleta = horaSemT.split('.')[0];
+            
+            // Pega apenas HH:MM
+            return horaCompleta.substring(0, 5); 
+        };
+        // ---------------------------------------------------
+
         const aulasFormatadas = result.map(aula => {
+            console.log(aula);
+            
+            // 1. Formatar data_aula para DD/MM/AAAA
+            let dataAulaFormatada = null;
+            if (aula.data_aula) {
+                // Trata a data de forma robusta, convertendo para objeto Date se necessário
+                const data = aula.data_aula instanceof Date 
+                    ? aula.data_aula 
+                    : new Date(aula.data_aula);
+                
+                const dia = String(data.getUTCDate()).padStart(2, '0');
+                const mes = String(data.getUTCMonth() + 1).padStart(2, '0');
+                const ano = data.getUTCFullYear();
+                
+                dataAulaFormatada = `${dia}/${mes}/${ano}`;
+            }
 
             return {
                 ...aula,
-                hora_inicio: aula.hora_inicio ? aula.hora_inicio.split('.')[0] : null, 
-                hora_fim: aula.hora_fim ? aula.hora_fim.split('.')[0] : null
+                data_aula: dataAulaFormatada,
+                hora_inicio: formatarHora(aula.hora_inicio), 
+                hora_fim: formatarHora(aula.hora_fim)
             };
         });
 
