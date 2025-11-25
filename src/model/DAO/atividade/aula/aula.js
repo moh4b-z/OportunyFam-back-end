@@ -142,7 +142,10 @@ async function selectAulasByInstituicaoId(idInstituicao){
             JOIN tbl_atividade a ON a.id = vad.id_atividade
             JOIN vw_alunos_instituicao i ON i.instituicao_id = ${idInstituicao}
                 AND i.atividade_id = a.id
-            ORDER BY a.titulo, vad.data_aula, vad.hora_inicio
+            ORDER BY 
+                vad.data_aula DESC,
+                vad.hora_inicio ASC,
+                a.titulo
         `
         return result
     } catch (error) {
