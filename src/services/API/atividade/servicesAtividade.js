@@ -108,6 +108,7 @@ async function listarTodasAtividades(){
         let result = await atividadeDAO.selectAllAtividades()
         //console.log(result);
         
+        
         if (result) {
             // Deserializa o campo 'horarios' que veio como JSON_ARRAYAGG
             const atividadesFormatadas = result.map(ativ => ({
@@ -130,6 +131,21 @@ async function listarTodasAtividades(){
         return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
     }
 }
+const formatarData = (dataAula) => {
+            if (!dataAula) return null;
+
+            // Cria um objeto Date de forma segura
+            const data = dataAula instanceof Date 
+                ? dataAula 
+                : new Date(dataAula);
+            
+            // Usa métodos UTC para garantir que o dia e mês sejam os do fuso 00:00 (Z)
+            const dia = String(data.getUTCDate()).padStart(2, '0');
+            const mes = String(data.getUTCMonth() + 1).padStart(2, '0'); // Mês é zero-based (+1)
+            const ano = data.getUTCFullYear();
+            
+            return `${dia}/${mes}/${ano}`;
+        };
 
 async function buscarAtividade(id){
     try {
@@ -139,6 +155,7 @@ async function buscarAtividade(id){
                 result.preco = Number(result.preco)
                 result.aulas = result.aulas ? result.aulas.map(aula => ({
                     ...aula, 
+                    data_aula: formatarData(aula.data_aula),
                     hora_inicio: aula.hora_inicio ? aula.hora_inicio.split('.')[0] : null, 
                     hora_fim: aula.hora_fim ? aula.hora_fim.split('.')[0] : null
                 })) : []
