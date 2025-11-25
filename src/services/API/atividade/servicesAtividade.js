@@ -116,6 +116,7 @@ async function listarTodasAtividades(){
                 preco: Number(ativ.preco),
                 aulas: ativ.aulas ? ativ.aulas.map(aula => ({
                     ...aula, 
+                    data: formatarData(aula.data),
                     hora_inicio: aula.hora_inicio ? aula.hora_inicio.split('.')[0].substring(0, 5) : null, 
                     hora_fim: aula.hora_fim ? aula.hora_fim.split('.')[0].substring(0, 5) : null
                 })) : []
@@ -188,7 +189,8 @@ async function buscarAtividadePorInstituicao(id){
                     // **2. Formatação das Aulas (JSON e Hora)**
                     const aulasFormatadas = ativ.aulas && Array.isArray(ativ.aulas) 
                         ? ativ.aulas.map(aula => ({
-                            ...aula, 
+                            ...aula,
+                            data: formatarData(aula.data),
                             hora_inicio: aula.hora_inicio ? aula.hora_inicio.split('.')[0].substring(0, 5) : null, 
                             hora_fim: aula.hora_fim ? aula.hora_fim.split('.')[0].substring(0, 5) : null
                         })) 
