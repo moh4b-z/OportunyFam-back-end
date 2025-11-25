@@ -106,9 +106,6 @@ async function excluirAtividade(id){
 async function listarTodasAtividades(){
     try {
         let result = await atividadeDAO.selectAllAtividades()
-        //console.log(result);
-        
-        
         if (result) {
             // Deserializa o campo 'horarios' que veio como JSON_ARRAYAGG
             const atividadesFormatadas = result.map(ativ => ({
@@ -147,19 +144,47 @@ const formatarData = (dataAula) => {
             
             return `${dia}/${mes}/${ano}`;
         };
-
-async function buscarAtividade(id){
+        
+async function buscarAtividade(id) {
     try {
         if (CORRECTION.CHECK_ID(id)) {
             const result = await atividadeDAO.selectByIdAtividade(parseInt(id))
             if (result) {
                 result.preco = Number(result.preco)
-                result.aulas = result.aulas ? result.aulas.map(aula => ({
-                    ...aula, 
-                    data: formatarData(aula.data),
-                    hora_inicio: aula.hora_inicio ? aula.hora_inicio.split('.')[0].substring(0, 5) : null, 
-                    hora_fim: aula.hora_fim ? aula.hora_fim.split('.')[0].substring(0, 5) : null
-                })) : []
+
+                // Verifica se existem aulas
+                if (result.aulas && Array.isArray(result.aulas)) {
+                    
+                    // 1º PASSO: ORDENAR (Enquanto a data ainda é pura)
+                    result.aulas.sort((a, b) => {
+                        const dataA = new Date(a.data);
+                        const dataB = new Date(b.data);
+                        
+                        // Ordenação por DATA (Decrescente: mais recente primeiro)
+                        // Se quiser as antigas primeiro, inverta para: dataA - dataB
+                        const comparacaoData = dataB - dataA; 
+
+                        // Se as datas forem iguais, desempata pela HORA (Crescente)
+                        if (comparacaoData === 0) {
+                             // Compara strings de hora "09:00" vs "10:00"
+                            return a.hora_inicio.localeCompare(b.hora_inicio);
+                        }
+
+                        return comparacaoData;
+                    });
+
+                    // 2º PASSO: FORMATAR (Transformar em string bonita)
+                    result.aulas = result.aulas.map(aula => ({
+                        ...aula,
+                        data: formatarData(aula.data),
+                        hora_inicio: aula.hora_inicio ? aula.hora_inicio.split('.')[0].substring(0, 5) : null,
+                        hora_fim: aula.hora_fim ? aula.hora_fim.split('.')[0].substring(0, 5) : null
+                    }));
+
+                } else {
+                    result.aulas = [];
+                }
+
                 return { ...MENSAGE.SUCCESS_REQUEST, atividade: result }
             } else {
                 return MENSAGE.ERROR_NOT_FOUND
@@ -172,7 +197,6 @@ async function buscarAtividade(id){
         return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
     }
 }
-
 async function buscarAtividadePorInstituicao(id){
     try {
         if (CORRECTION.CHECK_ID(id)) {
