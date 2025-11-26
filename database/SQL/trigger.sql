@@ -139,3 +139,18 @@ BEGIN
 END $$
 DELIMITER ;
 
+
+
+DELIMITER //
+
+CREATE TRIGGER tg_mensagem_before_insert
+BEFORE INSERT ON tbl_mensagem
+FOR EACH ROW
+BEGIN
+    -- Se o tipo não for fornecido ou for NULL/vazio, define como 'TEXTO'
+    IF NEW.tipo IS NULL OR NEW.tipo = '' THEN
+        SET NEW.tipo = 'TEXTO';
+    END IF;
+END //
+
+DELIMITER ; -- Reverte o delimitador para o padrão (ponto e vírgula)

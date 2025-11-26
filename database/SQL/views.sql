@@ -14,6 +14,9 @@ SELECT
       JSON_OBJECT(
         'id', m.id,
         'descricao', m.descricao,
+        'tipo', m.tipo, -- 🆕 NOVO CAMPO
+        'audio_url', m.audio_url, -- 🆕 NOVO CAMPO (Opcional, se precisar no detalhe)
+        'audio_duracao', m.audio_duracao, -- 🆕 NOVO CAMPO (Opcional, se precisar no detalhe)
         'data_envio', m.criado_em,
         'id_remetente', m.id_pessoa
       )

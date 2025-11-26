@@ -205,6 +205,31 @@ function CHECK_tbl_publicacao_instituicao(publicacao) {
     )
 }
 
+function CHECK_tbl_mensagem(mensagem) {
+    const ALLOWED_TYPES = ['TEXTO', 'AUDIO', 'IMAGEM']
+
+    if (!mensagem) return false
+    if (!CORRECTION.CHECK_TEXT(mensagem.descricao)) return false
+    if (!CORRECTION.CHECK_ID(mensagem.id_conversa)) return false
+    if (!CORRECTION.CHECK_ID(mensagem.id_pessoa)) return false
+
+    if (mensagem.tipo !== undefined) {
+        const tipoUp = String(mensagem.tipo).toUpperCase()
+        if (!ALLOWED_TYPES.includes(tipoUp)) return false
+    }
+
+    if (mensagem.audio_url !== undefined && mensagem.audio_url !== null) {
+        if (!CORRECTION.CHECK_VARCHAR(mensagem.audio_url, 400)) return false
+    }
+
+    if (mensagem.audio_duracao !== undefined && mensagem.audio_duracao !== null) {
+        const dur = CORRECTION.verificarNumero(mensagem.audio_duracao)
+        if (!dur || dur <= 0) return false
+    }
+
+    return true
+}
+
 
 
 module.exports = {
@@ -226,4 +251,6 @@ module.exports = {
     CHECK_tbl_matricula_aula
     ,
     CHECK_tbl_publicacao_instituicao
+    ,
+    CHECK_tbl_mensagem
 }

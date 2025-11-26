@@ -8,7 +8,10 @@ async function insertMensagem(dados) {
                 descricao: dados.descricao,
                 visto: dados.visto === undefined ? false : dados.visto,
                 id_conversa: dados.id_conversa,
-                id_pessoa: dados.id_pessoa
+                id_pessoa: dados.id_pessoa,
+                tipo: dados.tipo || 'TEXTO',
+                audio_url: dados.audio_url || null,
+                audio_duracao: dados.audio_duracao === undefined ? null : dados.audio_duracao
             }
         })
     } catch (error) {
@@ -23,7 +26,10 @@ async function updateMensagem(dados) {
             where: { id: dados.id },
             data: {
                 descricao: dados.descricao || undefined,
-                visto: dados.visto === undefined ? undefined : dados.visto
+                visto: dados.visto === undefined ? undefined : dados.visto,
+                tipo: dados.tipo || undefined,
+                audio_url: dados.audio_url === undefined ? undefined : dados.audio_url,
+                audio_duracao: dados.audio_duracao === undefined ? undefined : dados.audio_duracao
             }
         })
         return updated

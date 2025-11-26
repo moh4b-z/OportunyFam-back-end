@@ -222,6 +222,12 @@ CREATE TABLE tbl_mensagem (
   atualizado_em TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
   id_conversa INT NOT NULL,
   id_pessoa INT NOT NULL,
+  
+  -- 🆕 NOVOS CAMPOS:
+  tipo VARCHAR(50) NOT NULL, -- "TEXTO", "AUDIO", "IMAGEM"
+  audio_url VARCHAR(400) NULL, -- URL do áudio no Firebase Storage
+  audio_duracao INT UNSIGNED NULL, -- Duração em segundos
+  
   CONSTRAINT fk_conversa_mensagem FOREIGN KEY (id_conversa) REFERENCES tbl_conversa(id) ON DELETE CASCADE,
   CONSTRAINT fk_pessoa_mensagem FOREIGN KEY (id_pessoa) REFERENCES tbl_pessoa(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
