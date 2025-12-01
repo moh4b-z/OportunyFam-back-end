@@ -45,6 +45,7 @@ SELECT
   s.id AS status_id,
   s.nome AS status_inscricao,
   t.criado_em AS data_inscricao
+  t.id AS id_inscricao
 FROM tbl_instituicao i
 JOIN tbl_pessoa p_i ON p_i.id = i.id_pessoa
 JOIN tbl_atividade a ON a.id_instituicao = i.id

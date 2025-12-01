@@ -119,31 +119,51 @@ async function selectByIdInstituicao(id_instituicao) {
 
 
 /**
- * Busca instituições pelo nome (simples) na View vw_instituicao_completa.
- * Filtra e ordena apenas pelo nome da instituição.
+ * Busca instituições pelo nome na View vw_instituicao_completa.
+ * Implementa paginação (LIMIT/OFFSET) e contagem total para manter compatibilidade
+ * com as camadas superiores, ordenando apenas pelo nome.
  */
-async function selectSearchInstituicoesByNome(nomeBusca) {
-  // Se nomeBusca for null, a busca será ampla (LIKE '%%')
+async function selectSearchInstituicoesByNome(nomeBusca, pagina = 1, tamanho = 20) {
+  // O termo de busca será usado para a cláusula LIKE
   const busca = nomeBusca || '';
 
+  // 1. Cálculo de LIMIT e OFFSET para a paginação
+  const limit = parseInt(tamanho);
+  // O offset começa na página 1, por isso subtrai 1.
+  const offset = (parseInt(pagina) - 1) * limit;
+
   try {
-    const result = await prismaMySQL.$queryRaw`
+    // --- QUERY 1: CONTAGEM TOTAL (Para retornar o 'total' necessário) ---
+    // Usamos $queryRaw e desestruturamos o array para pegar o primeiro resultado
+    const [totalResult] = await prismaMySQL.$queryRaw`
+      SELECT
+        COUNT(*) as total
+      FROM
+        vw_instituicao_completa
+      WHERE
+        -- Filtro simples: nome contém a busca
+        nome LIKE CONCAT('%', ${busca}, '%');
+    `;
+    
+    // Converte o total para número.
+    const totalRegistro = totalResult && totalResult.total ? parseInt(totalResult.total) : 0;
+
+    // --- QUERY 2: DADOS PAGINADOS (Para retornar as 'instituicoes') ---
+    const instituicoes = await prismaMySQL.$queryRaw`
       SELECT
         *
       FROM
         vw_instituicao_completa
       WHERE
-        -- Filtra por qualquer parte do nome que contenha a busca
+        -- Filtro simples: nome contém a busca
         nome LIKE CONCAT('%', ${busca}, '%')
       ORDER BY
-        nome ASC; -- Ordenação alfabética direta pelo nome da instituição
+        nome ASC -- Ordenação alfabética direta pelo nome da instituição
+      LIMIT ${limit} OFFSET ${offset};
     `;
 
-    // O retorno é direto
-    const instituicoes = result || [];
-    const totalRegistro = instituicoes.length;
-
-    return { instituicoes, total: totalRegistro };
+    // Retorna o formato esperado pelas camadas superiores
+    return { instituicoes: instituicoes || [], total: totalRegistro };
 
   } catch (error) {
     console.error("Erro ao buscar instituições por nome:", error);
