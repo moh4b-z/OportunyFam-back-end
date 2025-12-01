@@ -246,7 +246,9 @@ DELIMITER ;
 -- Elas DEVEM retornar o objeto completo e já listam as colunas.
 -- ======================================================================
 DELIMITER $$
+
 DROP PROCEDURE IF EXISTS sp_buscar_instituicoes $$
+
 CREATE PROCEDURE sp_buscar_instituicoes (
   IN p_busca   VARCHAR(200),
   IN p_lat     DECIMAL(10,7),
@@ -256,10 +258,11 @@ CREATE PROCEDURE sp_buscar_instituicoes (
   IN p_tamanho INT
 )
 BEGIN
-  DECLARE v_limite INT DEFAULT IFNULL(p_tamanho,20);
-  DECLARE v_offset INT DEFAULT GREATEST(IFNULL(p_pagina,1)-1,0) * IFNULL(p_tamanho,20);
+  DECLARE v_limite INT DEFAULT IFNULL(p_tamanho, 20);
+  DECLARE v_offset INT DEFAULT GREATEST(IFNULL(p_pagina, 1) - 1, 0) * IFNULL(p_tamanho, 20);
   DECLARE v_raio_deg DOUBLE;
 
+  -- Converte km para graus (aproximação) se houver geolocalização
   IF p_raio_km IS NOT NULL AND p_lat IS NOT NULL AND p_lng IS NOT NULL THEN
     SET v_raio_deg = p_raio_km / 111.32;
   END IF;
@@ -271,21 +274,29 @@ BEGIN
       p.email AS email,
       i.cnpj,
       e.logradouro, e.numero, e.bairro, e.cidade, e.estado,
+      
+      -- Cálculo de Distância (Mantém NULL se não houver lat/lng)
       CASE
         WHEN p_lat IS NOT NULL AND p_lng IS NOT NULL
-        THEN ST_Distance_Sphere(POINT(p_lng,p_lat), POINT(e.longitude, e.latitude))/1000
+        THEN ST_Distance_Sphere(POINT(p_lng, p_lat), POINT(e.longitude, e.latitude)) / 1000
         ELSE NULL
       END AS distancia_km,
-      (CASE WHEN p.nome LIKE CONCAT('%', p_busca, '%') THEN 3 ELSE 0 END)
-      + (CASE WHEN i.descricao LIKE CONCAT('%', p_busca, '%') THEN 2 ELSE 0 END)
-      + (CASE WHEN e.logradouro LIKE CONCAT('%', p_busca, '%') THEN 1 ELSE 0 END) AS score
+
+      -- Cálculo de Score (Relevância)
+      -- Dica: Você pode aumentar o peso do nome se quiser garantir ainda mais prioridade
+      (CASE WHEN p.nome LIKE CONCAT('%', p_busca, '%') THEN 3 ELSE 0 END) +
+      (CASE WHEN i.descricao LIKE CONCAT('%', p_busca, '%') THEN 2 ELSE 0 END) +
+      (CASE WHEN e.logradouro LIKE CONCAT('%', p_busca, '%') THEN 1 ELSE 0 END) AS score
+    
     FROM tbl_instituicao i
     JOIN tbl_pessoa p ON p.id = i.id_pessoa
     JOIN tbl_endereco e ON e.id = i.id_endereco
     WHERE
+      -- Filtro de Raio (Geoespacial)
       (p_raio_km IS NULL OR p_lat IS NULL OR p_lng IS NULL
-        OR MBRWithin(e.geo, ST_Buffer(ST_SRID(POINT(p_lng,p_lat),4326), v_raio_deg)))
+        OR MBRWithin(e.geo, ST_Buffer(ST_SRID(POINT(p_lng, p_lat), 4326), v_raio_deg)))
       AND (
+        -- Filtro de Texto (Nome, Descrição, Endereço)
         p_busca IS NULL OR p_busca = '' OR
         p.nome LIKE CONCAT('%', p_busca, '%') OR
         i.descricao LIKE CONCAT('%', p_busca, '%') OR
@@ -298,26 +309,23 @@ BEGIN
     SELECT * FROM base
     WHERE (p_raio_km IS NULL OR distancia_km IS NULL OR distancia_km <= p_raio_km)
   )
-  -- Retorna a busca com colunas explícitas
+  
+  -- Retorna os dados ordenados
   SELECT
-    id,
-    nome,
-    email,
-    cnpj,
-    logradouro,
-    numero,
-    bairro,
-    cidade,
-    estado,
-    distancia_km,
-    score
+    id, nome, email, cnpj, logradouro, numero, bairro, cidade, estado, distancia_km, score
   FROM filtrada
-  ORDER BY (distancia_km IS NULL), distancia_km ASC, score DESC, nome ASC
+  -- AQUI ESTÁ A CORREÇÃO PRINCIPAL:
+  ORDER BY 
+    score DESC,                   -- 1º: Mais relevante (nome) primeiro
+    (distancia_km IS NULL),       -- 2º: Se tiver distância calculada, prioriza
+    distancia_km ASC,             -- 3º: Menor distância
+    nome ASC                      -- 4º: Ordem alfabética para empates
   LIMIT v_limite OFFSET v_offset;
 
-  -- Retorna a contagem total (esta já estava correta)
+  -- Retorna a contagem total para paginação
   SELECT COUNT(*) AS total FROM filtrada;
 END $$
+
 DELIMITER ;
 
 DELIMITER $$

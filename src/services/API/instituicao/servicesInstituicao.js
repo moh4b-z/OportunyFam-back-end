@@ -299,7 +299,7 @@ async function buscarInstituicoesPorNome(params) {
         if (!CORRECTION.CHECK_ID(pagina) || !CORRECTION.CHECK_ID(tamanho)) {
             return MENSAGE.ERROR_INVALID_PARAM
         }
-
+        
         const resultDAO = await instituicaoDAO.selectSearchInstituicoesByNome(nomeBusca, pagina, tamanho)
 
         if (!resultDAO) {

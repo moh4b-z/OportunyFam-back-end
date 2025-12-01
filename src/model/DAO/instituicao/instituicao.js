@@ -119,30 +119,37 @@ async function selectByIdInstituicao(id_instituicao) {
 
 
 /**
- * Busca instituições pelo nome (usa procedure de busca paginada)
+ * Busca instituições pelo nome (simples) na View vw_instituicao_completa.
+ * Filtra e ordena apenas pelo nome da instituição.
  */
-async function selectSearchInstituicoesByNome(nomeBusca, pagina = 1, tamanho = 20) {
-  const busca = nomeBusca || null
-  const lat = null
-  const lng = null
-  const raio_km = null
+async function selectSearchInstituicoesByNome(nomeBusca) {
+  // Se nomeBusca for null, a busca será ampla (LIKE '%%')
+  const busca = nomeBusca || '';
 
   try {
-    const result = await prismaMySQL.$queryRawUnsafe(`
-      CALL sp_buscar_instituicoes(?, ?, ?, ?, ?, ?);
-    `, busca, lat, lng, raio_km, parseInt(pagina), parseInt(tamanho))
+    const result = await prismaMySQL.$queryRaw`
+      SELECT
+        *
+      FROM
+        vw_instituicao_completa
+      WHERE
+        -- Filtra por qualquer parte do nome que contenha a busca
+        nome LIKE CONCAT('%', ${busca}, '%')
+      ORDER BY
+        nome ASC; -- Ordenação alfabética direta pelo nome da instituição
+    `;
 
-    const instituicoes = result[0] || []
-    const totalRegistro = result[1]?.[0]?.total ? parseInt(result[1][0].total) : 0
+    // O retorno é direto
+    const instituicoes = result || [];
+    const totalRegistro = instituicoes.length;
 
-    return { instituicoes, total: totalRegistro }
+    return { instituicoes, total: totalRegistro };
 
   } catch (error) {
-    console.error("Erro ao buscar instituições por nome:", error)
-    return false
+    console.error("Erro ao buscar instituições por nome:", error);
+    return false;
   }
 }
-
 
 /**
  * Busca alunos de uma instituição com filtros opcionais

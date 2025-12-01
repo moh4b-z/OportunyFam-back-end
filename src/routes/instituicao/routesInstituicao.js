@@ -20,6 +20,13 @@ router.put(
     controllerInstituicao.putInstituicao
 )
 
+
+router.get(
+    '/', 
+    cacheMiddleware(CACHE_TTL_INSTITUICOES),
+    controllerInstituicao.getSearchInstituicoesByName
+)
+
 router.get(
     '',
     cacheMiddleware(CACHE_TTL_INSTITUICOES),
@@ -39,11 +46,6 @@ router.get(
     controllerInstituicao.getAlunosInstituicao
 )
 
-router.get(
-    '/', 
-    cacheMiddleware(CACHE_TTL_INSTITUICOES),
-    controllerInstituicao.getSearchInstituicoesByName
-)
 
 router.get(
     '/:id',

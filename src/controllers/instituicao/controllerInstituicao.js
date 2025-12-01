@@ -42,6 +42,7 @@ async function getSearchInstituicao(request, response){
 
 async function getSearchInstituicoesByName(request, response){
     let params = request.query
+    
     let result = await servicesInstituicao.buscarInstituicoesPorNome(params)
     response.status(result.status_code)
     response.json(result)

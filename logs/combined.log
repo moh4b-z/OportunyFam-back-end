@@ -292,3 +292,70 @@
 {"level":"info","message":"Worker PID 35744 servindo na porta 8080","timestamp":"2025-11-25T01:22:22.427Z"}
 {"level":"info","message":{"duration":1794,"method":"POST","path":"/","pid":7500,"statusCode":500},"timestamp":"2025-11-25T01:22:28.669Z"}
 {"level":"info","message":{"duration":2872,"method":"POST","path":"/","pid":7500,"statusCode":201},"timestamp":"2025-11-25T01:23:56.538Z"}
+{"level":"info","message":"Master PID 10992 iniciando. Forking 4 workers","timestamp":"2025-11-26T00:45:43.927Z"}
+{"level":"info","message":"Worker PID 11232 servindo na porta 8080","timestamp":"2025-11-26T00:45:53.679Z"}
+{"level":"info","message":"Worker PID 11060 servindo na porta 8080","timestamp":"2025-11-26T00:45:53.677Z"}
+{"level":"info","message":"Worker PID 11932 servindo na porta 8080","timestamp":"2025-11-26T00:45:53.699Z"}
+{"level":"info","message":"Worker PID 10764 servindo na porta 8080","timestamp":"2025-11-26T00:45:53.710Z"}
+{"level":"info","message":"Master PID 6624 iniciando. Forking 4 workers","timestamp":"2025-12-01T01:54:05.295Z"}
+{"level":"info","message":"Worker PID 29960 servindo na porta 8080","timestamp":"2025-12-01T01:54:16.250Z"}
+{"level":"info","message":"Worker PID 30376 servindo na porta 8080","timestamp":"2025-12-01T01:54:16.254Z"}
+{"level":"info","message":"Worker PID 20192 servindo na porta 8080","timestamp":"2025-12-01T01:54:16.271Z"}
+{"level":"info","message":"Worker PID 24340 servindo na porta 8080","timestamp":"2025-12-01T01:54:16.285Z"}
+{"level":"info","message":{"duration":4636,"method":"GET","path":"/","pid":20192,"statusCode":200},"timestamp":"2025-12-01T01:55:40.422Z"}
+{"level":"info","message":"Master PID 4464 iniciando. Forking 4 workers","timestamp":"2025-12-01T01:57:29.283Z"}
+{"level":"info","message":"Worker PID 12416 servindo na porta 8080","timestamp":"2025-12-01T01:57:52.909Z"}
+{"level":"info","message":"Worker PID 10928 servindo na porta 8080","timestamp":"2025-12-01T01:57:52.910Z"}
+{"level":"info","message":"Worker PID 6228 servindo na porta 8080","timestamp":"2025-12-01T01:57:53.096Z"}
+{"level":"info","message":"Worker PID 27216 servindo na porta 8080","timestamp":"2025-12-01T01:57:53.148Z"}
+{"level":"info","message":{"duration":1972,"method":"GET","path":"/","pid":27216,"statusCode":200},"timestamp":"2025-12-01T01:58:06.827Z"}
+{"level":"info","message":{"duration":21,"method":"GET","path":"/","pid":27216,"statusCode":200},"timestamp":"2025-12-01T01:58:20.820Z"}
+{"level":"info","message":"Master PID 22848 iniciando. Forking 4 workers","timestamp":"2025-12-01T02:00:25.453Z"}
+{"level":"info","message":"Worker PID 23680 servindo na porta 8080","timestamp":"2025-12-01T02:00:44.887Z"}
+{"level":"info","message":"Worker PID 18388 servindo na porta 8080","timestamp":"2025-12-01T02:00:44.918Z"}
+{"level":"info","message":"Worker PID 23952 servindo na porta 8080","timestamp":"2025-12-01T02:00:45.047Z"}
+{"level":"info","message":"Worker PID 16524 servindo na porta 8080","timestamp":"2025-12-01T02:00:46.681Z"}
+{"level":"info","message":{"duration":3534,"method":"GET","path":"/","pid":16524,"statusCode":200},"timestamp":"2025-12-01T02:00:56.569Z"}
+{"level":"info","message":"Master PID 28048 iniciando. Forking 4 workers","timestamp":"2025-12-01T02:02:24.096Z"}
+{"level":"info","message":"Worker PID 1628 servindo na porta 8080","timestamp":"2025-12-01T02:02:41.218Z"}
+{"level":"info","message":"Worker PID 17240 servindo na porta 8080","timestamp":"2025-12-01T02:02:41.275Z"}
+{"level":"info","message":"Worker PID 10008 servindo na porta 8080","timestamp":"2025-12-01T02:02:41.291Z"}
+{"level":"info","message":"Worker PID 20092 servindo na porta 8080","timestamp":"2025-12-01T02:02:41.797Z"}
+{"level":"info","message":{"duration":3338,"method":"GET","path":"/","pid":10008,"statusCode":500},"timestamp":"2025-12-01T02:02:53.349Z"}
+{"level":"info","message":"Master PID 11936 iniciando. Forking 4 workers","timestamp":"2025-12-01T02:06:44.951Z"}
+{"level":"info","message":"Worker PID 24364 servindo na porta 8080","timestamp":"2025-12-01T02:06:58.725Z"}
+{"level":"info","message":"Worker PID 1352 servindo na porta 8080","timestamp":"2025-12-01T02:06:58.917Z"}
+{"level":"info","message":"Worker PID 13004 servindo na porta 8080","timestamp":"2025-12-01T02:06:58.956Z"}
+{"level":"info","message":"Worker PID 9964 servindo na porta 8080","timestamp":"2025-12-01T02:06:59.204Z"}
+{"level":"info","message":{"duration":1819,"method":"GET","path":"/","pid":13004,"statusCode":500},"timestamp":"2025-12-01T02:07:07.804Z"}
+{"level":"info","message":"Master PID 9720 iniciando. Forking 4 workers","timestamp":"2025-12-01T02:16:01.066Z"}
+{"level":"info","message":"Worker PID 21584 servindo na porta 8080","timestamp":"2025-12-01T02:16:10.596Z"}
+{"level":"info","message":"Worker PID 1384 servindo na porta 8080","timestamp":"2025-12-01T02:16:10.597Z"}
+{"level":"info","message":"Worker PID 4692 servindo na porta 8080","timestamp":"2025-12-01T02:16:10.712Z"}
+{"level":"info","message":"Worker PID 6000 servindo na porta 8080","timestamp":"2025-12-01T02:16:10.903Z"}
+{"level":"info","message":{"duration":1343,"method":"GET","path":"/","pid":6000,"statusCode":404},"timestamp":"2025-12-01T02:16:19.728Z"}
+{"level":"info","message":"Master PID 3352 iniciando. Forking 4 workers","timestamp":"2025-12-01T02:17:12.187Z"}
+{"level":"info","message":"Worker PID 17208 servindo na porta 8080","timestamp":"2025-12-01T02:17:20.349Z"}
+{"level":"info","message":"Worker PID 4396 servindo na porta 8080","timestamp":"2025-12-01T02:17:20.575Z"}
+{"level":"info","message":"Worker PID 29884 servindo na porta 8080","timestamp":"2025-12-01T02:17:20.630Z"}
+{"level":"info","message":"Worker PID 10652 servindo na porta 8080","timestamp":"2025-12-01T02:17:20.648Z"}
+{"level":"info","message":{"duration":1476,"method":"GET","path":"/","pid":29884,"statusCode":404},"timestamp":"2025-12-01T02:17:57.100Z"}
+{"level":"info","message":"Master PID 29540 iniciando. Forking 4 workers","timestamp":"2025-12-01T02:24:28.733Z"}
+{"level":"info","message":"Worker PID 27456 servindo na porta 8080","timestamp":"2025-12-01T02:24:45.008Z"}
+{"level":"info","message":"Worker PID 26212 servindo na porta 8080","timestamp":"2025-12-01T02:24:45.091Z"}
+{"level":"info","message":"Worker PID 15160 servindo na porta 8080","timestamp":"2025-12-01T02:24:45.114Z"}
+{"level":"info","message":"Worker PID 25996 servindo na porta 8080","timestamp":"2025-12-01T02:24:45.993Z"}
+{"level":"info","message":{"duration":3455,"method":"GET","path":"/","pid":26212,"statusCode":500},"timestamp":"2025-12-01T02:24:54.695Z"}
+{"level":"info","message":"Master PID 21084 iniciando. Forking 4 workers","timestamp":"2025-12-01T02:30:49.266Z"}
+{"level":"info","message":"Worker PID 16160 servindo na porta 8080","timestamp":"2025-12-01T02:31:07.746Z"}
+{"level":"info","message":"Worker PID 5692 servindo na porta 8080","timestamp":"2025-12-01T02:31:07.733Z"}
+{"level":"info","message":"Worker PID 13764 servindo na porta 8080","timestamp":"2025-12-01T02:31:07.767Z"}
+{"level":"info","message":"Worker PID 924 servindo na porta 8080","timestamp":"2025-12-01T02:31:08.256Z"}
+{"level":"error","message":{"error":"Do not know how to serialize a BigInt","method":"GET","path":"/v1/oportunyfam/instituicoes/","pid":13764,"stack":"TypeError: Do not know how to serialize a BigInt\n    at JSON.stringify (<anonymous>)\n    at stringify (C:\\Users\\moham\\OneDrive\\Codigo\\OportunyFam-back-end\\node_modules\\express\\lib\\response.js:1020:12)\n    at ServerResponse.json (C:\\Users\\moham\\OneDrive\\Codigo\\OportunyFam-back-end\\node_modules\\express\\lib\\response.js:243:14)\n    at getSearchInstituicoesByName (C:\\Users\\moham\\OneDrive\\Codigo\\OportunyFam-back-end\\src\\controllers\\instituicao\\controllerInstituicao.js:48:14)"},"timestamp":"2025-12-01T02:31:16.095Z"}
+{"level":"info","message":{"duration":2016,"method":"GET","path":"/v1/oportunyfam/instituicoes/","pid":13764,"statusCode":500},"timestamp":"2025-12-01T02:31:16.138Z"}
+{"level":"info","message":"Master PID 10888 iniciando. Forking 4 workers","timestamp":"2025-12-01T02:34:57.729Z"}
+{"level":"info","message":"Worker PID 17028 servindo na porta 8080","timestamp":"2025-12-01T02:35:06.378Z"}
+{"level":"info","message":"Worker PID 15252 servindo na porta 8080","timestamp":"2025-12-01T02:35:06.459Z"}
+{"level":"info","message":"Worker PID 944 servindo na porta 8080","timestamp":"2025-12-01T02:35:06.566Z"}
+{"level":"info","message":"Worker PID 1952 servindo na porta 8080","timestamp":"2025-12-01T02:35:06.903Z"}
+{"level":"info","message":{"duration":1421,"method":"GET","path":"/","pid":1952,"statusCode":200},"timestamp":"2025-12-01T02:35:13.495Z"}

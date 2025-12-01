@@ -250,6 +250,7 @@ SELECT
   p.nome,
   p.email,
   p.foto_perfil,
+  p.telefone,
   ins.cnpj,
   ins.descricao,
   p.criado_em,
