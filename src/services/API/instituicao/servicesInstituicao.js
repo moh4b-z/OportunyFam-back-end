@@ -292,76 +292,35 @@ async function buscarInstituicao(id){
 
 async function buscarInstituicoesPorNome(params) {
     try {
-        const nomeBusca = params.nome || null
-        const pagina = params.pagina || 1
-        const tamanho = params.tamanho || 20
-
-        if (!CORRECTION.CHECK_ID(pagina) || !CORRECTION.CHECK_ID(tamanho)) {
-            return MENSAGE.ERROR_INVALID_PARAM
-        }
+        const nomeBusca = params.nome || null;
         
-        const resultDAO = await instituicaoDAO.selectSearchInstituicoesByNome(nomeBusca, pagina, tamanho)
-
+        // 1. CHAMA O DAO SEM OS PARÂMETROS DE PAGINAÇÃO
+        // O DAO deve estar ajustado para ignorar paginação ou receber null.
+        const resultDAO = await instituicaoDAO.selectSearchInstituicoesByNome(nomeBusca); 
+        // Nota: A função DAO deve ser ajustada para aceitar apenas 'nomeBusca'
+        
         if (!resultDAO) {
-            return MENSAGE.ERROR_INTERNAL_SERVER_MODEL
+            return MENSAGE.ERROR_INTERNAL_SERVER_MODEL;
         }
 
-        const { instituicoes, total } = resultDAO
-        const tamanhoInt = parseInt(tamanho)
-        const paginaAtualInt = parseInt(pagina)
-        const totalPaginas = Math.ceil(total / tamanhoInt)
+        // Desestrutura o resultado (espera-se que 'total' seja o count real, não paginado)
+        const { instituicoes } = resultDAO; 
 
         if (instituicoes.length === 0) {
-            return MENSAGE.ERROR_NOT_FOUND
-        }
-
-        // --- Lógica de URL para Paginação ---
-        const baseUrlPath = `${MENSAGE.API_BASE_URL}/v1/oportunyfam/instituicoes`
-        const queryParams = new URLSearchParams()
-            
-        // Adiciona a busca (se existir)
-        if (nomeBusca) {
-            queryParams.append('busca', nomeBusca)
-        }
-        // Adiciona o tamanho (se for diferente do padrão 20)
-        if (tamanhoInt !== 20) {
-            queryParams.append('tamanho', tamanhoInt.toString())
-        }
-
-        let nextUrl = null
-        if (paginaAtualInt < totalPaginas) {
-            const nextParams = new URLSearchParams(queryParams.toString()) // Copia os parâmetros base
-            nextParams.append('pagina', (paginaAtualInt + 1).toString())
-            nextUrl = `${baseUrlPath}?${nextParams.toString()}` // Corrigido para usar nextParams
-        }
-
-        let prevUrl = null
-        if (paginaAtualInt > 1) {
-            const prevParams = new URLSearchParams(queryParams.toString()) // Copia os parâmetros base
-            prevParams.append('pagina', (paginaAtualInt - 1).toString())
-            prevUrl = `${baseUrlPath}?${prevParams.toString()}` // Corrigido para usar prevParams
+            return MENSAGE.ERROR_NOT_FOUND;
         }
         
-        // Retorno formatado
-        return {
-            ...MENSAGE.SUCCESS_REQUEST,
-            metadata: {
-                pagina_atual: paginaAtualInt,
-                tamanho_pagina: tamanhoInt,
-                total_registros: total,
-                total_paginas: totalPaginas,
-                link_proxima_pagina: nextUrl,
-                link_pagina_anterior: prevUrl
-            },
-            instituicoes: instituicoes
-        }
+        // 2. RETORNO SIMPLES (Similar à buscarInstituicao(id))
+        return { 
+            ...MENSAGE.SUCCESS_REQUEST, 
+            instituicoes: instituicoes 
+        };
 
     } catch (error) {
-        console.error(error)
-        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES
+        console.error(error);
+        return MENSAGE.ERROR_INTERNAL_SERVER_SERVICES;
     }
 }
-
 
 async function buscarAlunosInstituicao(params) {
     try {        

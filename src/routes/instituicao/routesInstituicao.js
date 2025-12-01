@@ -22,7 +22,7 @@ router.put(
 
 
 router.get(
-    '/', 
+    '/search', 
     cacheMiddleware(CACHE_TTL_INSTITUICOES),
     controllerInstituicao.getSearchInstituicoesByName
 )

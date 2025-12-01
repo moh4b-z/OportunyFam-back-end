@@ -120,57 +120,35 @@ async function selectByIdInstituicao(id_instituicao) {
 
 /**
  * Busca instituições pelo nome na View vw_instituicao_completa.
- * Implementa paginação (LIMIT/OFFSET) e contagem total para manter compatibilidade
- * com as camadas superiores, ordenando apenas pelo nome.
- */
-async function selectSearchInstituicoesByNome(nomeBusca, pagina = 1, tamanho = 20) {
-  // O termo de busca será usado para a cláusula LIKE
+**/
+async function selectSearchInstituicoesByNome(nomeBusca) {
+  // Se nomeBusca for null, a busca será ampla (LIKE '%%')
   const busca = nomeBusca || '';
 
-  // 1. Cálculo de LIMIT e OFFSET para a paginação
-  const limit = parseInt(tamanho);
-  // O offset começa na página 1, por isso subtrai 1.
-  const offset = (parseInt(pagina) - 1) * limit;
-
   try {
-    // --- QUERY 1: CONTAGEM TOTAL (Para retornar o 'total' necessário) ---
-    // Usamos $queryRaw e desestruturamos o array para pegar o primeiro resultado
-    const [totalResult] = await prismaMySQL.$queryRaw`
-      SELECT
-        COUNT(*) as total
-      FROM
-        vw_instituicao_completa
-      WHERE
-        -- Filtro simples: nome contém a busca
-        nome LIKE CONCAT('%', ${busca}, '%');
-    `;
-    
-    // Converte o total para número.
-    const totalRegistro = totalResult && totalResult.total ? parseInt(totalResult.total) : 0;
-
-    // --- QUERY 2: DADOS PAGINADOS (Para retornar as 'instituicoes') ---
-    const instituicoes = await prismaMySQL.$queryRaw`
+    const result = await prismaMySQL.$queryRaw`
       SELECT
         *
       FROM
         vw_instituicao_completa
       WHERE
-        -- Filtro simples: nome contém a busca
+        -- Filtra por qualquer parte do nome que contenha a busca
         nome LIKE CONCAT('%', ${busca}, '%')
       ORDER BY
-        nome ASC -- Ordenação alfabética direta pelo nome da instituição
-      LIMIT ${limit} OFFSET ${offset};
+        nome ASC; -- Ordenação alfabética direta pelo nome da instituição
     `;
 
-    // Retorna o formato esperado pelas camadas superiores
-    return { instituicoes: instituicoes || [], total: totalRegistro };
+    // O retorno é direto
+    const instituicoes = result || [];
+    const totalRegistro = instituicoes.length;
+
+    return { instituicoes, total: totalRegistro };
 
   } catch (error) {
     console.error("Erro ao buscar instituições por nome:", error);
     return false;
   }
 }
-
 /**
  * Busca alunos de uma instituição com filtros opcionais
  */
